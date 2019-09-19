@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Tests", "_Tests", "{BD3F43
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core", "Dinah.Core\Dinah.Core.csproj", "{A19643CB-FA28-4B65-9B21-4473A5625B23}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core.Demos", "Dinah.Core.Demos\Dinah.Core.Demos.csproj", "{019B5384-B33D-46ED-9665-50D8C4C498AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core.Demos", "_Demos\Dinah.Core.Demos\Dinah.Core.Demos.csproj", "{019B5384-B33D-46ED-9665-50D8C4C498AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dinah.Core.Drawing", "Dinah.Core.Drawing\Dinah.Core.Drawing.csproj", "{5237AE8C-6905-4F3E-881B-2A3D0870735D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core.Tests", "Dinah.Core.Tests\Dinah.Core.Tests.csproj", "{A3387D4F-660A-4FC3-A4B1-2EE3BE9B81B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core.Tests", "_Tests\Dinah.Core.Tests\Dinah.Core.Tests.csproj", "{A3387D4F-660A-4FC3-A4B1-2EE3BE9B81B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dinah.Core.Windows.Forms", "Dinah.Core.Windows.Forms\Dinah.Core.Windows.Forms.csproj", "{744519A0-0C87-4581-AC13-68D3DD7D2F59}"
 EndProject

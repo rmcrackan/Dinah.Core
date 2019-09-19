@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dinah.Core\Dinah.Core.csproj" />
+    <ProjectReference Include="..\..\Dinah.Core\Dinah.Core.csproj" />
   </ItemGroup>
 
 </Project>
