@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Dinah.Core;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace StringExtensionsTests
@@ -127,4 +130,301 @@ namespace StringExtensionsTests
         [DataRow("___hello world<>!@#$%^&*()\"___", "hELLo woRLd<>!@#$%^&*()\"")]
         public void should_pass(string fullString, string needle) => Assert.IsTrue(fullString.ContainsInsensitive(needle));
     }
+
+	public class pluralize_shared
+	{
+		public static Dictionary<string, string> Dictionary { get; } = new Dictionary<string, string>
+		{
+			["toe"] = "toes",
+			["shoe"] = "shoes",
+			["Entity"] = "Entities",
+			["PERSON"] = "PEOPLE",
+			["fish"] = "fish",
+			["deer"] = "deer",
+			["sheep"] = "sheep",
+			["house"] = "houses",
+			["mouse"] = "mice",
+			["louse"] = "lice",
+			["Box"] = "Boxes",
+			["index"] = "indices",
+			["OCTOPUS"] = "OCTOPI",
+			["man"] = "men",
+			["woman"] = "women"
+		};
+	}
+
+	[TestClass]
+	public class Pluralize
+	{
+		[TestMethod]
+		public void _0_times_uses_plural()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.Pluralize(0).Should().Be(pl);
+				pl.Pluralize(0).Should().Be(pl);
+			}
+		}
+
+		[TestMethod]
+		public void _1_times_uses_singlular()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.Pluralize(1).Should().Be(sing);
+				pl.Pluralize(1).Should().Be(sing);
+			}
+		}
+
+		[TestMethod]
+		public void many_times_uses_plural()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.Pluralize(5).Should().Be(pl);
+				pl.Pluralize(5).Should().Be(pl);
+			}
+		}
+	}
+
+	[TestClass]
+	public class PluralizeWithCount
+	{
+		[TestMethod]
+		public void _0_times_uses_plural()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.PluralizeWithCount(0).Should().Be("0 " + pl);
+				pl.PluralizeWithCount(0).Should().Be("0 " + pl);
+			}
+		}
+
+		[TestMethod]
+		public void _1_times_uses_singlular()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.PluralizeWithCount(1).Should().Be("1 " + sing);
+				pl.PluralizeWithCount(1).Should().Be("1 " + sing);
+			}
+		}
+
+		[TestMethod]
+		public void many_times_uses_plural()
+		{
+			foreach (var kvp in pluralize_shared.Dictionary)
+			{
+				var sing = kvp.Key;
+				var pl = kvp.Value;
+
+				sing.PluralizeWithCount(5).Should().Be("5 " + pl);
+				pl.PluralizeWithCount(5).Should().Be("5 " + pl);
+			}
+		}
+	}
+
+	[TestClass]
+	public class FirstCharToUpper
+	{
+		[TestMethod]
+		[DataRow(null, null)]
+		[DataRow("", "")]
+		[DataRow("   ", "   ")]
+		[DataRow("foo", "Foo")]
+		[DataRow("Foo", "Foo")]
+		[DataRow("FOO", "FOO")]
+		[DataRow("foo bar", "Foo bar")]
+		public void test_outputs(string param, string expected)
+			=> param.FirstCharToUpper().Should().Be(expected);
+	}
+
+	[TestClass]
+	public class Truncate
+	{
+		[TestMethod]
+		public void null_returns_null()
+			=> ((string)null).Truncate(10).Should().Be(null);
+
+		[TestMethod]
+		public void empty_returns_empty()
+			=> "".Truncate(10).Should().Be("");
+
+		[TestMethod]
+		public void single_char_string_returns_char()
+			=> "F".Truncate(10).Should().Be("F");
+
+		[TestMethod]
+		public void _0_limit_returns_char()
+			=> "foo".Truncate(0).Should().Be("f");
+
+		[TestMethod]
+		public void negative_limit_returns_char()
+			=> "foo".Truncate(-1).Should().Be("f");
+
+		[TestMethod]
+		public void string_shorter_than_limit_is_truncated()
+			=> "foo".Truncate(2).Should().Be("fo");
+
+		[TestMethod]
+		public void string_same_length_as_limit_is_returned()
+			=> "foo".Truncate(3).Should().Be("foo");
+
+		[TestMethod]
+		public void string_longer_than_limit_is_returned()
+			=> "foo".Truncate(4).Should().Be("foo");
+	}
+
+	[TestClass]
+	public class SurroundWithQuotes
+	{
+		[TestMethod]
+		[DataRow(null, "\"\"")]
+		[DataRow("", "\"\"")]
+		[DataRow("   ", "\"   \"")]
+		[DataRow("foo", "\"foo\"")]
+		[DataRow("foo bar", "\"foo bar\"")]
+		public void test_outputs(string param, string expected)
+			=> param.SurroundWithQuotes().Should().Be(expected);
+	}
+
+	[TestClass]
+	public class ExtractString
+	{
+		[TestMethod]
+		public void null_haystack_returns_null()
+			=> ((string)null).ExtractString("", 1).Should().BeNull();
+
+		[TestMethod]
+		public void null_before_returns_null()
+			=> "foo".ExtractString(null, 1).Should().BeNull();
+
+		[TestMethod]
+		public void empty_before_returns_null()
+			=> "foo".ExtractString("", 1).Should().BeNull();
+
+		[TestMethod]
+		public void whitespace_before_returns_null()
+			=> "foo".ExtractString("   ", 1).Should().BeNull();
+
+		[TestMethod]
+		public void _0_needleLength_throws()
+			=> Assert.ThrowsException<ArgumentException>(() => "foo".ExtractString("f", 0));
+
+		[TestMethod]
+		public void negative_needleLength_throws()
+			=> Assert.ThrowsException<ArgumentException>(() => "foo".ExtractString("f", -1));
+
+		[TestMethod]
+		public void needle_not_found_returns_null()
+			=> "foo".ExtractString("bar", 1).Should().BeNull();
+
+		[TestMethod]
+		[DataRow("foobar", "foo", 1, "b")]
+		[DataRow("foobar", "foo", 3, "bar")]
+		public void needle_found(string haystack, string before, int needleLength, string expected)
+			=> haystack.ExtractString(before, needleLength).Should().Be(expected);
+
+		[TestMethod]
+		public void needleLength_too_big_returns_existing()
+			=> "foobar".ExtractString("foo", 4).Should().Be("bar");
+	}
+
+	[TestClass]
+	public class ToBoolean
+	{
+		[TestMethod]
+		[DataRow("y")]
+		[DataRow("   y   ")]
+		[DataRow("Y")]
+		[DataRow("1")]
+		[DataRow("   1   ")]
+		[DataRow("t")]
+		[DataRow("   t   ")]
+		[DataRow("T")]
+		[DataRow("true")]
+		[DataRow("   true   ")]
+		[DataRow("True")]
+		[DataRow("TRUE")]
+		public void is_true(string str)
+			=> str.ToBoolean().Should().BeTrue();
+
+		[TestMethod]
+		[DataRow(null)]
+		[DataRow("")]
+		[DataRow("   ")]
+		[DataRow("n")]
+		[DataRow("N")]
+		[DataRow("f")]
+		[DataRow("false")]
+		[DataRow("Foo")]
+		public void is_false(string str)
+			=> str.ToBoolean().Should().BeFalse();
+	}
+
+	[TestClass]
+	public class HexStringToByteArray
+	{
+		[TestMethod]
+		public void null_throws()
+			=> Assert.ThrowsException<ArgumentNullException>(() => ((string)null).HexStringToByteArray());
+
+		[TestMethod]
+		public void empty_or_whitespace_throws()
+		{
+			Assert.ThrowsException<ArgumentException>(() => "".HexStringToByteArray());
+			Assert.ThrowsException<ArgumentException>(() => "   ".HexStringToByteArray());
+		}
+
+		[TestMethod]
+		public void invalid_char_throws()
+		{
+			Assert.ThrowsException<ArgumentException>(() => "1z".HexStringToByteArray());
+			Assert.ThrowsException<ArgumentException>(() => "z".HexStringToByteArray());
+		}
+
+		[TestMethod]
+		public void uneven_char_count_throws()
+		{
+			Assert.ThrowsException<ArgumentException>(() => "1".HexStringToByteArray());
+			Assert.ThrowsException<ArgumentException>(() => "abc".HexStringToByteArray());
+		}
+
+		[TestMethod]
+		[DataRow("00", new byte[] { 0 })]
+		[DataRow("0102", new byte[] { 1, 2 })]
+		[DataRow("0a0b0c0d", new byte[] { 10, 11, 12, 13 })]
+		public void test_outputs(string str, byte[] bytes)
+			=> str.HexStringToByteArray().Should().BeEquivalentTo(bytes);
+	}
+
+	[TestClass]
+	public class ToMd5Hash
+	{
+		[TestMethod]
+		public void null_throws()
+			=> Assert.ThrowsException<ArgumentNullException>(() => ((string)null).ToMd5Hash());
+
+		[TestMethod]
+		[DataRow("", "D41D8CD98F00B204E9800998ECF8427E")]
+		[DataRow("foo", "ACBD18DB4CC2F85CEDEF654FCCC4A4D8")]
+		[DataRow("test me", "7B0C2C2CBC980155D71BA3BE4D174F56")]
+		public void test_outputs(string input, string expected)
+			=> input.ToMd5Hash().Should().Be(expected);
+	}
 }

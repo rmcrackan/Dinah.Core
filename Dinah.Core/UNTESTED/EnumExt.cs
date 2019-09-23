@@ -22,30 +22,6 @@ namespace Dinah.Core
     }
     #endregion
 
-    #region object/instance methods. set of single values (non-flags)
-    // from: C:\Dev\ihes\main\Framework\Itron.Framework\StringExtensions.cs
-    public static class EnumExt
-    {
-        public static string GetDescription(this Enum en)
-        {
-            // helper to get enum [Description] attribute metadata.
-            // Get the [Description] attribute string for an enum (if it has one) else default to the enum's name.
-            if (en == null)
-                return "[null]";
-
-            string name = en.ToString();
-            MemberInfo[] memInfo = en.GetType().GetMember(name); // could use GetField() for FieldInfo ?
-            if (memInfo != null && memInfo.Length > 0)
-            {
-                object[] attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-                if (attrs != null && attrs.Length > 0)
-                    return ((DescriptionAttribute)attrs[0]).Description;
-            }
-            return name;
-        }
-    }
-    #endregion
-
     #region object/instance methods. flags
     // most from: http://hugoware.net/blog/enumeration-extensions-2-0
     public static class EnumerationFlagsExtensions
