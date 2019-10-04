@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace Dinah.Core
 {
-    #region from namespace Itron.Framework
     /// <summary>
     /// Represents a utility class that can be used to validate method parameters and property values.
     /// </summary>
@@ -485,5 +484,4 @@ namespace Dinah.Core
             }
         }
     }
-    #endregion
 }
