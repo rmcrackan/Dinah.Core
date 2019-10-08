@@ -13,30 +13,29 @@ namespace Dinah.Core.Diagnostics
             string output;
             int exitCode;
 
-            using (var process = new Process { StartInfo = seedInfo })
-            {
-                process.StartInfo.RedirectStandardOutput = !readErrorOutput;
-                process.StartInfo.RedirectStandardError = readErrorOutput;
+			using var process = new Process { StartInfo = seedInfo };
 
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                process.StartInfo.UseShellExecute = false;
+			process.StartInfo.RedirectStandardOutput = !readErrorOutput;
+			process.StartInfo.RedirectStandardError = readErrorOutput;
 
-                if (string.IsNullOrWhiteSpace(process.StartInfo.WorkingDirectory))
-                    process.StartInfo.WorkingDirectory = WorkingDir;
+			process.StartInfo.CreateNoWindow = true;
+			process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			process.StartInfo.UseShellExecute = false;
 
-                process.Start();
-                output = readErrorOutput
-                    ? process.StandardError.ReadToEnd()
-                    : process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+			if (string.IsNullOrWhiteSpace(process.StartInfo.WorkingDirectory))
+				process.StartInfo.WorkingDirectory = WorkingDir;
 
-                exitCode = process.ExitCode;
+			process.Start();
+			output = readErrorOutput
+				? process.StandardError.ReadToEnd()
+				: process.StandardOutput.ReadToEnd();
+			process.WaitForExit();
 
-                process.Close();
-            }
+			exitCode = process.ExitCode;
 
-            return (output, exitCode);
+			process.Close();
+
+			return (output, exitCode);
         }
     }
 }

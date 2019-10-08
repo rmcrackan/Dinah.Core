@@ -109,8 +109,8 @@ namespace Dinah.Core.Net.Http
 		{
 			downloadValidate(client, downloadUrl, destinationFilePath);
 
-			using (var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
-				return await downloadAsync(response, destinationFilePath, progress);
+			using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+			return await downloadAsync(response, destinationFilePath, progress);
 		}
 		public static async Task<string> DownloadFileAsync(
 			this HttpClient client,
@@ -120,8 +120,8 @@ namespace Dinah.Core.Net.Http
 		{
 			downloadValidate(client, downloadUrl, destinationFilePath);
 
-			using (var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
-				return await downloadAsync(response, destinationFilePath, progress);
+			using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+			return await downloadAsync(response, destinationFilePath, progress);
 		}
 		private static void downloadValidate(object client, string downloadUrl, string fileToWriteTo)
 		{
@@ -147,31 +147,29 @@ namespace Dinah.Core.Net.Http
 				destinationFilePath = PathLib.GetPathWithExtensionFromAnotherFile(destinationFilePath, headerFilename);
 			}
 
-			using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
-			using (var streamToWriteTo = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+			using var streamToReadFrom = await response.Content.ReadAsStreamAsync();
+			using var streamToWriteTo = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+			if (progress == null)
 			{
-				if (progress == null)
-				{
-					await streamToReadFrom.CopyToAsync(streamToWriteTo);
+				await streamToReadFrom.CopyToAsync(streamToWriteTo);
+				return destinationFilePath;
+			}
+
+			var totalFileSize = response.Content.Headers.ContentLength;
+			var bytesReceived = 0L;
+			var buffer = new byte[8192];
+
+			while (true)
+			{
+				var bytesRead = await streamToReadFrom.ReadAsync(buffer, 0, buffer.Length);
+				if (bytesRead == 0)
 					return destinationFilePath;
-				}
 
-				var totalFileSize = response.Content.Headers.ContentLength;
-				var bytesReceived = 0L;
-				var buffer = new byte[8192];
+				await streamToWriteTo.WriteAsync(buffer, 0, bytesRead);
 
-				while (true)
-				{
-					var bytesRead = await streamToReadFrom.ReadAsync(buffer, 0, buffer.Length);
-					if (bytesRead == 0)
-						return destinationFilePath;
+				bytesReceived += bytesRead;
 
-					await streamToWriteTo.WriteAsync(buffer, 0, bytesRead);
-
-					bytesReceived += bytesRead;
-
-					reportProgress(bytesReceived, totalFileSize, progress);
-				}
+				reportProgress(bytesReceived, totalFileSize, progress);
 			}
 		}
 

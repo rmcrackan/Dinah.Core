@@ -50,12 +50,10 @@ namespace Dinah.Core.IO
 
         public static void CreateFile(string file, byte[] bytes)
         {
-            using (var memoryStream = new MemoryStream(bytes))
-            using (var fileStream = File.Create(file))
-            {
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                memoryStream.CopyTo(fileStream);
-            }
-        }
+			using var memoryStream = new MemoryStream(bytes);
+			using var fileStream = File.Create(file);
+			memoryStream.Seek(0, SeekOrigin.Begin);
+			memoryStream.CopyTo(fileStream);
+		}
     }
 }

@@ -102,15 +102,13 @@ namespace Dinah.Core
 		{
 			ArgumentValidator.EnsureNotNull(str, nameof(str));
 
-			using (var md5 = System.Security.Cryptography.MD5.Create())
-			{
-				var hashBytes = md5.ComputeHash(Encoding.ASCII.GetBytes(str));
+			using var md5 = System.Security.Cryptography.MD5.Create();
+			var hashBytes = md5.ComputeHash(Encoding.ASCII.GetBytes(str));
 
-				var sb = new StringBuilder();
-				for (int i = 0; i < hashBytes.Length; i++)
-					sb.Append(hashBytes[i].ToString("X2"));
-				return sb.ToString();
-			}
+			var sb = new StringBuilder();
+			for (int i = 0; i < hashBytes.Length; i++)
+				sb.Append(hashBytes[i].ToString("X2"));
+			return sb.ToString();
 		}
 	}
 }

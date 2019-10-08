@@ -11,25 +11,19 @@ USAGE
 =====
 // Once you configure logging on a DbContext instance it will be enabled on all instances of that DbContext type. Repeated calls to ConfigureLogging() will change the logging for the DbContext type. Behind the scenes there is a single LogProvider for each DbContext type.
 
-using (var db = new BloggingContext())
-{
-    db.ConfigureLogging(s => Console.WriteLine(s));
-    // ...
-}
+using var db = new BloggingContext();
+db.ConfigureLogging(s => Console.WriteLine(s));
+// ...
 
 You can also filter the logger by LogLevel and/or category with an optional second parameter. Here the logger will capture all Errors and all Queries like this:
-using (var db = new BloggingContext())
-{
-    db.ConfigureLogging(s => Console.WriteLine(s), (c, l) => l == LogLevel.Error || c == DbLoggerCategory.Query.Name);
-    // ...
-}
+using var db = new BloggingContext();
+db.ConfigureLogging(s => Console.WriteLine(s), (c, l) => l == LogLevel.Error || c == DbLoggerCategory.Query.Name);
+// ...
 
 Shortcut to log the Query, Command, and Update categories to capture the all the generated SQL and execution statistics
-using (var db = new BloggingContext())
-{
-    db.ConfigureLogging(s => Console.WriteLine(s), LoggingCategories.SQL);
-    // ...
-}
+var db = new BloggingContext();
+db.ConfigureLogging(s => Console.WriteLine(s), LoggingCategories.SQL);
+// ...
 */
 namespace Dinah.EntityFrameworkCore
 {

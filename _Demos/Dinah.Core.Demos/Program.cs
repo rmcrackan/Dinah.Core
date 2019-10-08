@@ -22,13 +22,12 @@ namespace Dinah.Core.Demos
 		public void ProgressBarUp()
 		{
 			Console.Write("Performing some task... ");
-			using (var progressBar = new ProgressBar())
+
+			using var progressBar = new ProgressBar();
+			for (int i = 0; i <= 100; i++)
 			{
-				for (int i = 0; i <= 100; i++)
-				{
-					progressBar.Report((double)i / 100);
-					Thread.Sleep(20);
-				}
+				progressBar.Report((double)i / 100);
+				Thread.Sleep(20);
 			}
 
 			Console.WriteLine("Done.");
@@ -37,13 +36,12 @@ namespace Dinah.Core.Demos
 		public void ProgressBarDown()
 		{
 			Console.Write("Performing some task... ");
-			using (var progressBar = new ProgressBar())
+
+			using var progressBar = new ProgressBar();
+			for (int i = 100; i > 0; i--)
 			{
-				for (int i = 100; i > 0; i--)
-				{
-					progressBar.Report((double)i / 100);
-					Thread.Sleep(20);
-				}
+				progressBar.Report((double)i / 100);
+				Thread.Sleep(20);
 			}
 
 			Console.WriteLine("Done.");

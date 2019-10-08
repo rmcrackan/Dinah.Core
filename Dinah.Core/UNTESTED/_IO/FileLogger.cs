@@ -28,9 +28,11 @@ namespace Dinah.Core.IO
         private object fileLocker { get; } = new object();
         public void TextWriterLogger(string text)
         {
-            lock (fileLocker)
-                using (var file = new StreamWriter(fileName, true))
-                    file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + ": " + text);
+			lock (fileLocker)
+			{
+				using var file = new StreamWriter(fileName, true);
+				file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ffff") + ": " + text);
+			}
         }
     }
 }
