@@ -99,19 +99,7 @@ namespace Dinah.Core
         /// <exception cref="ArgumentNullException">Thrown when <i>argument</i> is null.</exception>
         public static void EnsureAtLeastOneNotNull(string name, params object[] arguments)
         {
-            bool found = false;
-
-            foreach (object obj in arguments)
-            {
-                if (obj != null)
-                {
-                    found = true;
-
-                    break;
-                }
-            }
-
-            if (!found)
+            if (!arguments.Any(obj => obj != null))
             {
                 throw new ArgumentNullException(name);
             }
