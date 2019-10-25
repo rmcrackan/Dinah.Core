@@ -18,19 +18,36 @@ namespace Dinah.Core
 			foreach (T value in Enum.GetValues(typeof(T)))
 			{
 				var valueInt = (int)(object)value;
-				if (0 != (valueInt & inputInt))
-				{
+				if (valueInt >= 0 && 0 != (valueInt & inputInt))
 					yield return value;
-				}
 			}
 		}
 
-		// https://stackoverflow.com/a/30174850
-		public static string GetDescription<T>(this T e) where T : struct, IConvertible
+		public static string GetDescription<T>(this T e)
 		{
-			if (!(e is Enum))
-				return null;
+			// identical
+			//en.GetType().IsDefined(typeof(FlagsAttribute), false)
+			//en.GetType().GetCustomAttributes<FlagsAttribute>().Any()
+			//en.GetType().GetCustomAttributes(typeof(FlagsAttribute), false).Length > 0
 
+			if (e is Enum en &&
+				Convert.ToInt64(en) != 0 &&
+				en.GetType().IsDefined(typeof(FlagsAttribute), false))
+			{
+				return en.getFlagDescriptions();
+			}
+
+			// non-enums, non-flag enums, and flag enums == 0
+			return e.getDescription();
+		}
+		private static string getFlagDescriptions(this Enum en)
+			=> Enum.GetValues(en.GetType()).Cast<Enum>()
+				.Where(enumValue => en.HasFlag(enumValue) && Convert.ToInt64(enumValue) > 0)
+				.Select(enumValue => enumValue.getDescription())
+				.Aggregate((a, b) => $"{a ?? "[null]"} | {b ?? "[null]"}");
+
+		private static string getDescription<T>(this T e)
+		{
 			var attribute =
 				e.GetType()
 				.GetTypeInfo()

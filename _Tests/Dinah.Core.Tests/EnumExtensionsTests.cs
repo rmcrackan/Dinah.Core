@@ -126,8 +126,10 @@ namespace EnumExtensionsTests
 	[Flags]
 	public enum FlagsEnum
 	{
+		[System.ComponentModel.Description("no val")]
 		None = 0,
 		Plop = 1,
+		[System.ComponentModel.Description("pouet")]
 		Pouet = 2,
 		[System.ComponentModel.Description("foo")]
 		Foo = 4,
@@ -205,7 +207,15 @@ namespace EnumExtensionsTests
 			=> FlagsEnum.Foo.GetDescription().Should().Be("foo");
 
 		[TestMethod]
-		public void mult_flag_enums_is_null()
-			=> (FlagsEnum.Bar | FlagsEnum.Foo).GetDescription().Should().BeNull();
+		public void mult_flag_enums_with_null()
+			=> (FlagsEnum.Bar | FlagsEnum.Foo).GetDescription().Should().Be("foo | [null]");
+
+		[TestMethod]
+		public void mult_flag_enums_descriptions()
+			=> (FlagsEnum.Pouet | FlagsEnum.Foo).GetDescription().Should().Be("pouet | foo");
+
+		[TestMethod]
+		public void none_flag_enums_description()
+			=> FlagsEnum.None.GetDescription().Should().Be("no val");
 	}
 }
