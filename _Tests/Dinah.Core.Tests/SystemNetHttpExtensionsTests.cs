@@ -304,7 +304,7 @@ namespace SystemNetHttpExtensionsTests
 			var progress = new Progress<DownloadProgress>();
 			progress.ProgressChanged += (s, e)
 				=> log.Add(
-					$"{e.BytesReceived}/{e.TotalFileSize} ({e.ProgressPercentage})%"
+					$"{e.BytesReceived}/{e.TotalBytesToReceive} ({e.ProgressPercentage})%"
 					);
 
 			var temp = Path.GetTempFileName();

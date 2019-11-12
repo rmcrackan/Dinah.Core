@@ -12,7 +12,7 @@ namespace Dinah.Core.Net.Http
 	public class DownloadProgress
 	{
 		public long BytesReceived { get; set; }
-		public long? TotalFileSize { get; set; }
+		public long? TotalBytesToReceive { get; set; }
 		public double? ProgressPercentage { get; set; }
 	}
 
@@ -155,7 +155,7 @@ namespace Dinah.Core.Net.Http
 				return destinationFilePath;
 			}
 
-			var totalFileSize = response.Content.Headers.ContentLength;
+			var totalBytesToReceive = response.Content.Headers.ContentLength;
 			var bytesReceived = 0L;
 			var buffer = new byte[8192];
 
@@ -169,23 +169,23 @@ namespace Dinah.Core.Net.Http
 
 				bytesReceived += bytesRead;
 
-				reportProgress(bytesReceived, totalFileSize, progress);
+				reportProgress(bytesReceived, totalBytesToReceive, progress);
 			}
 		}
 
 		private static void reportProgress(
 			long bytesReceived,
-			long? totalFileSize,
+			long? totalBytesToReceive,
 			IProgress<DownloadProgress> progress)
 		{
 			double? progressPercentage = null;
-			if (totalFileSize.HasValue)
-				progressPercentage = Math.Round((double)bytesReceived / totalFileSize.Value * 100, 2);
+			if (totalBytesToReceive.HasValue)
+				progressPercentage = Math.Round((double)bytesReceived / totalBytesToReceive.Value * 100, 2);
 
 			var args = new DownloadProgress
 			{
 				BytesReceived = bytesReceived,
-				TotalFileSize = totalFileSize,
+				TotalBytesToReceive = totalBytesToReceive,
 				ProgressPercentage = progressPercentage
 			};
 			progress.Report(args);
