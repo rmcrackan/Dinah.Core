@@ -5,8 +5,9 @@ using System.Linq;
 
 namespace Dinah.Core.ErrorHandling
 {
-    // stripped-down version of GenericBizRunner.StatusGenericHandler
-    public class StatusHandler : IEnumerable<string>
+	// stripped-down version of GenericBizRunner.StatusGenericHandler
+	// consider replacing StatusHandler with Vladimir Khorikov's CSharpFunctionalExtensions nuget
+	public class StatusHandler : IEnumerable<string>
     {
         private List<string> _errors { get; } = new List<string>();
 

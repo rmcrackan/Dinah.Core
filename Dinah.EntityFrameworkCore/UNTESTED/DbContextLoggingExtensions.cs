@@ -59,7 +59,7 @@ namespace Dinah.EntityFrameworkCore
         public volatile LoggingConfiguration Configuration;
         static bool DefaultFilter(string CategoryName, LogLevel level) => true;
 
-        static ConcurrentDictionary<Type, LogProvider> providers = new ConcurrentDictionary<Type, LogProvider>();
+        private static ConcurrentDictionary<Type, LogProvider> providers { get; } = new ConcurrentDictionary<Type, LogProvider>();
 
         public static void CreateOrModifyLoggerForDbContext(Type DbContextType, ILoggerFactory loggerFactory, Action<string> logger,
             Func<string, LogLevel, bool> filter = null)
