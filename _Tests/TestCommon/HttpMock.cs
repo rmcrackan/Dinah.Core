@@ -82,6 +82,16 @@ namespace TestCommon
                .Verifiable();
 
             return handlerMock;
-        }
-    }
+		}
+
+		public static HttpClientHandler GetHandler(string handlerReturnString = null, HttpStatusCode statusCode = HttpStatusCode.OK)
+			 => CreateMockHttpClientHandler
+				(
+				handlerReturnString ?? "foo",
+				statusCode
+				).Object;
+
+		public static HttpClientHandler GetHandler(HttpResponseMessage response)
+			=> CreateMockHttpClientHandler(response).Object;
+	}
 }

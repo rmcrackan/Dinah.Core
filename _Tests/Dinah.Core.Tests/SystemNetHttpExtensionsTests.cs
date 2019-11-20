@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TestCommon;
 
 namespace SystemNetHttpExtensionsTests
 {
@@ -189,7 +190,7 @@ namespace SystemNetHttpExtensionsTests
         }
 
 #if !RUN_LIVE_DOWNLOADS
-        [Ignore]
+		[Ignore]
 #endif
         [TestMethod]
         public async Task download_small()
@@ -262,6 +263,37 @@ namespace SystemNetHttpExtensionsTests
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "url", ""));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "url", "   "));
         }
+
+		[TestMethod]
+		public async Task rename_via_ContentDisposition()
+		{
+			var test_file_base64 = "dGVzdA==";
+			var test_plaintext = "test";
+
+			var expectedFilename = "file.aax";
+
+			try
+			{
+				var response = new HttpResponseMessage
+				{
+					Content = new ByteArrayContent(Convert.FromBase64String(test_file_base64))
+				};
+				response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment") { FileName = "foo_ep6.aax" };
+
+				var client = new HttpClient(HttpMock.GetHandler(response));
+
+				var finalFile = await client.DownloadFileAsync("http://t.co.uk/downloadme?a=1", "file.xyz");
+
+				await Task.Delay(100);
+				finalFile.Should().Be(expectedFilename);
+				File.Exists(expectedFilename).Should().BeTrue();
+				File.ReadAllText(expectedFilename).Should().Be(test_plaintext);
+			}
+			finally
+			{
+				File.Delete(expectedFilename);
+			}
+		}
 
 #if !RUN_LIVE_DOWNLOADS
         [Ignore]
