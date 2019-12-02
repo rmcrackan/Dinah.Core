@@ -16,14 +16,6 @@ namespace Dinah.Core.IO
                 System.Threading.Thread.Sleep(100);
         }
 
-        // DO NOT use with redirected Console.WriteLine -- infinite loop
-        public void DebuggingLogger(string text)
-        {
-            string msg = new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name + " - " + text;
-            Console.WriteLine(msg);
-            TextWriterLogger(msg);
-        }
-
         // use with Console.WriteLine
         private object fileLocker { get; } = new object();
         public void TextWriterLogger(string text)

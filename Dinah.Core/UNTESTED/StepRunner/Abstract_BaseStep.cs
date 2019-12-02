@@ -13,29 +13,47 @@ namespace Dinah.Core.StepRunner
         protected abstract bool RunRaw();
 
         public (bool IsSuccess, TimeSpan Elapsed) Run()
-        {
-            Console.WriteLine($"Begin step '{Name}'");
-            var stopwatch = Stopwatch.StartNew();
+		{
+			logBegin();
 
-            bool success;
-            try
-            {
-                success = RunRaw();
-            }
-            catch
-            {
-                success = false;
-            }
+			var stopwatch = Stopwatch.StartNew();
 
-            stopwatch.Stop();
-            var elapsed = stopwatch.Elapsed;
+			bool success;
+			Exception exc = null;
+			try
+			{
+				success = RunRaw();
+			}
+			catch (Exception ex)
+			{
+				exc = ex;
+				success = false;
+			}
 
-            Console.WriteLine(
-                $"End step '{Name}'. "
-                + (success ? "Success" : "FAILED")
-                + ". Completed in " + elapsed.GetTotalTimeFormatted());
+			stopwatch.Stop();
+			var elapsed = stopwatch.Elapsed;
 
-            return (success, elapsed);
-        }
-    }
+			logEnd(success, elapsed, exc);
+
+			return (success, elapsed);
+		}
+
+		private void logBegin()
+		{
+			Serilog.Log.Logger.Debug($"Begin step '{Name}'");
+		}
+
+		private void logEnd(bool success, TimeSpan elapsed, Exception exc)
+		{
+			var logStart = $"End step '{Name}'. ";
+			var logEnd = $". Completed in {elapsed.GetTotalTimeFormatted()}";
+
+			if (success)
+				Serilog.Log.Logger.Debug($"{logStart}Success{logEnd}");
+			else if (exc is null)
+				Serilog.Log.Logger.Error($"{logStart}FAILED{logEnd}");
+			else
+				Serilog.Log.Logger.Error(exc, $"{logStart}FAILED{logEnd}");
+		}
+	}
 }

@@ -6,19 +6,18 @@ using Microsoft.Extensions.Configuration;
 
 namespace Dinah.EntityFrameworkCore
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TContext">
-    /// Child Context:
-    /// not needed : public MyTestContext() : base() { }
-    /// IS NEEDED :  public MyTestContext(DbContextOptions<TContext> options) : base(options) { }
-    ///
-    /// OnConfiguring() is the standard way to do use a hardcoded conn str. Works with migrations and works with standard code.
-    /// Since we're using the factory to load the conn str from a file instead, we don't need OnConfiguring()
-    ///     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite("Data Source=sample.db");
-    /// </typeparam>
-    public abstract class DesignTimeDbContextFactoryBase<TContext> :
+	// from: https://www.benday.com/2017/12/19/ef-core-2-0-migrations-without-hard-coded-connection-strings/
+
+	/// <typeparam name="TContext">
+	/// Child Context:
+	/// not needed : public MyTestContext() : base() { }
+	/// IS NEEDED :  public MyTestContext(DbContextOptions<TContext> options) : base(options) { }
+	///
+	/// OnConfiguring() is the standard way to do use a hardcoded conn str. Works with migrations and works with standard code.
+	/// Since we're using the factory to load the conn str from a file instead, we don't need OnConfiguring()
+	///     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite("Data Source=sample.db");
+	/// </typeparam>
+	public abstract class DesignTimeDbContextFactoryBase<TContext> :
         IDesignTimeDbContextFactory<TContext> where TContext : DbContext
     {
         protected abstract TContext CreateNewInstance(DbContextOptions<TContext> options);
@@ -26,16 +25,14 @@ namespace Dinah.EntityFrameworkCore
         protected abstract void UseDatabaseEngine(DbContextOptionsBuilder optionsBuilder, string connectionString);
 
         // entry point for Add-Migration and Update-Database
-        public TContext CreateDbContext(string[] args) => Create(new FileInfo(Directory.GetCurrentDirectory()));
+        public TContext CreateDbContext(string[] args)
+			=> Create(new FileInfo(Directory.GetCurrentDirectory()));
 
         // entry point for standard code call
         public TContext Create()
-        {
-            var context = Create(new FileInfo(AppContext.BaseDirectory));
-            return context;
-        }
+			=> Create(new FileInfo(AppContext.BaseDirectory));
 
-        public TContext Create(FileInfo fileInfo)
+		public TContext Create(FileInfo fileInfo)
         {
             var connectionStringProp = typeof(TContext).Name;
             var rawConnectionString = new ConfigurationBuilder()
@@ -47,15 +44,12 @@ namespace Dinah.EntityFrameworkCore
                 .ExpandEnvironmentVariables(rawConnectionString)
                 .Replace("%DESKTOP%", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
 
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new InvalidOperationException($"Could not find a connection string named '{connectionStringProp}'.");
-
             return Create(connectionString);
         }
 
         public TContext Create(string connectionString)
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException($"{nameof(connectionString)} is null or empty.", nameof(connectionString));
 
             var builder = new DbContextOptionsBuilder<TContext>();

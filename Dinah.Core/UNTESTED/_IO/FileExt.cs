@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 
 namespace Dinah.Core.IO
@@ -16,12 +14,13 @@ namespace Dinah.Core.IO
                 {
                     // deletes file if it exists. no error if it doesn't exist
                     File.Delete(source);
+					Serilog.Log.Logger.Debug($"File successfully deleted: {source}");
                     break;
                 }
                 catch (Exception e)
                 {
                     Thread.Sleep(100);
-                    Console.WriteLine($"Failed to delete {source}. Exception: {e.Message}");
+					Serilog.Log.Logger.Error(e, $"Failed to delete: {source}");
                 }
             }
         }
@@ -36,14 +35,15 @@ namespace Dinah.Core.IO
                     {
                         File.Delete(target);
                         File.Move(source, target);
-                    }
+						Serilog.Log.Logger.Debug($"File successfully moved from '{source}' to '{target}'");
+					}
 
                     break;
                 }
                 catch (Exception e)
                 {
                     Thread.Sleep(100);
-                    Console.WriteLine($"Failed to move {source} to {target}. Exception: {e.Message}");
+					Serilog.Log.Logger.Error(e, $"Failed to move '{source}' to '{target}'");
                 }
             }
         }

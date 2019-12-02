@@ -6,17 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dinah.EntityFrameworkCore
 {
-    // this class is my approximation of EF 6 interceptors:
-    // System.Data.Entity.Infrastructure.Interception.DbInterception.Add(new CommandLoggingInterceptor());
-
-    // source for my pattern:
-    // https://blogs.msdn.microsoft.com/dotnet/2016/09/29/implementing-seeding-custom-conventions-and-interceptors-in-ef-core-1-0/
-
-    // other patterns, each of which is unique:
-    // https://weblogs.asp.net/dixin/entity-framework-core-and-linq-to-entities-3-logging-and-tracing-queries
-    // https://github.com/aspnet/EntityFrameworkCore/issues/9418
-    // https://weblogs.asp.net/ricardoperes/interception-in-entity-framework-core
-
     /// <summary>Attempt to approximate EF 6 interceptors. NOT ATOMIC WITH TRANSACTIONS</summary>
     public class InterceptableDbContext : DbContext
     {
