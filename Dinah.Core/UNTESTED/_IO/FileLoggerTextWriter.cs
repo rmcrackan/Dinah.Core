@@ -4,8 +4,6 @@ using System.Text;
 
 namespace Dinah.Core.IO
 {
-    // from: https://stackoverflow.com/a/18727100
-
     public class FileLoggerTextWriter : TextWriter
     {
         FileLogger logger1 { get; }
