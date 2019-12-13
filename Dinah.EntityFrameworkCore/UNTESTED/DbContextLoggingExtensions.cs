@@ -87,7 +87,7 @@ namespace Dinah.EntityFrameworkCore
             }
         }
 
-        private LogProvider(Action<string> logger, Func<string, LogLevel, bool> filter) => this.Configuration = new LoggingConfiguration(logger, filter);
+        private LogProvider(Action<string> logger, Func<string, LogLevel, bool> filter) => Configuration = new LoggingConfiguration(logger, filter);
 
         public ILogger CreateLogger(string categoryName) => new Logger(categoryName, this);
 
