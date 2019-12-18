@@ -8,6 +8,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.17" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Pluralize.NET" Version="1.0.2" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.0" />

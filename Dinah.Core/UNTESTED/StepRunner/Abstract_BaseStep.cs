@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using Dinah.Core;
 
 namespace Dinah.Core.StepRunner
 {
@@ -40,7 +37,7 @@ namespace Dinah.Core.StepRunner
 
 		private void logBegin()
 		{
-			Serilog.Log.Logger.Debug($"Begin step '{Name}'");
+			Serilog.Log.Logger.Information($"Begin step '{Name}'");
 		}
 
 		private void logEnd(bool success, TimeSpan elapsed, Exception exc)
@@ -49,7 +46,7 @@ namespace Dinah.Core.StepRunner
 			var logEnd = $". Completed in {elapsed.GetTotalTimeFormatted()}";
 
 			if (success)
-				Serilog.Log.Logger.Debug($"{logStart}Success{logEnd}");
+				Serilog.Log.Logger.Information($"{logStart}Success{logEnd}");
 			else if (exc is null)
 				Serilog.Log.Logger.Error($"{logStart}FAILED{logEnd}");
 			else

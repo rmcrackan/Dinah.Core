@@ -14,7 +14,7 @@ namespace Dinah.Core.IO
                 {
                     // deletes file if it exists. no error if it doesn't exist
                     File.Delete(source);
-					Serilog.Log.Logger.Debug($"File successfully deleted: {source}");
+					Serilog.Log.Logger.Information($"File successfully deleted: {source}");
                     break;
                 }
                 catch (Exception e)
@@ -35,7 +35,7 @@ namespace Dinah.Core.IO
                     {
                         File.Delete(target);
                         File.Move(source, target);
-						Serilog.Log.Logger.Debug($"File successfully moved from '{source}' to '{target}'");
+						Serilog.Log.Logger.Information($"File successfully moved from '{source}' to '{target}'");
 					}
 
                     break;
