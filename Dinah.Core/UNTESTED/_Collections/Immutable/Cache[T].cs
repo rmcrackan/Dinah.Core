@@ -7,6 +7,9 @@ namespace Dinah.Core.Collections.Immutable
 {
 	// https://stackoverflow.com/a/48480845
 	// thread-safe, immutable, lock free
+
+	// consider replacing with Microsoft.Extensions.Caching.Memory nuget's MemoryCache:
+	// https://michaelscodingspot.com/cache-implementations-in-csharp-net/
 	public class Cache<T> : IEnumerable<T>
 	{
 		private ImmutableHashSet<T> cache;
