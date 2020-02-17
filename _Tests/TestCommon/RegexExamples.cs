@@ -32,4 +32,27 @@ namespace RegexExamples
 				.Should().Be(@"C:\User\whatever\path\file.txt");
 		}
 	}
+
+	[TestClass]
+	public class Match
+	{
+		[TestMethod]
+		[DataRow("abc1.12.def3.4", 1.12f)]
+		[DataRow("0.3,4.7,8.6", 0.3f)]
+		[DataRow("0.6, 3.5", 0.6f)]
+		[DataRow("5-8", 5f)]
+		[DataRow("5.", 5f)]
+		[DataRow("X.5", 5f)] // no leading 0
+		public void get_first_number(string input, float expected)
+		{
+			var pattern = @"^\D*(?<index>\d+\.?\d*)";
+			var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+
+			var match = regex.Match(input);
+			var mStr = match.Groups["index"].ToString();
+			
+			var mFloat = float.Parse(mStr);
+			mFloat.Should().Be(expected);
+		}
+	}
 }
