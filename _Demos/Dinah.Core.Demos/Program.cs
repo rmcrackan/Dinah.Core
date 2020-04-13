@@ -38,7 +38,7 @@ namespace Dinah.Core.Demos
 			Console.Write("Performing some task... ");
 
 			using var progressBar = new ProgressBar();
-			for (int i = 100; i > 0; i--)
+			for (int i = 100; i >= 0; i--)
 			{
 				progressBar.Report((double)i / 100);
 				Thread.Sleep(20);

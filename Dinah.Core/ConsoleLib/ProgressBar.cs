@@ -37,6 +37,9 @@ namespace Dinah.Core.ConsoleLib
 			// Make sure value is in [0..1] range
 			value = Math.Max(0, Math.Min(1, value));
 			Interlocked.Exchange(ref currentProgress, value);
+
+			// update the display each time the progress value is updated
+			timerHandler(null);
 		}
 
 		private void timerHandler(object state)
