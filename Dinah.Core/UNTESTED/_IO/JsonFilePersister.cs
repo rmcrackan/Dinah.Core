@@ -49,7 +49,7 @@ namespace Dinah.Core.IO
 		private T loadFromFile()
 		{
 			var json = File.ReadAllText(Path);
-			var target = DeserializeTarget(json, JsonPath);
+			var target = JsonHelper.FromJson<T>(json, JsonPath, GetSerializerSettings());
 
 			if (target is null)
 				throw new FormatException("File was not in a format able to be imported");
@@ -67,7 +67,6 @@ namespace Dinah.Core.IO
 				throw new ArgumentException("Path cannot be blank", nameof(path));
 		}
 
-		protected abstract T DeserializeTarget(string json, string jsonPath);
 		private object _locker { get; } = new object();
 		private void saveFile(object sender, EventArgs e)
 		{
