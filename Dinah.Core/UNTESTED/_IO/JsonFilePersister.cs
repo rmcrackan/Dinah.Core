@@ -10,7 +10,7 @@ namespace Dinah.Core.IO
 	/// If not using the optional JSONPath: Create file if it does not exist. Overwrite existing with identity tokens
 	/// If using the optional JSONPath: the object of the path must be valid and existing in the file</summary>
 	public abstract class JsonFilePersister<T> : IDisposable
-		where T : Updatable
+		where T : IUpdatable
 	{
 		public T Target { get; }
 		public string Path { get; }

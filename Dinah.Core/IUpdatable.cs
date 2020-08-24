@@ -2,7 +2,7 @@
 
 namespace Dinah.Core
 {
-	public interface Updatable
+	public interface IUpdatable
 	{
 		event EventHandler Updated;
 	}
