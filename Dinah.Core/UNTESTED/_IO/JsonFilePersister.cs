@@ -74,7 +74,7 @@ namespace Dinah.Core.IO
 
 		public void BeginTransation() => IsInTransaction = true;
 
-		public void EndTransation()
+		public void CommitTransation()
 		{
 			IsInTransaction = false;
 			if (pendingUpdate)
@@ -82,6 +82,9 @@ namespace Dinah.Core.IO
 			pendingUpdate = false;
 		}
 
+		// currently not needed. might add later:
+		// - RollbackTransation/AbondonTransation
+		// - reload Target
 
 		private object _locker { get; } = new object();
 		private void saveFile(object _, EventArgs __)
