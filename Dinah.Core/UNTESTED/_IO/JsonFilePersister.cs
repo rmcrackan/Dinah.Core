@@ -67,9 +67,31 @@ namespace Dinah.Core.IO
 				throw new ArgumentException("Path cannot be blank", nameof(path));
 		}
 
-		private object _locker { get; } = new object();
-		private void saveFile(object sender, EventArgs e)
+
+		private bool pendingUpdate = false;
+
+		public bool IsInTransaction { get; private set; }
+
+		public void BeginTransation() => IsInTransaction = true;
+
+		public void EndTransation()
 		{
+			IsInTransaction = false;
+			if (pendingUpdate)
+				saveFile(this, null);
+			pendingUpdate = false;
+		}
+
+
+		private object _locker { get; } = new object();
+		private void saveFile(object _, EventArgs __)
+		{
+			if (IsInTransaction)
+			{
+				pendingUpdate = true;
+				return;
+			}
+
 			lock (_locker)
 			{
 				if (JsonPath is null)
