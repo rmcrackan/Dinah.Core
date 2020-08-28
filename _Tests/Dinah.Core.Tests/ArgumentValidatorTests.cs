@@ -17,7 +17,7 @@ namespace ArgumentValidatorTests
 	public class EnsureNotNull
 	{
 		[TestMethod]
-		public void null_fails() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureNotNull(null, "name"));
+		public void null_fails() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureNotNull((string)null, "name"));
 
 		[TestMethod]
 		public void blank_passes()
