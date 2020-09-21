@@ -174,15 +174,15 @@ namespace SystemNetHttpExtensionsTests
         [TestMethod]
         public async Task null_params_throw()
         {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync((ISealedHttpClient)null, "url", "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<ISealedHttpClient>().Object, null, "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<ISealedHttpClient>().Object, "url", null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync((IHttpClientActions)null, "url", "file"));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<IHttpClientActions>().Object, null, "file"));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<IHttpClientActions>().Object, "url", null));
         }
 
         [TestMethod]
         public async Task blank_params_throw()
         {
-            var mock = new Mock<ISealedHttpClient>().Object;
+            var mock = new Mock<IHttpClientActions>().Object;
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "   ", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "url", ""));
@@ -222,7 +222,7 @@ namespace SystemNetHttpExtensionsTests
             try
             {
                 // REAL LIVE download client
-                var client = new SealedHttpClient(new HttpClientHandler()) as ISealedHttpClient;
+                var client = new SealedHttpClient(new HttpClientHandler()) as IHttpClientActions;
                 await client.DownloadFileAsync(downloadFileUrl, temp);
 
                 await Task.Delay(200);

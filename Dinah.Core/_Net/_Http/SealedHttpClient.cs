@@ -2,7 +2,10 @@
 
 namespace Dinah.Core.Net.Http
 {
-	public class SealedHttpClient : HttpClient, ISealedHttpClient
+	/// <summary>
+	/// Only expose actions. Omit properties and access to state
+	/// </summary>
+	public class SealedHttpClient : HttpClient, IHttpClientActions
 	{
 		public SealedHttpClient(HttpMessageHandler handler) : base(handler) { }
 	}

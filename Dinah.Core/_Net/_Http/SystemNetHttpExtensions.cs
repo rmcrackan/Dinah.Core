@@ -102,7 +102,7 @@ namespace Dinah.Core.Net.Http
 		// http://www.tugberkugurlu.com/archive/efficiently-streaming-large-http-responses-with-httpclient
 		// use ResponseHeadersRead
 		public static async Task<string> DownloadFileAsync(
-			this ISealedHttpClient client,
+			this IHttpClientActions client,
 			string downloadUrl,
 			string destinationFilePath,
 			IProgress<DownloadProgress> progress = null)

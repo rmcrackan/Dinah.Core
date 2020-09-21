@@ -9,7 +9,7 @@ namespace Dinah.Core.Net.Http
 	/// <summary>
 	/// An interface for all HttpClient methods. Omit properties and access to state
 	/// </summary>
-	public interface ISealedHttpClient
+	public interface IHttpClientActions
 	{
 		void CancelPendingRequests();
 		Task<HttpResponseMessage> DeleteAsync(Uri requestUri, CancellationToken cancellationToken);

@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 
 namespace Dinah.Core.Net.Http
 {
-	public interface IHttpClient : ISealedHttpClient
+	public interface IHttpClient : IHttpClientActions
 	{
 		CookieContainer CookieJar { get; }
 		HttpRequestHeaders DefaultRequestHeaders { get; }
