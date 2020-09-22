@@ -28,5 +28,7 @@ namespace Dinah.Core.ErrorHandling
 
         public IEnumerator<string> GetEnumerator() => _errors.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _errors.GetEnumerator();
+
+        public override string ToString() => IsSuccess ? "Success" : "Errors: " + _errors.Count;
     }
 }
