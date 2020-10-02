@@ -427,4 +427,43 @@ namespace StringExtensionsTests
 		public void test_outputs(string input, string expected)
 			=> input.ToMd5Hash().Should().Be(expected);
 	}
+
+	[TestClass]
+	public class ToMask
+	{
+		[TestMethod]
+		// null, blank, empty, whitespace
+		[DataRow(null, null)]
+		[DataRow("", "")]
+		[DataRow("   ", "   ")]
+		[DataRow(" \r\n a\r\nb\r\nc \r\n ", " \r\n a[...]c \r\n ")]
+		// basic strings
+		[DataRow("a", "[...]")]
+		[DataRow("ab", "a[...]b")]
+		[DataRow("  ab", "  a[...]b")]
+		[DataRow("ab  ", "a[...]b  ")]
+		[DataRow("  ab  ", "  a[...]b  ")]
+		[DataRow("   a   ", "   [...]   ")]
+		[DataRow("password", "p[...]d")]
+		// segment delimiters only
+		[DataRow("//:@", "//:@")]
+		[DataRow("  //:@  ", "  //:@  ")]
+		// email
+		[DataRow("test@me.com", "t[...]t@m[...]e.c[...]m")]
+		[DataRow("test@me.co.uk", "t[...]t@m[...]e.c[...]o.u[...]k")]
+		[DataRow("a@b.co", "[...]@[...].c[...]o")]
+		[DataRow("@b.co", "@[...].c[...]o")]
+		// ipv4
+		[DataRow("192.168.1.1", "1[...]2.1[...]8.[...].[...]")]
+		// ipv6
+		[DataRow("::/0", "::/[...]")]
+		[DataRow("::/128", "::/1[...]8")]
+		[DataRow("2001:1::2/128", "2[...]1:[...]::[...]/1[...]8")]
+		// url
+		[DataRow("https://test.co.uk", "h[...]s://t[...]t.c[...]o.u[...]k")]
+		// file path
+		[DataRow(@"C:\my\file\here.txt", @"[...]:\m[...]y\f[...]e\h[...]e.t[...]t")]
+		public void test_outputs(string input, string expected)
+			=> StringExtensions.ToMask(input, "[...]").Should().Be(expected);
+	}
 }

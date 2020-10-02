@@ -110,5 +110,103 @@ namespace Dinah.Core
 				sb.Append(hashBytes[i].ToString("X2"));
 			return sb.ToString();
 		}
+
+		private static char[] SegmentDelimiters { get; } = new[] { '/', ':', '\\', '.', '@' };
+		/// <summary>
+		/// Mask string; keep first and last characters of each segment. Replace middle with mask.
+		/// Segments delimited with / : \ . @
+		/// Esp useful for: password, email, IP, url, file path
+		/// See unit test for better list
+		/// </summary>
+		/// <param name="str">String to hide</param>
+		/// <param name="mask">Mask to use for hidden characters. Default: [...]</param>
+		/// <returns>Hidden string</returns>
+		public static string ToMask(this string str, string mask = "[...]")
+		{
+			if (string.IsNullOrWhiteSpace(str))
+				return str;
+
+			// count trailing whitespace
+			var finalWhitespaceIndex = str.Length;
+			for (var i = str.Length - 1; i >= 0; i--)
+				if (char.IsWhiteSpace(str[i]))
+					finalWhitespaceIndex = i;
+				else
+					break;
+
+			var sb = new StringBuilder();
+
+			var isBeginning = true;
+			var len = 0;
+			var firstChar = '\0';
+			var lastChar = '\0';
+			for (var i = 0; i < finalWhitespaceIndex; i++)
+			{
+				var c = str[i];
+
+				// include beginning whitespace
+				if (isBeginning)
+				{
+					var isWhitespace = char.IsWhiteSpace(c);
+					isBeginning = isWhitespace;
+
+					if (isWhitespace || SegmentDelimiters.Contains(c))
+					{
+						sb.Append(c);
+					}
+					else
+					{
+						firstChar = c;
+						len++;
+					}
+				}
+				else if (SegmentDelimiters.Contains(c))
+				{
+					// handle each segment
+					if (len == 1)
+					{
+						sb.Append(mask);
+					}
+					else if (len > 1)
+					{
+						sb.Append(firstChar);
+						sb.Append(mask);
+						sb.Append(lastChar);
+					}
+					sb.Append(c);
+					len = 0;
+					firstChar = '\0';
+					lastChar = '\0';
+				}
+				// we're inside of a segment
+				else
+				{
+					if (len == 0)
+						firstChar = c;
+					else
+						lastChar = c;
+					len++;
+				}
+			}
+
+			// final segment
+			if (len == 1)
+			{
+				sb.Append(mask);
+			}
+			else if (len > 1)
+			{
+				sb.Append(firstChar);
+				sb.Append(mask);
+				sb.Append(lastChar);
+			}
+
+			// include trailing whitespace
+			for (var i = finalWhitespaceIndex; i < str.Length; i++)
+				sb.Append(str[i]);
+
+			var output = sb.ToString();
+			return output;
+		}
 	}
 }
