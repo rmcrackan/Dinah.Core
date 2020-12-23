@@ -11,13 +11,13 @@ namespace Dinah.Core.ErrorHandling
     {
         private List<string> _errors { get; } = new List<string>();
 
-        /// <summary>holds the list of errors. If empty, then no errors</summary>
+        /// <summary>Holds the list of errors. If empty, then no errors</summary>
         public ReadOnlyCollection<string> Errors => _errors.AsReadOnly();
 
-        /// <summary>true if no error messages</summary>
+        /// <summary>True if no error messages</summary>
         public bool IsSuccess => !HasErrors;
 
-        /// <summary>true if any error messages have been registered</summary>
+        /// <summary>True if any error messages have been registered</summary>
         public bool HasErrors => _errors.Any();
 
         public void AddError(string errorMessage) => _errors.Add(errorMessage);
