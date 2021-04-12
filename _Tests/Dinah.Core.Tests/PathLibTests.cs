@@ -59,4 +59,20 @@ namespace PathLibTests
 				.Should().Be(expected);
 	}
 
+	[TestClass]
+	public class ToPathSafeString
+	{
+		private const string URL = "http://test.com/a/b/c";
+
+		[TestMethod]
+		// null
+		[DataRow(URL, null, "httptest.comabc")]
+		// empty
+		[DataRow(URL, "", "httptest.comabc")]
+		// single char replace
+		[DataRow(URL, "_", "http___test.com_a_b_c")]
+		// multi char replace
+		[DataRow(URL, "!!!", "http!!!!!!!!!test.com!!!a!!!b!!!c")]
+		public void Tests(string inStr, string replacement, string outStr) => Assert.AreEqual(outStr, PathLib.ToPathSafeString(inStr, replacement));
+	}
 }

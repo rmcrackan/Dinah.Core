@@ -20,12 +20,12 @@ namespace Dinah.Core
 			if (correctPathAndName is null)
 				throw new ArgumentNullException(nameof(correctPathAndName));
 			if (string.IsNullOrWhiteSpace(correctPathAndName))
-				throw new ArgumentException();
+				throw new ArgumentException("Can not be null or white space", nameof(correctPathAndName));
 
 			if (correctExt is null)
 				throw new ArgumentNullException(nameof(correctExt));
 			if (string.IsNullOrWhiteSpace(correctExt))
-				throw new ArgumentException();
+				throw new ArgumentException("Can not be null or white space", nameof(correctExt));
 
 
 			if (Uri.TryCreate(correctExt, UriKind.Absolute, out var url))
@@ -36,6 +36,15 @@ namespace Dinah.Core
 
 			var final = Path.ChangeExtension(correctPathAndName, Path.GetExtension(correctExt));
 			return final;
+		}
+
+		private static string invalidChars { get; } = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+		public static string ToPathSafeString(string str, string replacement = "")
+		{
+			replacement ??= "";
+			foreach (var ch in invalidChars)
+				str = str.Replace(ch.ToString(), replacement);
+			return str;
 		}
 	}
 }
