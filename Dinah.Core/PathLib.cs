@@ -46,5 +46,17 @@ namespace Dinah.Core
 				str = str.Replace(ch.ToString(), replacement);
 			return str;
 		}
+
+		public static string ReplaceExtension(string filepath, string newExt)
+		{
+			var dir = Path.GetDirectoryName(filepath);
+			var filenameNoExt = Path.GetFileNameWithoutExtension(filepath);
+
+			newExt = newExt?.Trim().Trim('.').Trim() ?? "";
+			if (newExt != "")
+				newExt = "." + newExt;
+
+			return Path.Combine(dir, filenameNoExt + newExt);
+		}
 	}
 }

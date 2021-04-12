@@ -75,4 +75,27 @@ namespace PathLibTests
 		[DataRow(URL, "!!!", "http!!!!!!!!!test.com!!!a!!!b!!!c")]
 		public void Tests(string inStr, string replacement, string outStr) => Assert.AreEqual(outStr, PathLib.ToPathSafeString(inStr, replacement));
 	}
+
+	[TestClass]
+	public class ReplaceExtension
+	{
+		[TestMethod]
+		// null
+		[DataRow(@"c:\foo\bar.txt", null, @"c:\foo\bar")]
+		// empty
+		[DataRow(@"c:\foo\bar.txt", "", @"c:\foo\bar")]
+		// whitespace
+		[DataRow(@"c:\foo\bar.txt", "   ", @"c:\foo\bar")]
+		// same extension
+		[DataRow(@"c:\foo\bar.txt", "txt", @"c:\foo\bar.txt")]
+		// new extension, no dot
+		[DataRow(@"c:\foo\bar.txt", "xyz", @"c:\foo\bar.xyz")]
+		// new extension, with dot
+		[DataRow(@"c:\foo\bar.txt", ".xyz", @"c:\foo\bar.xyz")]
+		// new extension, complex
+		[DataRow(@"c:\foo\bar.txt", ".abc.xyz", @"c:\foo\bar.abc.xyz")]
+		// new extension, with whitespace
+		[DataRow(@"c:\foo\bar.txt", "   xyz   ", @"c:\foo\bar.xyz")]
+		public void Tests(string inStr, string ext, string outStr) => Assert.AreEqual(outStr, PathLib.ReplaceExtension(inStr, ext));
+	}
 }
