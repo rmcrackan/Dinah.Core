@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dinah.Core.Diagnostics
 {
@@ -22,9 +22,33 @@ namespace Dinah.Core.Diagnostics
         public static string WorkingDir { get; set; } = System.IO.Path.GetDirectoryName(Exe.FileLocationOnDisk);
 
         public static ProcessResult RunHidden(this ProcessStartInfo seedInfo)
-        {
+		{
 			using var process = new Process { StartInfo = seedInfo };
+			var result = new ProcessResult();
+			initProcess(process, result);
 
+			process.WaitForExit();
+
+			result.ExitCode = process.ExitCode;
+			process.Close();
+			return result;
+		}
+
+		public static async Task<ProcessResult> RunHiddenAsync(this ProcessStartInfo seedInfo)
+		{
+			using var process = new Process { StartInfo = seedInfo };
+			var result = new ProcessResult();
+			initProcess(process, result);
+
+			await process.WaitForExitAsync();
+
+			result.ExitCode = process.ExitCode;
+			process.Close();
+			return result;
+		}
+
+		private static void initProcess(Process process, ProcessResult result)
+		{
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.RedirectStandardError = true;
 
@@ -35,21 +59,12 @@ namespace Dinah.Core.Diagnostics
 			if (string.IsNullOrWhiteSpace(process.StartInfo.WorkingDirectory))
 				process.StartInfo.WorkingDirectory = WorkingDir;
 
-			var result = new ProcessResult();
-
 			process.OutputDataReceived += result.OutputDataReceived;
 			process.ErrorDataReceived += result.ErrorDataReceived;
 
 			process.Start();
 			process.BeginOutputReadLine();
 			process.BeginErrorReadLine();
-			process.WaitForExit();
-
-			result.ExitCode = process.ExitCode;
-
-			process.Close();
-
-			return result;
-        }
+		}
 	}
 }
