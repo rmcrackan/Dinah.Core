@@ -188,4 +188,41 @@ namespace HtmlHelperTests
             inputs["e1"].Should().Be("a@b.xyz");
         }
     }
+
+    [TestClass]
+    public class GetLinks
+    {
+        [TestMethod]
+        public void _1_link()
+        {
+            var url = "http://example.com/a?b=c";
+            var html = $@"<body><p><a href='{url}'></p></body>";
+            var links = HtmlHelper.GetLinks(html);
+            links.Count.Should().Be(1);
+            links[0].Should().Be(url);
+        }
+
+        [TestMethod]
+        public void _2_links()
+        {
+            var url1 = "http://example.com/a?b=c";
+            var url2 = "#";
+            var html = $@"<body><p><a href='{url1}'></p><p><a href='{url2}' class='foo'></p></body>";
+            var links = HtmlHelper.GetLinks(html);
+            links.Count.Should().Be(2);
+            links[0].Should().Be(url1);
+            links[1].Should().Be(url2);
+        }
+
+        [TestMethod]
+        public void link_with_class()
+        {
+            var fooUrl = "http://example.com/a?b=c";
+            var barUrl = "#";
+            var html = $@"<body><p><a href='{fooUrl}' class='foo'></p><p><a href='{barUrl}' class='bar'></p></body>";
+            var links = HtmlHelper.GetLinks(html, "foo");
+            links.Count.Should().Be(1);
+            links[0].Should().Be(fooUrl);
+        }
+    }
 }
