@@ -225,4 +225,33 @@ namespace HtmlHelperTests
             links[0].Should().Be(fooUrl);
         }
     }
+
+    [TestClass]
+    public class GetDivCount
+    {
+        [TestMethod]
+        public void _0_divs()
+        {
+            var html = "<body><p></p></body>";
+            HtmlHelper.GetDivCount(html).Should().Be(0);
+        }
+        [TestMethod]
+        public void _1_div()
+        {
+            var html = "<body><p><div /></p></body>";
+            HtmlHelper.GetDivCount(html).Should().Be(1);
+        }
+        [TestMethod]
+        public void _1_div_0_matches()
+        {
+            var html = "<body><p><div id='foo' /></p></body>";
+            HtmlHelper.GetDivCount(html, "bar").Should().Be(0);
+        }
+        [TestMethod]
+        public void _3_divs_2_matches()
+        {
+            var html = "<body><p><div id='foo' /><div id='bar' /><div id='bar' /></p></body>";
+            HtmlHelper.GetDivCount(html, "bar").Should().Be(2);
+        }
+    }
 }

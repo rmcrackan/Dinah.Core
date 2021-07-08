@@ -61,5 +61,23 @@ namespace Dinah.Core
 
 			return links;
 		}
+
+		public static int GetDivCount(string body, string id = null)
+		{
+			body = body ?? throw new ArgumentNullException(nameof(body));
+
+			var divs = new List<string>();
+
+			var doc = new HtmlDocument();
+			doc.LoadHtml(body);
+
+			var xpath = string.IsNullOrWhiteSpace(id)
+				? $"//div"
+				: $"//div[@id='{id?.Trim()}']";
+
+			var nodes = doc.DocumentNode.SelectNodes(xpath);
+
+			return nodes?.Count ?? 0;
+		}
 	}
 }
