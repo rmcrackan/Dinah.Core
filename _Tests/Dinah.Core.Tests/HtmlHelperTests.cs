@@ -254,4 +254,86 @@ namespace HtmlHelperTests
             HtmlHelper.GetDivCount(html, "bar").Should().Be(2);
         }
     }
+
+    [TestClass]
+    public class GetElements
+    {
+        const string SAMPLE = @"
+    <div class='a-row a-spacing-small'>
+      <fieldset class='a-spacing-small'>
+        
+          <div data-a-input-name='otpDeviceContext' class='a-radio auth-TOTP'><label><input type='radio' name='otpDeviceContext' value='aAbBcC=, TOTP' checked/><i class='a-icon a-icon-radio'></i><span class='a-label a-radio-label'>
+            Enter the OTP from the authenticator app
+          </span></label></div>
+        
+          <div data-a-input-name='otpDeviceContext' class='a-radio auth-SMS'><label><input type='radio' name='otpDeviceContext' value='dDeEfE=, SMS'/><i class='a-icon a-icon-radio'></i><span class='a-label a-radio-label'>
+            Send an SMS to my number ending with 123
+          </span></label></div>
+        
+          <div data-a-input-name='otpDeviceContext' class='a-radio auth-VOICE'><label><input type='radio' name='otpDeviceContext' value='dDeEfE=, VOICE'/><i class='a-icon a-icon-radio'></i><span class='a-label a-radio-label'>
+            Call me on my number ending with 123
+          </span></label></div>
+        
+      </fieldset>
+    </div>
+";
+        [TestMethod]
+		public void parse_sample()
+		{
+            var otpDivs = HtmlHelper.GetElements(SAMPLE, "div", "data-a-input-name", "otpDeviceContext");
+            otpDivs.Count.Should().Be(3);
+
+            {
+                var otp = otpDivs[0];
+
+                var inputNode = otp.SelectSingleNode(".//input");
+                var name = inputNode.Attributes["name"]?.Value;
+                name.Should().Be("otpDeviceContext");
+                var value = inputNode.Attributes["value"]?.Value;
+                value.Should().Be("aAbBcC=, TOTP");
+
+                var span = otp.SelectSingleNode(".//span");
+                var text = span?.InnerText.Trim();
+                text.Should().Be("Enter the OTP from the authenticator app");
+            }
+
+            {
+                var otp = otpDivs[1];
+
+                var inputNode = otp.SelectSingleNode(".//input");
+                var name = inputNode.Attributes["name"]?.Value;
+                name.Should().Be("otpDeviceContext");
+                var value = inputNode.Attributes["value"]?.Value;
+                value.Should().Be("dDeEfE=, SMS");
+
+                var span = otp.SelectSingleNode(".//span");
+                var text = span?.InnerText.Trim();
+                text.Should().Be("Send an SMS to my number ending with 123");
+            }
+
+            {
+                var otp = otpDivs[2];
+
+                var inputNode = otp.SelectSingleNode(".//input");
+                var name = inputNode.Attributes["name"]?.Value;
+                name.Should().Be("otpDeviceContext");
+                var value = inputNode.Attributes["value"]?.Value;
+                value.Should().Be("dDeEfE=, VOICE");
+
+                var span = otp.SelectSingleNode(".//span");
+                var text = span?.InnerText.Trim();
+                text.Should().Be("Call me on my number ending with 123");
+            }
+        }
+
+        [TestMethod]
+		public void get_by_tag()
+		{
+            var title = "My Title";
+            var html = $"<head><title foo='bar'>{title}</title></head>";
+            var nodes = HtmlHelper.GetElements(html, "title");
+            nodes.Count.Should().Be(1);
+            nodes[0].InnerText.Should().Be(title);
+		}
+    }
 }
