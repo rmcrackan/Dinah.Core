@@ -8,6 +8,13 @@ namespace Dinah.Core.Logging
 {
 	public static class LoggerExtensions
 	{
+		public static bool IsVerboseEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Verbose);
+		public static bool IsDebugEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Debug);
+		public static bool IsInformationEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Information);
+		public static bool IsWarningEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Warning);
+		public static bool IsErrorEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Error);
+		public static bool IsFatalEnabled(this ILogger logger) => logger.IsEnabled(LogEventLevel.Fatal);
+
 		public static ILogger Here(this ILogger logger,
 			[CallerMemberName] string memberName = "",
 			[CallerFilePath] string sourceFilePath = "",
