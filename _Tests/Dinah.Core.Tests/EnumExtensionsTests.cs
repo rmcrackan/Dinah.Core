@@ -150,6 +150,7 @@ namespace EnumExtensionsTests
 		}
 	}
 
+	// this one is actually built in. including here as a reminder
 	[TestClass]
 	public class HasFlag
 	{
