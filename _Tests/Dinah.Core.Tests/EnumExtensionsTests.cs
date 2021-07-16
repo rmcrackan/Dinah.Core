@@ -17,110 +17,45 @@ namespace EnumExtensionsTests
 {
 	public struct NonEnum : IConvertible
 	{
-		public TypeCode GetTypeCode()
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool ToBoolean(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public byte ToByte(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public char ToChar(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public DateTime ToDateTime(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public decimal ToDecimal(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public double ToDouble(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public short ToInt16(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public int ToInt32(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public long ToInt64(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public sbyte ToSByte(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public float ToSingle(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string ToString(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public object ToType(Type conversionType, IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public ushort ToUInt16(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public uint ToUInt32(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
-
-		public ulong ToUInt64(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
+		#region non-implemented IConvertible methods
+		public TypeCode GetTypeCode() => throw new NotImplementedException();
+		public bool ToBoolean(IFormatProvider provider) => throw new NotImplementedException();
+		public byte ToByte(IFormatProvider provider) => throw new NotImplementedException();
+		public char ToChar(IFormatProvider provider) => throw new NotImplementedException();
+		public DateTime ToDateTime(IFormatProvider provider) => throw new NotImplementedException();
+		public decimal ToDecimal(IFormatProvider provider) => throw new NotImplementedException();
+		public double ToDouble(IFormatProvider provider) => throw new NotImplementedException();
+		public short ToInt16(IFormatProvider provider) => throw new NotImplementedException();
+		public int ToInt32(IFormatProvider provider) => throw new NotImplementedException();
+		public long ToInt64(IFormatProvider provider) => throw new NotImplementedException();
+		public sbyte ToSByte(IFormatProvider provider) => throw new NotImplementedException();
+		public float ToSingle(IFormatProvider provider) => throw new NotImplementedException();
+		public string ToString(IFormatProvider provider) => throw new NotImplementedException();
+		public object ToType(Type conversionType, IFormatProvider provider) => throw new NotImplementedException();
+		public ushort ToUInt16(IFormatProvider provider) => throw new NotImplementedException();
+		public uint ToUInt32(IFormatProvider provider) => throw new NotImplementedException();
+		public ulong ToUInt64(IFormatProvider provider) => throw new NotImplementedException();
+		#endregion
 	}
 
 	public enum ByteEnum : byte
 	{
 		None,
-		Plop,
-		Pouet,
-		[System.ComponentModel.Description("foo")]
-		Foo,
-		Bar
+		One,
+		Two,
+		[System.ComponentModel.Description("three val")]
+		Three,
+		Four
 	}
 
 	public enum IntEnum
 	{
 		None,
-		Plop,
-		Pouet,
-		[System.ComponentModel.Description("foo")]
-		Foo,
-		Bar
+		One,
+		Two,
+		[System.ComponentModel.Description("three val")]
+		Three,
+		Four
 	}
 
 	[Flags]
@@ -128,12 +63,12 @@ namespace EnumExtensionsTests
 	{
 		[System.ComponentModel.Description("no val")]
 		None = 0,
-		Plop = 1,
-		[System.ComponentModel.Description("pouet")]
-		Pouet = 2,
-		[System.ComponentModel.Description("foo")]
-		Foo = 4,
-		Bar = 8
+		One = 1,
+		[System.ComponentModel.Description("two val")]
+		Two = 2,
+		[System.ComponentModel.Description("four val")]
+		Four = 4,
+		Eight = 8
 	}
 
 	[TestClass]
@@ -145,77 +80,101 @@ namespace EnumExtensionsTests
 
 		[TestMethod]
 		public void byte_enum_throws()
-			=> Assert.ThrowsException<InvalidCastException>(() => ByteEnum.Bar.ToValues().ToArray());
+			=> Assert.ThrowsException<InvalidCastException>(() => ByteEnum.Four.ToValues().ToArray());
 
 		[TestMethod]
-		public void non_flag_gives_unexpected_results()
+		public void non_flag_gives_inaccurate_results()
 		{
-			var one = IntEnum.Foo;
-			var oneValue = one.ToValues().ToArray();
-
 			// Foo == decimal 3 == binary 11
 			// binary 11 matches binary 01, 10, 11
-			var oneExpected = new IntEnum[] { IntEnum.Plop, IntEnum.Pouet, IntEnum.Foo };
-			oneValue.Should().BeEquivalentTo(oneExpected);
+			var three = IntEnum.Three;
+			var threeValues = three.ToValues();
+			ShouldBeEquivalentTo(threeValues, new[] { IntEnum.One, IntEnum.Two, IntEnum.Three });
 
-			var two = IntEnum.Foo | IntEnum.Bar;
-			var twoValue = two.ToValues().ToArray();
-			var twoExpected = new IntEnum[] { IntEnum.Plop, IntEnum.Pouet, IntEnum.Foo, IntEnum.Bar };
-			twoValue.Should().BeEquivalentTo(twoExpected);
+			var _2or4 = IntEnum.Three | IntEnum.Four;
+			var _2or4Values = _2or4.ToValues();
+			ShouldBeEquivalentTo(_2or4Values, new[] { IntEnum.One, IntEnum.Two, IntEnum.Three, IntEnum.Four });
 		}
 
 		[TestMethod]
 		public void enumerate_flags()
 		{
-			var flags = FlagsEnum.None | FlagsEnum.Plop | FlagsEnum.Foo;
+			var flags = FlagsEnum.None | FlagsEnum.One | FlagsEnum.Four;
 			var array = flags.ToValues().ToArray();
 
-			var expectedArray = new[] { FlagsEnum.Plop, FlagsEnum.Foo };
+			var expectedArray = new[] { FlagsEnum.One, FlagsEnum.Four };
 			array.Should().BeEquivalentTo(expectedArray);
+		}
+
+		public static void ShouldBeEquivalentTo(IEnumerable<IntEnum> values, params IntEnum[] becauseArgs)
+			=> values.ToArray().Should().BeEquivalentTo(becauseArgs);
+	}
+
+	[TestClass]
+	public class Include
+	{
+		[TestMethod]
+		public void assign_single_value()
+		{
+			var options = FlagsEnum.None;
+			options = options.Include(FlagsEnum.One);
+			options.ShouldBeEquivalentTo(new[] { FlagsEnum.One });
+		}
+
+		[TestMethod]
+		public void assign_multiple_values()
+		{
+			var options = FlagsEnum.One;
+			options = options.Include(FlagsEnum.Two | FlagsEnum.Four);
+			options.ShouldBeEquivalentTo(new[] { FlagsEnum.One, FlagsEnum.Two, FlagsEnum.Four });
 		}
 	}
 
 	[TestClass]
-	public class GetDescription
+	public class Remove
 	{
 		[TestMethod]
-		public void non_enum_is_null()
-			=> new NonEnum().GetDescription().Should().BeNull();
+		public void remove_single_value()
+		{
+			var options = FlagsEnum.One | FlagsEnum.Two | FlagsEnum.Four;
+			options = options.Remove(FlagsEnum.One);
+			options.ShouldBeEquivalentTo(new[] { FlagsEnum.Two, FlagsEnum.Four });
+		}
 
 		[TestMethod]
-		public void non_described_byte_enum_is_null()
-			=> ByteEnum.Bar.GetDescription().Should().BeNull();
+		public void remove_multiple_values()
+		{
+			var options = FlagsEnum.One | FlagsEnum.Two | FlagsEnum.Four;
+			options = options.Remove(FlagsEnum.One | FlagsEnum.Two);
+			options.ShouldBeEquivalentTo(new[] { FlagsEnum.Four });
+		}
+	}
 
+	[TestClass]
+	public class HasFlag
+	{
 		[TestMethod]
-		public void described_byte_enum_is_foo()
-			=> ByteEnum.Foo.GetDescription().Should().Be("foo");
+		public void example()
+		{
+			var options = FlagsEnum.Two | FlagsEnum.Four;
+			options.HasFlag(FlagsEnum.Two).Should().BeTrue();
+		}
+	}
 
+	[TestClass]
+	public class MissingFlag
+	{
 		[TestMethod]
-		public void non_described_int_enum_is_null()
-			=> IntEnum.Bar.GetDescription().Should().BeNull();
+		public void example()
+		{
+			var options = FlagsEnum.Two | FlagsEnum.Four;
+			options.MissingFlag(FlagsEnum.One).Should().BeTrue();
+		}
+	}
 
-		[TestMethod]
-		public void described_int_enum_is_foo()
-			=> IntEnum.Foo.GetDescription().Should().Be("foo");
-
-		[TestMethod]
-		public void non_described_flag_enum_is_null()
-			=> FlagsEnum.Bar.GetDescription().Should().BeNull();
-
-		[TestMethod]
-		public void described_flag_enum_is_foo()
-			=> FlagsEnum.Foo.GetDescription().Should().Be("foo");
-
-		[TestMethod]
-		public void mult_flag_enums_with_null()
-			=> (FlagsEnum.Bar | FlagsEnum.Foo).GetDescription().Should().Be("foo | [null]");
-
-		[TestMethod]
-		public void mult_flag_enums_descriptions()
-			=> (FlagsEnum.Pouet | FlagsEnum.Foo).GetDescription().Should().Be("pouet | foo");
-
-		[TestMethod]
-		public void none_flag_enums_description()
-			=> FlagsEnum.None.GetDescription().Should().Be("no val");
+	public static class AssertExt
+	{
+		public static void ShouldBeEquivalentTo(this FlagsEnum flagEnum, params FlagsEnum[] becauseArgs)
+			=> flagEnum.ToValues().ToArray().Should().BeEquivalentTo(becauseArgs);
 	}
 }
