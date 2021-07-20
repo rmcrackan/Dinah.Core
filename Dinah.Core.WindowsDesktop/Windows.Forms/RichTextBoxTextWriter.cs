@@ -11,9 +11,12 @@ namespace Dinah.Core.Windows.Forms
         private RichTextBox richTextBox { get; }
         public RichTextBoxTextWriter(RichTextBox richTextBox) : base(richTextBox) => this.richTextBox = richTextBox;
 
-        public override void WriteLine(string value) => richTextBox.InvokeIfRequired(c => writeLine(value));
+        public override void WriteLine(string value) => richTextBox?.InvokeIfRequired(c => writeLine(value));
         private void writeLine(string value)
         {
+            if (richTextBox is null || richTextBox.IsDisposed)
+                return;
+
             string text1 = "[" + DateTime.Today.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + "] - " + value + "\r\n";
 
             Color color = Color.Black;

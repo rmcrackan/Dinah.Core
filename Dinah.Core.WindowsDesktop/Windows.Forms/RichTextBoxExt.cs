@@ -7,6 +7,9 @@ namespace Dinah.Core.Windows.Forms
     {
         public static void AppendColourText(this RichTextBox box, Color color, string text)
         {
+            if (box is null || box.IsDisposed)
+                return;
+
             int textLength1 = box.TextLength;
             box.AppendText(text);
             int textLength2 = box.TextLength;
