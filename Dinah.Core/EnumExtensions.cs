@@ -4,27 +4,50 @@ using System.Linq;
 
 namespace Dinah.Core
 {
-	public static class EnumExtensions
-	{
-		#region class method/s
-		/// <summary>Enum Extension Methods</summary>
-		/// <typeparam name="T">type of Enum</typeparam>
-		public static class Enum<T> where T : Enum
-		{
-			public static T Parse(string value) => (T)Enum.Parse(typeof(T), value);
+    //
+    // These do the same thing with different syntax
+    // Enum<MyEnum>.GetValues()
+    // MyEnum.MyFirst.GetValues<MyEnum>()
+    // EnumExtensions.GetValues<MyEnum>() 
+    //
 
-			public static IEnumerable<T> GetValues() => (T[])Enum.GetValues(typeof(T));
+    #region class method/s
+    /// <summary>Enum Extension Methods</summary>
+    /// <typeparam name="T">type of Enum</typeparam>
+    public static class Enum<T> where T : Enum
+    {
+        public static T Parse(string value) => (T)Enum.Parse(typeof(T), value);
 
-			public static int ToInt(T obj) => Convert.ToInt32(Enum.Parse(typeof(T), obj.ToString()) as Enum);
+        public static IEnumerable<T> GetValues() => Enum.GetValues(typeof(T)).Cast<T>();
 
-			/// <summary>get count of enum options except "None"</summary>
-			public static int Count => GetValues().Count(obj => ToInt(obj) > 0);
-		}
-		#endregion
+        public static int ToInt(T obj) => Convert.ToInt32(Enum.Parse(typeof(T), obj.ToString()) as Enum);
 
-		#region object/instance methods. flags
-		// https://stackoverflow.com/a/22132996
-		public static IEnumerable<T> ToValues<T>(this T flags) where T : struct, IConvertible
+        /// <summary>get count of enum options except "None"</summary>
+        public static int Count => GetValues().Count(obj => ToInt(obj) > 0);
+    }
+    #endregion
+
+    public static class EnumExtensions
+    {
+        /// <summary>
+        /// Gets all items for this enum type. Value param itself does nothing except provide the correct type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">One of the values of this enum type.</param>
+        /// <returns></returns>
+        public static IEnumerable<T> GetValues<T>(this Enum value) => Enum.GetValues(typeof(T)).Cast<T>();
+
+        /// <summary>
+        /// Gets all items for an enum type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> GetValues<T>() where T : struct => Enum.GetValues(typeof(T)).Cast<T>();
+
+
+        #region object/instance methods. flags
+        // https://stackoverflow.com/a/22132996
+        public static IEnumerable<T> ToValues<T>(this T flags) where T : struct, IConvertible
 		{
 			if (!typeof(T).IsEnum)
 				throw new ArgumentException("T must be an enumerated type.");
