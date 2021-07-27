@@ -40,10 +40,25 @@ namespace Dinah.Core
 
             /// <summary>Open folder, select file. If a folderPath is a folder: open parent folder, select folder</summary>
             /// <param name="folderPath"></param>
-            public static void File(string folderPath) => Process.Start("explorer.exe", $"/select, \"{folderPath}\"");
+            /// <returns>False if file/folder not exist</returns>
+            public static bool File(string folderPath)
+            {
+                if (!System.IO.File.Exists(folderPath) && !System.IO.Directory.Exists(folderPath))
+                    return false;
+                Process.Start("explorer.exe", $"/select, \"{folderPath}\"");
+                return true;
+            }
 
             /// <summary>Open folder</summary>
-            public static void Folder(string folderPath) => Process.Start("explorer.exe", $"\"{folderPath}\"");
+            /// <param name="folderPath"></param>
+            /// <returns>False if folder does not exist</returns>
+            public static bool Folder(string folderPath)
+            {
+                if (!System.IO.Directory.Exists(folderPath))
+                    return false;
+                Process.Start("explorer.exe", $"\"{folderPath}\"");
+                return true;
+            }
         }
     }
 }
