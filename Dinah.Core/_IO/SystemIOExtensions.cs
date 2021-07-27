@@ -12,5 +12,7 @@ namespace Dinah.Core
 			var hash = md5.ComputeHash(stream);
 			return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
 		}
+
+		public static bool IsRoot(this DirectoryInfo directoryInfo) => directoryInfo.Parent == null;
 	}
 }
