@@ -28,13 +28,17 @@ namespace Dinah.EntityFrameworkCore
         }
 
         // this is also called from within SaveChangesAsync(CancellationToken)
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            preSave();
-            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess);
-            postSave();
-
-            return result;
+            try
+            {
+                preSave();
+				return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            }
+            finally
+            {
+                postSave();
+            }
         }
 
         private void preSave()
