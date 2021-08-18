@@ -1,73 +1,74 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Dinah.Core.DataBinding
 {
-    public class SortableBindingList<T> : BindingList<T>
-    {
-        private Dictionary<Type, PropertyComparer<T>> comparers { get; } = new Dictionary<Type, PropertyComparer<T>>();
-        private bool isSorted;
-        private ListSortDirection listSortDirection;
-        private PropertyDescriptor propertyDescriptor;
+	public class SortableBindingList<T> : BindingList<T> where T : IMemberComparable
+	{
+		private bool isSorted;
+		private ListSortDirection listSortDirection;
+		private PropertyDescriptor propertyDescriptor;
 
-        public SortableBindingList() : base(new List<T>()) { }
+		public SortableBindingList() : base(new List<T>()) { }
+		public SortableBindingList(IEnumerable<T> enumeration) : base(new List<T>(enumeration)) { }
 
-        public SortableBindingList(IEnumerable<T> enumeration) : base(new List<T>(enumeration)) { }
+		private MemberComparer<T> Comparer { get; } = new();
+		protected override bool SupportsSortingCore => true;
+		protected override bool SupportsSearchingCore => true;
+		protected override bool IsSortedCore => isSorted;
+		protected override PropertyDescriptor SortPropertyCore => propertyDescriptor;
+		protected override ListSortDirection SortDirectionCore => listSortDirection;
 
-        protected override bool SupportsSortingCore => true;
+		protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
+		{
+			List<T> itemsList = (List<T>)Items;
 
-        protected override bool IsSortedCore => isSorted;
+			Comparer.PropertyName = property.Name;
+			Comparer.Direction = direction;
 
-        protected override PropertyDescriptor SortPropertyCore => propertyDescriptor;
+			//Array.Sort() and List<T>.Sort() are unstable sorts. OrderBy is stable.
+			var sortedItems = itemsList.OrderBy((ge) => ge, Comparer).ToList();
 
-        protected override ListSortDirection SortDirectionCore => listSortDirection;
+			itemsList.Clear();
+			itemsList.AddRange(sortedItems);
 
-        protected override bool SupportsSearchingCore => true;
+			propertyDescriptor = property;
+			listSortDirection = direction;
+			isSorted = true;
 
-        protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
-        {
-            List<T> itemsList = (List<T>)Items;
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+		}
 
-            Type propertyType = property.PropertyType;
-            if (!comparers.TryGetValue(propertyType, out PropertyComparer<T> comparer))
-            {
-                comparer = new PropertyComparer<T>(property, direction);
-                comparers.Add(propertyType, comparer);
-            }
+		protected override void RemoveSortCore()
+		{
+			isSorted = false;
+			propertyDescriptor = base.SortPropertyCore;
+			listSortDirection = base.SortDirectionCore;
 
-            comparer.SetPropertyAndDirection(property, direction);
-            itemsList.Sort(comparer);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+		}
 
-            propertyDescriptor = property;
-            listSortDirection = direction;
-            isSorted = true;
+		protected override int FindCore(PropertyDescriptor property, object key)
+		{
+			int count = Count;
 
-            OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
-        }
+			System.Collections.IComparer valueComparer = null;
 
-        protected override void RemoveSortCore()
-        {
-            isSorted = false;
-            propertyDescriptor = base.SortPropertyCore;
-            listSortDirection = base.SortDirectionCore;
+			for (int i = 0; i < count; ++i)
+			{
+				T element = this[i];
+				var elemValue = element.GetMemberValue(property.Name);
+				valueComparer ??= element.GetMemberComparer(elemValue.GetType());
 
-            OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
-        }
+				if (valueComparer.Compare(elemValue, key) == 0)
+				{
+					return i;
+				}
+			}
 
-        protected override int FindCore(PropertyDescriptor property, object key)
-        {
-            int count = Count;
-            for (int i = 0; i < count; ++i)
-            {
-                T element = this[i];
-                if (property.GetValue(element).Equals(key))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-    }
+			return -1;
+		}
+	}
 }
