@@ -15,6 +15,7 @@ namespace Dinah.Core.Threading
             else
                 code();
         }
+
         // alternate version
         // usage:
         //   object1.InvokeIfRequired(c => { c.Visible = true; });
@@ -25,6 +26,5 @@ namespace Dinah.Core.Threading
             else
                 action(c);
         }
-
     }
 }
