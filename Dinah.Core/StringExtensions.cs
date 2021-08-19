@@ -210,6 +210,12 @@ namespace Dinah.Core
 			return output;
 		}
 
+		public static string DefaultIfNullOrWhiteSpace(this string value, string defaultValue)
+			=> string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+		
+		public static string DefaultIfNullOrEmpty(this string value, string defaultValue)
+			=> string.IsNullOrEmpty(value) ? defaultValue : value;
+
 		/// <summary>
 		/// Attempts to convert unicode characters to an approximately equal ASCII character.
 		/// </summary>
