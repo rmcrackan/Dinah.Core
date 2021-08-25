@@ -9,6 +9,8 @@ namespace Dinah.Core
         public static class To
         {
             // from: https://stackoverflow.com/a/43232486
+            /// <summary>Platform agnostic. Open your system's browser and go to url</summary>
+            /// <param name="url"></param>
             public static void Url(string url)
             {
                 try
