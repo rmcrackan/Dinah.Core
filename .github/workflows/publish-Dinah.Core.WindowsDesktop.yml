@@ -12,7 +12,7 @@ on:
 jobs:
   publish:
     name: Dinah.Core.WindowsDesktop build, pack & publish
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
 
