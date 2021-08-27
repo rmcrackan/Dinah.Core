@@ -15,10 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          # needed for GitVersion.MsBuild
-          fetch-depth: 0
-
 
       # - name: Setup dotnet
       #   uses: actions/setup-dotnet@v1
