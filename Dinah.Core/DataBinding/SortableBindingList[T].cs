@@ -23,22 +23,43 @@ namespace Dinah.Core.DataBinding
 
 		protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
 		{
-			List<T> itemsList = (List<T>)Items;
-
 			Comparer.PropertyName = property.Name;
 			Comparer.Direction = direction;
 
-			//Array.Sort() and List<T>.Sort() are unstable sorts. OrderBy is stable.
-			var sortedItems = itemsList.OrderBy((ge) => ge, Comparer).ToList();
-
-			itemsList.Clear();
-			itemsList.AddRange(sortedItems);
+			Sort();
 
 			propertyDescriptor = property;
 			listSortDirection = direction;
 			isSorted = true;
 
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+		}
+
+		private void Sort()
+		{
+			List<T> itemsList = (List<T>)Items;
+
+			//Array.Sort() and List<T>.Sort() are unstable sorts. OrderBy is stable.
+			var sortedItems = itemsList.OrderBy((ge) => ge, Comparer).ToList();
+
+			itemsList.Clear();
+			itemsList.AddRange(sortedItems);
+		}
+
+		protected override void OnListChanged(ListChangedEventArgs e)
+		{
+			if (isSorted && 
+				e.ListChangedType == ListChangedType.ItemChanged && 
+				e.PropertyDescriptor == SortPropertyCore)
+			{
+				var item = Items[e.NewIndex];
+				Sort();
+				var newIndex = Items.IndexOf(item);
+
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemMoved, newIndex, e.NewIndex));
+			}
+			else
+				base.OnListChanged(e);
 		}
 
 		protected override void RemoveSortCore()
