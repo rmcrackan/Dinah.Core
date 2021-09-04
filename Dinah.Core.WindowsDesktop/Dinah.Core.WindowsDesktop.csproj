@@ -10,4 +10,8 @@
     <StartupObject />
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dinah.Core" Version="1.0.5.2" />
+  </ItemGroup>
+
 </Project>

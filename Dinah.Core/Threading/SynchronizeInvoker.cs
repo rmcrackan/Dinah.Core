@@ -5,7 +5,7 @@ using System.Threading;
 namespace Dinah.Core.Threading
 {
 	/// <summary>
-	/// Captures the current <see cref="SynchronizationContext"/> and allow invking on that thread.
+	/// Captures the current <see cref="SynchronizationContext"/> and allow invoking on that thread.
 	/// </summary>
 	public class SynchronizeInvoker : ISynchronizeInvoke
 	{

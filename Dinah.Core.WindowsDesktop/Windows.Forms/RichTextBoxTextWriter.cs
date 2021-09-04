@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Dinah.Core.Threading;
 
 namespace Dinah.Core.Windows.Forms
 {
@@ -11,7 +12,7 @@ namespace Dinah.Core.Windows.Forms
         private RichTextBox richTextBox { get; }
         public RichTextBoxTextWriter(RichTextBox richTextBox) : base(richTextBox) => this.richTextBox = richTextBox;
 
-        public override void WriteLine(string value) => richTextBox?.InvokeIfRequired(c => writeLine(value));
+        public override void WriteLine(string value) => richTextBox?.InvokeIfRequired(richTb => writeLine(value));
         private void writeLine(string value)
         {
             if (richTextBox is null || richTextBox.IsDisposed)

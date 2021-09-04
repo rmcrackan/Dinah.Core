@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Dinah.Core.Threading;
 
 namespace Dinah.Core.Windows.Forms
 {
