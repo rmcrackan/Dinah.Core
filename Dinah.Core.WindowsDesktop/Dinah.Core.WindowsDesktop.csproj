@@ -5,13 +5,13 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>1.1.0.1</Version>
+    <Version>1.1.0.2</Version>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dinah.Core" Version="1.0.5.2" />
+    <PackageReference Include="Dinah.Core" Version="1.1.0.1" />
   </ItemGroup>
 
 </Project>

@@ -17,8 +17,8 @@ namespace Dinah.Core.Windows.Forms
 
         public override Encoding Encoding => Encoding.ASCII;
 
-        public override void WriteLine(string value) => textbox.UIThread(() => textbox.AppendText(value + Environment.NewLine));
-        public override void Write(char value) => textbox.UIThread(() => textbox.AppendText(value.ToString()));
-        public override void Write(string value) => textbox.UIThread(() => textbox.AppendText(value));
+        public override void WriteLine(string value) => textbox.UIThreadAsync(() => textbox.AppendText(value + Environment.NewLine));
+        public override void Write(char value) => textbox.UIThreadAsync(() => textbox.AppendText(value.ToString()));
+        public override void Write(string value) => textbox.UIThreadAsync(() => textbox.AppendText(value));
     }
 }

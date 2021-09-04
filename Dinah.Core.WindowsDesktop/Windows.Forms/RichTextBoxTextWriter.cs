@@ -12,7 +12,7 @@ namespace Dinah.Core.Windows.Forms
         private RichTextBox richTextBox { get; }
         public RichTextBoxTextWriter(RichTextBox richTextBox) : base(richTextBox) => this.richTextBox = richTextBox;
 
-        public override void WriteLine(string value) => richTextBox?.InvokeIfRequired(richTb => writeLine(value));
+        public override void WriteLine(string value) => richTextBox?.UIThreadSync(() => writeLine(value));
         private void writeLine(string value)
         {
             if (richTextBox is null || richTextBox.IsDisposed)
