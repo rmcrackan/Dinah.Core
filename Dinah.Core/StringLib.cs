@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Dinah.Core
 {
@@ -19,5 +20,11 @@ namespace Dinah.Core
 			var base64EncodedBytes = Convert.FromBase64String(base64EncodedText);
 			return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
 		}
+
+		private static Regex regex { get; } = new Regex(@"(?<index>-?\d+\.?\d*)", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+		public static float ExtractFirstNumber(string text)
+			=> string.IsNullOrWhiteSpace(text) || !regex.IsMatch(text) || !float.TryParse(regex.Match(text).Groups["index"].ToString(), out var f)
+			? 0
+			: f;
 	}
 }
