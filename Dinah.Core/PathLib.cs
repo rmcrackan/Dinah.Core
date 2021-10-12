@@ -38,14 +38,9 @@ namespace Dinah.Core
 			return final;
 		}
 
-		private static string invalidChars { get; } = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+		// GetInvalidFileNameChars contains everything in GetInvalidPathChars plus ':', '*', '?', '\\', '/'
 		public static string ToPathSafeString(string str, string replacement = "")
-		{
-			replacement ??= "";
-			foreach (var ch in invalidChars)
-				str = str.Replace(ch.ToString(), replacement);
-			return str;
-		}
+			=> string.Join(replacement ?? "", str.Split(Path.GetInvalidFileNameChars()));
 
 		public static string ReplaceExtension(string filepath, string newExt)
 		{

@@ -24,10 +24,11 @@ namespace Dinah.Core
 
 		public static string FirstCharToUpper(this string str)
 		{
-			if (str == null)
-				return null;
 			if (string.IsNullOrWhiteSpace(str))
 				return str;
+
+			if (str.Length == 1)
+				return str.ToUpper();
 
 			return char.ToUpper(str[0]) + str.Substring(1);
 		}
