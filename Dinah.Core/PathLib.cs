@@ -41,17 +41,5 @@ namespace Dinah.Core
 		// GetInvalidFileNameChars contains everything in GetInvalidPathChars plus ':', '*', '?', '\\', '/'
 		public static string ToPathSafeString(string str, string replacement = "")
 			=> string.Join(replacement ?? "", str.Split(Path.GetInvalidFileNameChars()));
-
-		public static string ReplaceExtension(string filepath, string newExt)
-		{
-			var dir = Path.GetDirectoryName(filepath);
-			var filenameNoExt = Path.GetFileNameWithoutExtension(filepath);
-
-			newExt = newExt?.Trim().Trim('.').Trim() ?? "";
-			if (newExt != "")
-				newExt = "." + newExt;
-
-			return Path.Combine(dir, filenameNoExt + newExt);
-		}
 	}
 }
