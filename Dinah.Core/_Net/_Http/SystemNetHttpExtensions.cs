@@ -143,9 +143,7 @@ namespace Dinah.Core.Net.Http
 			// if ContentDisposition.FileName specifies file extension, then keep param file path and name but use file extension from ContentDisposition.FileName
 			var headerFilename = response?.Content?.Headers?.ContentDisposition?.FileName;
 			if (!string.IsNullOrWhiteSpace(headerFilename))
-			{
-				destinationFilePath = PathLib.GetPathWithExtensionFromAnotherFile(destinationFilePath, headerFilename);
-			}
+				destinationFilePath = Path.ChangeExtension(destinationFilePath, Path.GetExtension(headerFilename));
 
 			using var streamToReadFrom = await response.Content.ReadAsStreamAsync();
 			using var streamToWriteTo = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
