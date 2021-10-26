@@ -5,8 +5,6 @@ namespace Dinah.Core
 {
     public abstract class Enumeration<TEnumerationType> : Enumeration where TEnumerationType : Enumeration
     {
-        public int Id => Value;
-
         protected Enumeration(int value, string displayName) : base(value, displayName) { }
 
         public static IEnumerable<TEnumerationType> GetAll() => GetAll<TEnumerationType>();

@@ -41,7 +41,7 @@ namespace Enumeration_T_Tests
     {
         [TestMethod]
         public void Value_is_stored()
-            => SubClassing.Manager.Id.Should().Be(0);
+            => SubClassing.Manager.Value.Should().Be(0);
     }
 
     [TestClass]
