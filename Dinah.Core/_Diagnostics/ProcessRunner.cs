@@ -9,8 +9,8 @@ namespace Dinah.Core.Diagnostics
 		List<string> outputLines { get; } = new List<string>();
 		List<string> errorLines { get; } = new List<string>();
 
-		public void OutputDataReceived(object sender, DataReceivedEventArgs e) => outputLines.Add(e.Data);
-		public void ErrorDataReceived(object sender, DataReceivedEventArgs e) => errorLines.Add(e.Data);
+		public void OutputDataReceived(object sender, DataReceivedEventArgs e) => outputLines.Add(e.Data?.Trim(new char[] { '\r', '\n' }) ?? "");
+		public void ErrorDataReceived(object sender, DataReceivedEventArgs e) => errorLines.Add(e.Data?.Trim(new char[] { '\r', '\n' }) ?? "");
 
 		public int ExitCode { get; set; }
 

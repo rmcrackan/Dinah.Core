@@ -138,8 +138,7 @@ namespace Dinah.Core
 			//   git log <yourlasttag>..HEAD
 			// %s == see subject/comments. https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
 			=> RunGitCommand(directoryInfo, $"git log --pretty=%s {tag}..HEAD")
-			.Output.Trim();
-
+			.Output;
 
 		private static bool? gitBoolCommand(string dir, string cmd)
 		{
@@ -148,10 +147,12 @@ namespace Dinah.Core
 			if (result.ExitCode == 128 && (result.Error.StartsWith("fatal: not a git repository") || result.Error.StartsWith("fatal: failed to stat")))
 				return null;
 
-			if (result.Output == "true")
+			var output = result.Output;
+
+			if (output.EqualsInsensitive($"{true}"))
 				return true;
 
-			if (result.Output == "false")
+			if (output.EqualsInsensitive($"{false}"))
 				return false;
 
 			throw new Exception();
