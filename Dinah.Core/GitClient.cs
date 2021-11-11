@@ -164,7 +164,8 @@ namespace Dinah.Core
 		public static ProcessResult RunGitCommand(DirectoryInfo directoryInfo, string cmd) => RunGitCommand(directoryInfo.FullName, cmd);
 		public static ProcessResult RunGitCommand(string directory, string cmd)
 		{
-			if (!cmd.Trim().ToLower().StartsWith("git "))
+			cmd = cmd.Trim();
+			if (!cmd.StartsWithInsensitive("git "))
 				cmd = "git " + cmd;
 			return runCommand(directory, cmd);
 		}
