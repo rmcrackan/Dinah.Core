@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Dinah.Core.Diagnostics;
+using Dinah.Core.Processes;
 
 namespace Dinah.Core
 {
