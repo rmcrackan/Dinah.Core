@@ -26,6 +26,9 @@ jobs:
         id: publish_nuget
         uses: rohith/publish-nuget@v2
         with:
+          # no idea if this will fix it
+          dotnet-version: 6.0.0
+
           # Filepath of the project to be packaged, relative to root of repository
           PROJECT_FILE_PATH: Dinah.Core/Dinah.Core.csproj
           
