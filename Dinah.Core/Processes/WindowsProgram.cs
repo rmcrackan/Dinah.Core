@@ -14,10 +14,10 @@ namespace Dinah.Core.Processes
 
 		public WindowsProgram(string exePath) => ExePath = exePath;
 
-		public void Start()
+		public void Start(string arguments = "")
 		{
 			if (!IsRunning)
-				ProcessRunner.RunHidden(ExePath, "/home");
+				ProcessRunner.RunHidden(ExePath, arguments);
 		}
 
 		public void Kill()
