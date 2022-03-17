@@ -103,4 +103,32 @@ namespace ArgumentValidatorTests
 		[TestMethod]
 		public void null_minimum_passes() => ArgumentValidator.EnsureGreaterThan("arg", "n", null);
 	}
+
+	[TestClass]
+	public class EnsureBetweenInclusive
+	{
+		[TestMethod]
+		public void null_argument_throws() => Assert.ThrowsException<NullReferenceException>(() => ArgumentValidator.EnsureBetweenInclusive(null, "n", "min", "max"));
+
+		[TestMethod]
+		public void too_small_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(9, "n", 10, 20));
+
+		[TestMethod]
+		public void too_big_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(21, "n", 10, 20));
+
+		[TestMethod]
+		public void minimum_passes() => ArgumentValidator.EnsureBetweenInclusive(10, "n", 10, 20);
+
+		[TestMethod]
+		public void between_passes() => ArgumentValidator.EnsureBetweenInclusive(15, "n", 10, 20);
+
+		[TestMethod]
+		public void maximum_passes() => ArgumentValidator.EnsureBetweenInclusive(20, "n", 10, 20);
+
+		[TestMethod]
+		public void null_minimum_passes() => ArgumentValidator.EnsureBetweenInclusive("arg", "n", null, "max");
+
+		[TestMethod]
+		public void null_maximum_passes() => ArgumentValidator.EnsureBetweenInclusive("arg", "n", "min", null);
+	}
 }
