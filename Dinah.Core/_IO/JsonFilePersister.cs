@@ -86,6 +86,11 @@ namespace Dinah.Core.IO
 		// - RollbackTransation/AbondonTransation
 		// - reload Target
 
+		/// <summary>Called when save begins</summary>
+		protected virtual void OnSaving() { }
+		/// <summary>Called when save begins</summary>
+		protected virtual void OnSaved() { }
+
 		private object _locker { get; } = new object();
 		private void saveFile(object _, EventArgs __)
 		{
@@ -96,33 +101,42 @@ namespace Dinah.Core.IO
 			}
 
 			lock (_locker)
-			{
-				if (JsonPath is null)
-				{
-					File.WriteAllText(Path, JsonConvert.SerializeObject(Target, Formatting.Indented, GetSerializerSettings()));
-					return;
+            {
+                try
+                {
+					OnSaving();
+
+					if (JsonPath is null)
+					{
+						File.WriteAllText(Path, JsonConvert.SerializeObject(Target, Formatting.Indented, GetSerializerSettings()));
+						return;
+					}
+
+					// path must
+					// - exist
+					// - have valid jsonPath match
+
+					var contents = File.ReadAllText(Path);
+					var allToken = JObject.Parse(contents);
+					var pathToken = allToken.SelectToken(JsonPath);
+
+					if (pathToken is null)
+						throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
+
+					// load existing identity into JObject
+					var serializer = JsonSerializer.Create(GetSerializerSettings());
+					var idJObj = JObject.FromObject(Target, serializer);
+
+					// replace. this propgates to 'allToken'
+					pathToken.Replace(idJObj);
+
+					var allSer = JsonConvert.SerializeObject(allToken, Formatting.Indented, GetSerializerSettings());
+					File.WriteAllText(Path, allSer);
 				}
-
-				// path must
-				// - exist
-				// - have valid jsonPath match
-
-				var contents = File.ReadAllText(Path);
-				var allToken = JObject.Parse(contents);
-				var pathToken = allToken.SelectToken(JsonPath);
-
-				if (pathToken is null)
-					throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
-
-				// load existing identity into JObject
-				var serializer = JsonSerializer.Create(GetSerializerSettings());
-				var idJObj = JObject.FromObject(Target, serializer);
-
-				// replace. this propgates to 'allToken'
-				pathToken.Replace(idJObj);
-
-				var allSer = JsonConvert.SerializeObject(allToken, Formatting.Indented, GetSerializerSettings());
-				File.WriteAllText(Path, allSer);
+                finally
+                {
+					OnSaved();
+				}
 			}
 		}
 
