@@ -6,9 +6,27 @@ using Newtonsoft.Json.Linq;
 
 namespace Dinah.Core.IO
 {
-	/// <summary>Persist settings to json file.
-	/// If not using the optional JSONPath: Create file if it does not exist. Overwrite existing with identity tokens
-	/// If using the optional JSONPath: the object of the path must be valid and existing in the file</summary>
+	/// <summary>
+	/// Persist settings to json file.
+	/// 
+	/// <list type="bullet">
+	///     <item><description>If not using the optional JSONPath: Create file if it does not exist. Overwrite existing with identity tokens</description></item>
+	///     <item><description>If using the optional JSONPath: the object of the path must be valid and existing in the file.</description></item>
+	/// </list>
+	/// 
+	/// <example>Impetus for being IDisposable: 'using' disposes/unsubscribes persistence. can still use object
+	/// <code>
+	/// foo()
+	///   using var persister = new Persister()
+	///     // PERSISTS
+	///     persister.Target.Prop = true
+	///     return persister.Target
+	/// bar()
+	///   // DOES NOT PERSIST
+	///   foo().Prop = false
+	/// </code>
+	/// </example>
+	/// </summary>
 	public abstract class JsonFilePersister<T> : IDisposable
 		where T : IUpdatable
 	{
