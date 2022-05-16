@@ -42,11 +42,11 @@ namespace Dinah.Core.DataBinding
 		/// <summary>
 		/// items that were removed from the list due to filtering and their pre-filtering indices
 		/// </summary>
-		private List<(int originalIndex,T item)> filterRemovedIndexed = new List<(int originalIndex, T item)>();
+		private List<(int originalIndex,T item)> filterRemovedIndexed = new();
 		/// <summary>
 		/// Filtered items in the list and their pre-filtering indices.
 		/// </summary>
-		private List<(int originalIndex,T item)> filteredIndexed = new();
+		private List<(int originalIndex,T item)> filteredItemsIndexed = new();
 
 		/// <summary>
 		/// Filters the list
@@ -63,9 +63,7 @@ namespace Dinah.Core.DataBinding
 					base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
 				}
 				else
-				{
-					filteredIndexed.Add((i, InnerList[i]));
-				}
+					filteredItemsIndexed.Add((i, InnerList[i]));
 			}
 		}
 		/// <summary>
@@ -73,7 +71,7 @@ namespace Dinah.Core.DataBinding
 		/// </summary>
 		public void RemoveFilter()
 		{
-			if (filteredIndexed.Count == 0) return;
+			if (filteredItemsIndexed.Count == 0) return;
 
 			for (int i = InnerList.Count - 1; i >= 0; i--)
 			{
@@ -81,7 +79,7 @@ namespace Dinah.Core.DataBinding
 				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
 			}
 
-			filterRemovedIndexed.AddRange(filteredIndexed);
+			filterRemovedIndexed.AddRange(filteredItemsIndexed);
 
 			if (!IsSortedCore)
 				filterRemovedIndexed.Sort((i1, i2) => i1.originalIndex.CompareTo(i2.originalIndex));
@@ -93,7 +91,7 @@ namespace Dinah.Core.DataBinding
 			}
 
 			filterRemovedIndexed.Clear();
-			filteredIndexed.Clear();
+			filteredItemsIndexed.Clear();
 
 			if (IsSortedCore)
 				Sort();
