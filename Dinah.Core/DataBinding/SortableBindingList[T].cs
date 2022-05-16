@@ -38,7 +38,15 @@ namespace Dinah.Core.DataBinding
 
 		public List<T> InnerList => (List<T>)Items;
 
-		private List<T> filterRemoved = new List<T>();
+
+		/// <summary>
+		/// items that were removed from the list due to filtering and their pre-filtering indices
+		/// </summary>
+		private List<(int originalIndex,T item)> filterRemovedIndexed = new List<(int originalIndex, T item)>();
+		/// <summary>
+		/// Filtered items in the list and their pre-filtering indices.
+		/// </summary>
+		private List<(int originalIndex,T item)> filteredIndexed = new();
 
 		/// <summary>
 		/// Filters the list
@@ -50,24 +58,43 @@ namespace Dinah.Core.DataBinding
 			{
 				if (!filteredItems.Contains(InnerList[i]))
 				{
-					filterRemoved.Add(InnerList[i]);
+					filterRemovedIndexed.Add((i,InnerList[i]));
 					InnerList.RemoveAt(i);
 					base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
+				}
+				else
+				{
+					filteredIndexed.Add((i, InnerList[i]));
 				}
 			}
 		}
 		/// <summary>
-		/// Removes filtering and restores sorting
+		/// Removes the filter from the list, restoring all items at their original pre-filtering indices or sorted positions.
 		/// </summary>
 		public void RemoveFilter()
 		{
-			if (filterRemoved.Count == 0) return;
-			int currentCount = InnerList.Count;
-			for (int i = 0; i < filterRemoved.Count; i++)
+			if (filteredIndexed.Count == 0) return;
+
+			for (int i = InnerList.Count - 1; i >= 0; i--)
 			{
-				InnerList.Add(filterRemoved[i]);
-				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, i + currentCount));
+				InnerList.RemoveAt(i);
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
 			}
+
+			filterRemovedIndexed.AddRange(filteredIndexed);
+
+			if (!IsSortedCore)
+				filterRemovedIndexed.Sort((i1, i2) => i1.originalIndex.CompareTo(i2.originalIndex));
+
+			for (int i = 0; i < filterRemovedIndexed.Count; i++)
+			{
+				InnerList.Add(filterRemovedIndexed[i].item);
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, i));
+			}
+
+			filterRemovedIndexed.Clear();
+			filteredIndexed.Clear();
+
 			if (IsSortedCore)
 				Sort();
 		}
