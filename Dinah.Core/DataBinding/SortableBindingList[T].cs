@@ -36,21 +36,55 @@ namespace Dinah.Core.DataBinding
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
+		public List<T> InnerList => (List<T>)Items;
+
+		private List<T> filterRemoved = new List<T>();
+
+		/// <summary>
+		/// Filters the list
+		/// </summary>
+		/// <param name="filteredItems">list of items to be shown</param>
+		public void SetFilteredItems(List<T> filteredItems)
+		{
+			for (int i = InnerList.Count - 1; i >= 0; i--)
+			{
+				if (!filteredItems.Contains(InnerList[i]))
+				{
+					filterRemoved.Add(InnerList[i]);
+					InnerList.RemoveAt(i);
+					base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
+				}
+			}
+		}
+		/// <summary>
+		/// Removes filtering and restores sorting
+		/// </summary>
+		public void RemoveFilter()
+		{
+			if (filterRemoved.Count == 0) return;
+			int currentCount = InnerList.Count;
+			for (int i = 0; i < filterRemoved.Count; i++)
+			{
+				InnerList.Add(filterRemoved[i]);
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, i + currentCount));
+			}
+			if (IsSortedCore)
+				Sort();
+		}
+
 		private void Sort()
 		{
-			List<T> itemsList = (List<T>)Items;
-
 			//Array.Sort() and List<T>.Sort() are unstable sorts. OrderBy is stable.
-			var sortedItems = itemsList.OrderBy((ge) => ge, Comparer).ToList();
+			var sortedItems = InnerList.OrderBy((ge) => ge, Comparer).ToList();
 
-			itemsList.Clear();
-			itemsList.AddRange(sortedItems);
+			InnerList.Clear();
+			InnerList.AddRange(sortedItems);
 		}
 
 		protected override void OnListChanged(ListChangedEventArgs e)
 		{
-			if (isSorted && 
-				e.ListChangedType == ListChangedType.ItemChanged && 
+			if (isSorted &&
+				e.ListChangedType == ListChangedType.ItemChanged &&
 				e.PropertyDescriptor == SortPropertyCore)
 			{
 				var item = Items[e.NewIndex];
