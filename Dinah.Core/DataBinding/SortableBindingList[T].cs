@@ -36,7 +36,7 @@ namespace Dinah.Core.DataBinding
 			OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
 		}
 
-		private void Sort()
+		protected void Sort()
 		{
 			List<T> itemsList = (List<T>)Items;
 
