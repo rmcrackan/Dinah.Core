@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Dinah.Core.DataBinding
 {
-	// see also notes in Libation/Source/__ARCHITECTURE NOTES.txt :: MVVM
+	// see also notes in Libation/Source/_ARCHITECTURE NOTES.txt :: MVVM
 	public class SortableBindingList<T> : BindingList<T> where T : IMemberComparable
 	{
 		private bool isSorted;
