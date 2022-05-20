@@ -37,7 +37,8 @@ namespace Dinah.EntityFrameworkCore
             var connectionStringProp = typeof(TContext).Name;
             var rawConnectionString = new ConfigurationBuilder()
                 .SetBasePath(fileInfo.FullName)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("migrate.json", optional: true, reloadOnChange: true)
                 .Build()
                 .GetConnectionString(connectionStringProp);
             var connectionString = Environment
