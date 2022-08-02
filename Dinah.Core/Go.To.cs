@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Dinah.Core
 {
@@ -14,7 +13,6 @@ namespace Dinah.Core
         {
             // from: https://stackoverflow.com/a/43232486
             /// <summary>Platform agnostic. Open your system's browser and go to url</summary>
-            /// <param name="url"></param>
             public static void Url(string url)
             {
                 try
@@ -44,26 +42,49 @@ namespace Dinah.Core
                 }
             }
 
-            /// <summary>Open folder, select file. If a folderPath is a folder: open parent folder, select folder</summary>
-            /// <param name="folderPath"></param>
+            /// <summary>Platform agnostic. Open folder, select file. If a path is a folder: open parent folder, select folder</summary>
+            /// <param name="path"></param>
             /// <returns>False if file/folder not exist</returns>
-            public static bool File(string folderPath)
+            public static bool File(string path)
             {
-                if (!System.IO.File.Exists(folderPath) && !System.IO.Directory.Exists(folderPath))
+                if (!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
                     return false;
-                Process.Start("explorer.exe", $"/select, \"{folderPath}\"");
-                return true;
+
+                if (IsWindows)
+                {
+                    Process.Start("explorer.exe", $"/select, \"{path}\"");
+                    return true;
+                }
+
+                return Folder(System.IO.Path.GetDirectoryName(path));
             }
 
-            /// <summary>Open folder</summary>
-            /// <param name="folderPath"></param>
+            /// <summary>Platform agnostic. Open folder</summary>
+            /// <param name="path"></param>
             /// <returns>False if folder does not exist</returns>
-            public static bool Folder(string folderPath)
+            public static bool Folder(string path)
             {
-                if (!System.IO.Directory.Exists(folderPath))
+                if (!System.IO.Directory.Exists(path))
                     return false;
-                Process.Start("explorer.exe", $"\"{folderPath}\"");
-                return true;
+
+                if (IsWindows)
+                {
+                    Process.Start("explorer.exe", $"\"{path}\"");
+                    return true;
+                }
+
+                var fileName
+                    = IsLinux ? "xdg-open"
+                    : "open";
+
+                var proc = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = fileName,
+                    Arguments = path is null ? string.Empty : $"\"{path}\"",
+                    UseShellExecute = false,
+                });
+                proc.WaitForExit();
+                return proc.ExitCode == 0;
             }
         }
     }
