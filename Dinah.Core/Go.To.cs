@@ -6,6 +6,10 @@ namespace Dinah.Core
 {
     public static class Go
     {
+        public static bool IsWindows { get; } = OperatingSystem.IsWindows();
+        public static bool IsLinux { get; } = OperatingSystem.IsLinux();
+        public static bool IsMacOS { get; } = OperatingSystem.IsMacOS();
+
         public static class To
         {
             // from: https://stackoverflow.com/a/43232486
@@ -20,16 +24,16 @@ namespace Dinah.Core
                 catch
                 {
                     // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    if (IsWindows)
                     {
                         url = url.Replace("&", "^&");
                         Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                     }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    else if (IsLinux)
                     {
                         Process.Start("xdg-open", url);
                     }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    else if (IsMacOS)
                     {
                         Process.Start("open", url);
                     }

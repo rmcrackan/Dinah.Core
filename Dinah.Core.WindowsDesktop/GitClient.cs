@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Dinah.Core.Processes;
+using Dinah.Core.WindowsDesktop.Processes;
 
-namespace Dinah.Core
+namespace Dinah.Core.WindowsDesktop
 {
 	public class GitClient
 	{
@@ -160,9 +160,9 @@ namespace Dinah.Core
 
 
 
-		public ProcessResult RunGitCommand(string cmd) => RunGitCommand(directoryInfo, cmd);
-		public static ProcessResult RunGitCommand(DirectoryInfo directoryInfo, string cmd) => RunGitCommand(directoryInfo.FullName, cmd);
-		public static ProcessResult RunGitCommand(string directory, string cmd)
+		public Result RunGitCommand(string cmd) => RunGitCommand(directoryInfo, cmd);
+		public static Result RunGitCommand(DirectoryInfo directoryInfo, string cmd) => RunGitCommand(directoryInfo.FullName, cmd);
+		public static Result RunGitCommand(string directory, string cmd)
 		{
 			cmd = cmd.Trim();
 			if (!cmd.StartsWithInsensitive("git "))
@@ -170,7 +170,7 @@ namespace Dinah.Core
 			return runCommand(directory, cmd);
 		}
 
-		private static ProcessResult runCommand(string directory, string cmd)
+		private static Result runCommand(string directory, string cmd)
 		{
 			var processStartInfo = new ProcessStartInfo
 			{
@@ -179,7 +179,7 @@ namespace Dinah.Core
 				//  "/c" Carries out the command specified by the string and then terminates
 				Arguments = "/c " + cmd
 			};
-			return ProcessRunner.RunHidden(processStartInfo);
+			return Runner.RunHidden(processStartInfo);
 		}
 	}
 }

@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Principal;
-using System.Threading.Tasks;
 
-namespace Dinah.Core.Processes
+namespace Dinah.Core.WindowsDesktop.Processes
 {
-	public class ProcessResult
+    public class Result
 	{
 		List<string> outputLines { get; } = new List<string>();
 		List<string> errorLines { get; } = new List<string>();
@@ -15,7 +14,7 @@ namespace Dinah.Core.Processes
 		private static void logMe(List<string> list, string str)
 		{
 			if (str is not null)
-				list.Add(str.Trim(new char[] { '\r', '\n' }) ?? "");
+				list.Add(str.Trim('\r', '\n'));
 		}
 
 		public int ExitCode { get; set; }

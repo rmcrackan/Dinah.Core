@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ServiceProcess;
 
-namespace Dinah.Core.Processes
+namespace Dinah.Core.WindowsDesktop.Processes
 {
-    public class WindowsService
+    public class Service
 	{
 		private string serviceProcessName { get; }
 		private ServiceController sc { get; }
@@ -19,7 +19,7 @@ namespace Dinah.Core.Processes
 
 		public bool IsRunning => sc.Status != ServiceControllerStatus.Stopped && sc.Status != ServiceControllerStatus.StopPending;
 
-		public WindowsService(string serviceProcessName)
+		public Service(string serviceProcessName)
 		{
 			this.serviceProcessName = serviceProcessName;
 			sc = new ServiceController(this.serviceProcessName);
@@ -28,13 +28,13 @@ namespace Dinah.Core.Processes
 		public void Start()
 		{
 			if (!IsRunning)
-				ProcessRunner.RunHidden("sc", $"start {serviceProcessName}");
+				Runner.RunHidden("sc", $"start {serviceProcessName}");
 		}
 
 		public void Stop()
 		{
 			if (IsRunning)
-				ProcessRunner.RunHidden("sc", $"stop {serviceProcessName}");
+				Runner.RunHidden("sc", $"stop {serviceProcessName}");
 		}
 	}
 }
