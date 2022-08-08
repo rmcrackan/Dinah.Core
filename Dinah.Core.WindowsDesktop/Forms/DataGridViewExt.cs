@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Dinah.Core.Windows.Forms
+namespace Dinah.Core.WindowsDesktop.Forms
 {
 	public static class DataGridViewExt
 	{

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace Dinah.Core.Drawing
+namespace Dinah.Core.WindowsDesktop.Drawing
 {
 	/// <summary>
 	/// The name ImageConverter is already taken by System.Drawing
