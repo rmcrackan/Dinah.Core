@@ -38,7 +38,8 @@ namespace Dinah.Core.WindowsDesktop
             File.SetAttributes(Icon_ico, File.GetAttributes(Icon_ico) | FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly);
             File.SetAttributes(hidden, File.GetAttributes(hidden) | FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReadOnly);
 
-            //File.SetAttributes(dir, File.GetAttributes(dir) | FileAttributes.ReadOnly);
+            // this strangely completes the process. also hides these 3 hidden system files, even if "show hidden items" is checked
+            File.SetAttributes(dir, File.GetAttributes(dir) | FileAttributes.ReadOnly);
 
             refresh();
         }
