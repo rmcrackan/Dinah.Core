@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCommon", "_Tests\TestCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.Core.WindowsDesktop", "Dinah.Core.WindowsDesktop\Dinah.Core.WindowsDesktop.csproj", "{33D24407-4B5C-47B8-A586-99FF4E3560A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dinah.EntityFrameworkCore.Tests", "_Tests\Dinah.EntityFrameworkCore.Tests\Dinah.EntityFrameworkCore.Tests.csproj", "{E4A483C2-8C96-4320-830B-F761688F6270}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dinah.EntityFrameworkCore.Tests", "_Tests\Dinah.EntityFrameworkCore.Tests\Dinah.EntityFrameworkCore.Tests.csproj", "{E4A483C2-8C96-4320-830B-F761688F6270}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
