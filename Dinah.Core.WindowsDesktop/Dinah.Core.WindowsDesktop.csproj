@@ -3,9 +3,9 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>5.2.4.1</Version>
+    <Version>7.0.0.1</Version>
     <ApplicationIcon />
     <StartupObject />
     <AllowedOutputExtensionsInPackageBuildOutputFolder>
