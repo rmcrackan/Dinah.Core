@@ -45,5 +45,9 @@ namespace Dinah.Core
 
 			return attribute?.Description;
 		}
-	}
+
+        public static bool In<T>(this T source, params T[] parameters) => _in(source, parameters);
+        public static bool In<T>(this T source, IEnumerable<T> parameters) => _in(source, parameters);
+        private static bool _in<T>(T source, IEnumerable<T> parameters) => parameters.Contains(source);
+    }
 }
