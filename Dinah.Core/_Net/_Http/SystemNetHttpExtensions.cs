@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace Dinah.Core.Net.Http
@@ -16,19 +17,27 @@ namespace Dinah.Core.Net.Http
 		public double? ProgressPercentage { get; set; }
 	}
 
-	public static class SystemNetHttpExtensions
+	public class HttpBody
 	{
-		// Posting URL-encoded key values with HttpClient
-		// http://ronaldrosiernet.azurewebsites.net/Blog/2013/12/07/posting_urlencoded_key_values_with_httpclient
+		public HttpContent Content { get; private init; }
 
-		public static void AddContent(this HttpRequestMessage request, JObject jObj)
-			=> request.AddContent(new StringContent(jObj.ToString(), System.Text.Encoding.UTF8, "application/json"));
+		public static implicit operator HttpBody(JObject jObj)
+			=> jObj is null ? null : new() { Content = new StringContent(jObj.ToString(Newtonsoft.Json.Formatting.None), System.Text.Encoding.UTF8, "application/json") };
 
-		public static void AddContent(this HttpRequestMessage request, IEnumerable<KeyValuePair<string, string>> keyValuePairs)
-			=> request.AddContent(new FormUrlEncodedContent(keyValuePairs));
+		public static implicit operator HttpBody(XElement xml)
+			=> xml is null ? null : new() { Content = new StringContent(xml.ToString(SaveOptions.DisableFormatting), System.Text.Encoding.UTF8, "application/xml") };
 
-		public static void AddContent(this HttpRequestMessage request, HttpContent content)
-			=> request.Content = content;
+		public static implicit operator HttpBody(Dictionary<string,string> dictionary)
+			=> dictionary is null ? null : new() { Content = new FormUrlEncodedContent(dictionary) };
+
+		public static implicit operator HttpBody(HttpContent content)
+			=> content is null ? null : new HttpBody { Content = content };
+	}
+
+	public static class SystemNetHttpExtensions
+	{		
+		public static void AddContent(this HttpRequestMessage request, HttpBody body)
+			=> request.Content = body.Content;
 
 		public static Cookie ParseCookie(string cookieString)
 		{
