@@ -22,7 +22,7 @@ namespace Dinah.Core.Net.Http
 		public HttpContent Content { get; private init; }
 
 		public static implicit operator HttpBody(JObject jObj)
-			=> jObj is null ? null : new() { Content = new StringContent(jObj.ToString(Newtonsoft.Json.Formatting.None), System.Text.Encoding.UTF8, "application/json") };
+			=> jObj is null ? null : new() { Content = new StringContent(jObj.ToString(), System.Text.Encoding.UTF8, "application/json") };
 
 		public static implicit operator HttpBody(XElement xml)
 			=> xml is null ? null : new() { Content = new StringContent(xml.ToString(SaveOptions.DisableFormatting), System.Text.Encoding.UTF8, "application/xml") };
