@@ -35,12 +35,12 @@ namespace Dinah.Core.StepRunner
 			return (success, elapsed);
 		}
 
-		private void logBegin()
+		protected void logBegin()
 		{
 			Serilog.Log.Logger.Information($"Begin step '{Name}'");
 		}
 
-		private void logEnd(bool success, TimeSpan elapsed, Exception exc)
+		protected void logEnd(bool success, TimeSpan elapsed, Exception exc)
 		{
 			var logStart = $"End step '{Name}'. ";
 			var logEnd = $". Completed in {elapsed.GetTotalTimeFormatted()}";
