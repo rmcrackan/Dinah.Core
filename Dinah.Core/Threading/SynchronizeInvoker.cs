@@ -9,14 +9,16 @@ namespace Dinah.Core.Threading
 	/// </summary>
 	public class SynchronizeInvoker : ISynchronizeInvoke
 	{
-		public bool InvokeRequired => Thread.CurrentThread.ManagedThreadId != InstanceThreadId;
-		private int InstanceThreadId { get; set; } = Thread.CurrentThread.ManagedThreadId;
+		public bool InvokeRequired => AlwaysInvoke || SynchronizationContext.Current != SyncContext || Environment.CurrentManagedThreadId != InstanceThreadId;
+		public int InstanceThreadId { get; } = Environment.CurrentManagedThreadId;
 		private SynchronizationContext SyncContext { get; } = SynchronizationContext.Current;
+		private bool AlwaysInvoke { get; }
 
-		public SynchronizeInvoker()
+		public SynchronizeInvoker(bool alwaysInvoke = false)
 		{
 			if (SyncContext is null)
 				throw new NullReferenceException($"Could not capture a current {nameof(SynchronizationContext)}");
+			AlwaysInvoke = alwaysInvoke;
 		}
 
 		public IAsyncResult BeginInvoke(Action action) => BeginInvoke(action, null);
