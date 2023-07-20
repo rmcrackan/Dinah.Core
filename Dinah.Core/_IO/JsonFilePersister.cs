@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+#nullable enable
 namespace Dinah.Core.IO
 {
 	/// <summary>
@@ -32,10 +33,10 @@ namespace Dinah.Core.IO
 	{
 		public T Target { get; }
 		public string Path { get; }
-		public string JsonPath { get; }
+		public string? JsonPath { get; }
 
 		/// <summary>uses path. create file if doesn't yet exist</summary>
-		protected JsonFilePersister(T target, string path, string jsonPath = null)
+		protected JsonFilePersister(T target, string path, string? jsonPath = null)
 		{
 			Target = target ?? throw new ArgumentNullException(nameof(target));
 			Target.Updated += saveFile;
@@ -47,11 +48,11 @@ namespace Dinah.Core.IO
 			if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
 
-			saveFile(this, null);
+			saveFile(this, EventArgs.Empty);
 		}
 
 		/// <summary>load from existing file</summary>
-		protected JsonFilePersister(string path, string jsonPath = null)
+		protected JsonFilePersister(string path, string? jsonPath = null)
 		{
 			validatePath(path);
 
@@ -75,7 +76,7 @@ namespace Dinah.Core.IO
 			return target;
 		}
 
-		protected virtual JsonSerializerSettings GetSerializerSettings() => null;
+		protected virtual JsonSerializerSettings? GetSerializerSettings() => null;
 
 		private void validatePath(string path)
 		{
@@ -96,7 +97,7 @@ namespace Dinah.Core.IO
 		{
 			IsInTransaction = false;
 			if (pendingUpdate)
-				saveFile(this, null);
+				saveFile(this, EventArgs.Empty);
 			pendingUpdate = false;
 		}
 
@@ -110,7 +111,7 @@ namespace Dinah.Core.IO
 		protected virtual void OnSaved() { }
 
 		private object _locker { get; } = new object();
-		private void saveFile(object _, EventArgs __)
+		private void saveFile(object? _, EventArgs __)
 		{
 			if (IsInTransaction)
 			{

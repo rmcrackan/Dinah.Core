@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 
+#nullable enable
 namespace Dinah.Core.IO
 {
     public class FileLogger
@@ -18,7 +19,7 @@ namespace Dinah.Core.IO
 
         // use with Console.WriteLine
         private object fileLocker { get; } = new object();
-        public void TextWriterLogger(string text)
+        public void TextWriterLogger(string? text)
         {
 			lock (fileLocker)
 			{

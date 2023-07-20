@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading;
 
+#nullable enable
 namespace Dinah.Core.Threading
 {
 	/// <summary>
@@ -11,19 +12,21 @@ namespace Dinah.Core.Threading
 	{
 		public bool InvokeRequired => AlwaysInvoke || SynchronizationContext.Current != SyncContext || Environment.CurrentManagedThreadId != InstanceThreadId;
 		public int InstanceThreadId { get; } = Environment.CurrentManagedThreadId;
-		private SynchronizationContext SyncContext { get; } = SynchronizationContext.Current;
+		private SynchronizationContext SyncContext { get; }
 		private bool AlwaysInvoke { get; }
 
 		public SynchronizeInvoker(bool alwaysInvoke = false)
 		{
-			if (SyncContext is null)
-				throw new NullReferenceException($"Could not capture a current {nameof(SynchronizationContext)}");
+			SyncContext
+				= SynchronizationContext.Current
+				?? throw new NullReferenceException($"Could not capture a current {nameof(SynchronizationContext)}");
+
 			AlwaysInvoke = alwaysInvoke;
 		}
 
 		public IAsyncResult BeginInvoke(Action action) => BeginInvoke(action, null);
 		public IAsyncResult BeginInvoke(Delegate method) => BeginInvoke(method, null);
-		public IAsyncResult BeginInvoke(Delegate method, object[] args)
+		public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
 		{
 			var tme = new ThreadMethodEntry(method, args);
 
@@ -39,7 +42,7 @@ namespace Dinah.Core.Threading
 			return tme;
 		}
 
-		public object EndInvoke(IAsyncResult result)
+		public object? EndInvoke(IAsyncResult result)
 		{
 			if (result is not ThreadMethodEntry crossThread)
 				throw new ArgumentException($"{nameof(result)} was not returned by {nameof(SynchronizeInvoker)}.{nameof(BeginInvoke)}");
@@ -50,9 +53,9 @@ namespace Dinah.Core.Threading
 			return crossThread.ReturnValue;
 		}
 
-		public object Invoke(Action action) => Invoke(action, null);
-		public object Invoke(Delegate method) => Invoke(method, null);
-		public object Invoke(Delegate method, object[] args)
+		public object? Invoke(Action action) => Invoke(action, null);
+		public object? Invoke(Delegate method) => Invoke(method, null);
+		public object? Invoke(Delegate method, object?[]? args)
 		{
 			var tme = new ThreadMethodEntry(method, args);
 
@@ -72,25 +75,25 @@ namespace Dinah.Core.Threading
 		/// <summary>
 		/// This callback executes on the SynchronizationContext thread.
 		/// </summary>
-		private static void OnSendOrPostCallback(object asyncArgs)
+		private static void OnSendOrPostCallback(object? asyncArgs)
 		{
-			var e = asyncArgs as ThreadMethodEntry;
-			e.Complete();
+			if (asyncArgs is ThreadMethodEntry e)
+				e.Complete();
 		}
 
 		private class ThreadMethodEntry : IAsyncResult
 		{
-			public object AsyncState => null;
+			public object? AsyncState => null;
 			public bool CompletedSynchronously { get; internal set; }
 			public bool IsCompleted { get; private set; }
-			public object ReturnValue { get; private set; }
+			public object? ReturnValue { get; private set; }
 			public WaitHandle AsyncWaitHandle => completedEvent;
 
 			private Delegate method;
-			private object[] args;
+			private object?[]? args;
 			private ManualResetEvent completedEvent;
 
-			public ThreadMethodEntry(Delegate method, object[] args)
+			public ThreadMethodEntry(Delegate method, object?[]? args)
 			{
 				this.method = method;
 				this.args = args;

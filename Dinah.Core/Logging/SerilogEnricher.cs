@@ -27,7 +27,7 @@ namespace Dinah.Core.Logging
 				}
 
 				var method = stack.GetMethod();
-				if (method.DeclaringType != null && method.DeclaringType.Assembly != typeof(Log).Assembly)
+				if (method?.DeclaringType != null && method.DeclaringType.Assembly != typeof(Log).Assembly)
 				{
 					var caller = $"{method.DeclaringType.FullName}.{method.Name}({string.Join(", ", method.GetParameters().Select(pi => pi.ParameterType.FullName))})";
 					logEvent.AddPropertyIfAbsent(new LogEventProperty("Caller", new ScalarValue(caller)));

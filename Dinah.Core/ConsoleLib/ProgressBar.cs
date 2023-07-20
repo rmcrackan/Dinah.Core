@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 
+#nullable enable
 namespace Dinah.Core.ConsoleLib
 {
 	// https://stackoverflow.com/a/31193455
@@ -42,7 +43,7 @@ namespace Dinah.Core.ConsoleLib
 			timerHandler(null);
 		}
 
-		private void timerHandler(object state)
+		private void timerHandler(object? state)
 		{
 			lock (timer)
 			{

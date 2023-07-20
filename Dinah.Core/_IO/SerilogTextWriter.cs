@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Dinah.Core.IO
 {
 	public class SerilogTextWriter : TextWriter
@@ -13,7 +14,7 @@ namespace Dinah.Core.IO
 
 		public override void WriteLine() => Serilog.Log.Logger.Information("");
 
-		public override void WriteLine(string value) => Serilog.Log.Logger.Information(value);
+		public override void WriteLine(string? value) => Serilog.Log.Logger.Information(value);
 		public override void WriteLine(bool value) => Serilog.Log.Logger.Information($"{value}");
 		public override void WriteLine(char value) => Serilog.Log.Logger.Information($"{value}");
 		public override void WriteLine(decimal value) => Serilog.Log.Logger.Information($"{value}");
@@ -23,14 +24,14 @@ namespace Dinah.Core.IO
 		public override void WriteLine(long value) => Serilog.Log.Logger.Information($"{value}");
 		public override void WriteLine(ulong value) => Serilog.Log.Logger.Information($"{value}");
 		public override void WriteLine(uint value) => Serilog.Log.Logger.Information($"{value}");
-		public override void WriteLine(StringBuilder value) => Serilog.Log.Logger.Information($"{value}");
+		public override void WriteLine(StringBuilder? value) => Serilog.Log.Logger.Information($"{value}");
 
-		public override void WriteLine(string format, object arg0) => Serilog.Log.Logger.Information(format, arg0);
-		public override void WriteLine(string format, object arg0, object arg1) => Serilog.Log.Logger.Information(format, arg0, arg1);
-		public override void WriteLine(string format, object arg0, object arg1, object arg2) => Serilog.Log.Logger.Information(format, arg0, arg1, arg2);
-		public override void WriteLine(string format, params object[] arg) => Serilog.Log.Logger.Information(format, arg);
+		public override void WriteLine(string format, object? arg0) => Serilog.Log.Logger.Information(format, arg0);
+		public override void WriteLine(string format, object? arg0, object? arg1) => Serilog.Log.Logger.Information(format, arg0, arg1);
+		public override void WriteLine(string format, object? arg0, object? arg1, object? arg2) => Serilog.Log.Logger.Information(format, arg0, arg1, arg2);
+		public override void WriteLine(string format, params object?[] arg) => Serilog.Log.Logger.Information(format, arg);
 
-		public override void WriteLine(object value) => Serilog.Log.Logger.Information("{@DebugInfo}", value);
+		public override void WriteLine(object? value) => Serilog.Log.Logger.Information("{@DebugInfo}", value);
 
 		//
 		//// with stack tracing, the 'Write's should be able to handle this correctly.

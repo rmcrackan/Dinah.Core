@@ -1,4 +1,5 @@
-﻿namespace Dinah.Core
+﻿#nullable enable
+namespace Dinah.Core
 {
 	/// <summary>
 	/// This makes writing code cumbersome ...it's all just strings afterall.
@@ -24,11 +25,11 @@
 			Value = value;
 		}
 
-		protected virtual void ValidateInput(T value) { }
+		protected virtual void ValidateInput(T? value) { }
 
-		public override string ToString() => Value?.ToString();
+		public override string? ToString() => Value?.ToString();
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 			=> (obj is StrongType<T> st) ? Equals(st.Value)
 			: (Value == null) ? (obj is null)
 			: Value.Equals(obj);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Dinah.Core;
@@ -88,8 +89,6 @@ namespace ArgumentValidatorTests
 	[TestClass]
 	public class EnsureGreaterThan
 	{
-		[TestMethod]
-		public void null_argument_throws() => Assert.ThrowsException<NullReferenceException>(() => ArgumentValidator.EnsureGreaterThan(null, "n", "foo"));
 
 		[TestMethod]
 		public void too_small_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureGreaterThan(9, "n", 10));
@@ -99,17 +98,11 @@ namespace ArgumentValidatorTests
 
 		[TestMethod]
 		public void bigger_passes() => ArgumentValidator.EnsureGreaterThan(9, "n", 8);
-
-		[TestMethod]
-		public void null_minimum_passes() => ArgumentValidator.EnsureGreaterThan("arg", "n", null);
 	}
 
 	[TestClass]
 	public class EnsureBetweenInclusive
 	{
-		[TestMethod]
-		public void null_argument_throws() => Assert.ThrowsException<NullReferenceException>(() => ArgumentValidator.EnsureBetweenInclusive(null, "n", "min", "max"));
-
 		[TestMethod]
 		public void too_small_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(9, "n", 10, 20));
 
@@ -124,11 +117,5 @@ namespace ArgumentValidatorTests
 
 		[TestMethod]
 		public void maximum_passes() => ArgumentValidator.EnsureBetweenInclusive(20, "n", 10, 20);
-
-		[TestMethod]
-		public void null_minimum_passes() => ArgumentValidator.EnsureBetweenInclusive("arg", "n", null, "max");
-
-		[TestMethod]
-		public void null_maximum_passes() => ArgumentValidator.EnsureBetweenInclusive("arg", "n", "min", null);
 	}
 }

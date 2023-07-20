@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+#nullable enable
 // FROM: http://enterprisecraftsmanship.com/2017/08/28/value-object-a-better-implementation/
 namespace Dinah.Core
 {
@@ -12,7 +13,7 @@ namespace Dinah.Core
     {
         protected abstract IEnumerable<object> GetEqualityComponents();
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
 			if (!(obj is ValueObject_Static<T> valueObject))
 				return false;
@@ -25,15 +26,11 @@ namespace Dinah.Core
 
         public override int GetHashCode()
         {
-            return GetEqualityComponents()
-                .Aggregate(1, (current, obj) =>
-                {
-                    unchecked
-                    {
-                        return current * 23 + (obj?.GetHashCode() ?? 0);
-                    }
-                });
-        }
+            HashCode hashCode = default;
+            foreach (var component in GetEqualityComponents())
+                hashCode.Add(component);
+            return hashCode.ToHashCode();
+		}
 
         public static bool operator ==(ValueObject_Static<T> a, ValueObject_Static<T> b)
         {
@@ -54,24 +51,17 @@ namespace Dinah.Core
     public abstract class ValueObject_Reflection<T> : IEquatable<T>
         where T : ValueObject_Reflection<T>
     {
-        public override bool Equals(object obj) => obj == null ? false : Equals(obj as T);
+        public override bool Equals(object? obj) => obj == null ? false : Equals(obj as T);
         public override int GetHashCode()
         {
-            var fields = GetFields();
-            int startValue = 17;
-            int multiplier = 59;
-            int hashCode = startValue;
-            foreach (var field in fields)
-            {
-                object value = field.GetValue(this);
-                if (value != null)
-                    hashCode = hashCode * multiplier + value.GetHashCode();
-            }
-            return hashCode;
+            HashCode hashCode = default;
+            foreach (var field in GetFields())
+                hashCode.Add(field.GetValue(this));
+            return hashCode.ToHashCode();
         }
-        public virtual bool Equals(T other)
+        public virtual bool Equals(T? other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
             Type t = GetType();
             Type otherType = other.GetType();
@@ -80,8 +70,8 @@ namespace Dinah.Core
             var fields = t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             foreach (var field in fields)
             {
-                object value1 = field.GetValue(other);
-                object value2 = field.GetValue(this);
+				object? value1 = field.GetValue(other);
+				object? value2 = field.GetValue(this);
                 if (value1 == null)
                 {
                     if (value2 != null)
@@ -96,7 +86,7 @@ namespace Dinah.Core
         {
             var t = GetType();
             var fields = new List<FieldInfo>();
-            while (t != typeof(object))
+            while (t is not null && t != typeof(object))
             {
                 fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
                 t = t.BaseType;

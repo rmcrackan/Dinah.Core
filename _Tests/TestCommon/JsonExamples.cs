@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Protected;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using TestCommon;
 
+#nullable enable
 namespace JsonExamples
 {
     [TestClass]
@@ -21,7 +15,7 @@ namespace JsonExamples
         public class JsonTest
         {
             [JsonProperty]
-            private string nullPriv;
+            private string? nullPriv;
 
             [JsonProperty]
             private int priv;
@@ -33,17 +27,17 @@ namespace JsonExamples
             public void setGPS(double gps) => GetPrivSet = gps;
 
             [JsonRequired]
-            private string privReq = "q";
-            public void SetPrivReq(string pr) => privReq = pr;
-            public string GetPrivReq() => privReq;
+            private string? privReq = "q";
+            public void SetPrivReq(string? pr) => privReq = pr;
+            public string? GetPrivReq() => privReq;
 
             [JsonProperty]
-            private ComplexType complexType;
+            private ComplexType? complexType;
             public void SetComplexType(ComplexType ct) => complexType = ct;
-            public ComplexType GetComplexType() => complexType;
+            public ComplexType? GetComplexType() => complexType;
 
             [JsonIgnore]
-            public string IgnoreMe { get; set; }
+            public string? IgnoreMe { get; set; }
 
             [JsonConstructor]
             private JsonTest(int getOnly) => GetOnly = getOnly;
@@ -54,7 +48,7 @@ namespace JsonExamples
         }
         public class ComplexType
         {
-            public string Value { get; set; }
+            public string? Value { get; set; }
             public DateTime Expires { get; set; }
         }
 
@@ -66,7 +60,7 @@ namespace JsonExamples
             public Guid Id { get; set; }
 
             [JsonProperty]
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             [JsonProperty]
             public int Size { get; set; }
@@ -79,7 +73,8 @@ namespace JsonExamples
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
 
-            deser.GetOnly.Should().Be(9);
+			deser.Should().NotBeNull();
+			deser!.GetOnly.Should().Be(9);
         }
 
         [TestMethod]
@@ -98,7 +93,8 @@ namespace JsonExamples
             j.setPriv(2);
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-            deser.GetPriv().Should().Be(2);
+			deser.Should().NotBeNull();
+			deser!.GetPriv().Should().Be(2);
         }
 
         [TestMethod]
@@ -115,7 +111,8 @@ namespace JsonExamples
 
             // cannot be deserialized
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-            deser.GetPrivSet.Should().Be(default);
+			deser.Should().NotBeNull();
+			deser!.GetPrivSet.Should().Be(default);
         }
 
         [TestMethod]
@@ -127,7 +124,8 @@ namespace JsonExamples
 
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-            deser.GetPrivReq().Should().Be("y");
+			deser.Should().NotBeNull();
+			deser!.GetPrivReq().Should().Be("y");
         }
 
         [TestMethod]
@@ -146,14 +144,16 @@ namespace JsonExamples
 
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-            deser.GetComplexType().Should().BeNull();
+			deser.Should().NotBeNull();
+			deser!.GetComplexType().Should().BeNull();
 
             var token = new ComplexType { Value = "v", Expires = DateTime.MaxValue };
             deser.SetComplexType(token);
             var ser2 = JsonConvert.SerializeObject(deser);
             var deser2 = JsonConvert.DeserializeObject<JsonTest>(ser2);
-            deser2.GetComplexType().Value.Should().Be("v");
-            deser2.GetComplexType().Expires.Should().Be(DateTime.MaxValue);
+			deser2.Should().NotBeNull();
+			deser2!.GetComplexType()?.Value.Should().Be("v");
+            deser2.GetComplexType()?.Expires.Should().Be(DateTime.MaxValue);
         }
 
         [TestMethod]
@@ -166,7 +166,8 @@ namespace JsonExamples
             var ser = JsonConvert.SerializeObject(j);
             ser.Should().NotContain(nameof(j.IgnoreMe));
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-            deser.IgnoreMe.Should().BeNull();
+			deser.Should().NotBeNull();
+			deser!.IgnoreMe.Should().BeNull();
         }
 
         [TestMethod]
@@ -176,7 +177,8 @@ namespace JsonExamples
             var ser = JsonConvert.SerializeObject(o);
             ser.Should().NotContain(nameof(o.Id));
             var deser = JsonConvert.DeserializeObject<OptIn>(ser);
-            deser.Name.Should().Be("n");
+			deser.Should().NotBeNull();
+			deser!.Name.Should().Be("n");
             deser.Size.Should().Be(7);
             Assert.AreEqual(deser.Id, default);
         }
@@ -195,7 +197,7 @@ namespace JsonExamples
 		public void ctor_1_param()
 			=> JsonConvert
 				.DeserializeObject<_1Param>("{ \"bar\": \"hello\" }")
-				.Bar.Should().Be("hello");
+				?.Bar.Should().Be("hello");
 
 		public class _2Params
 		{
@@ -212,7 +214,8 @@ namespace JsonExamples
 		public void match_param_order_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"foo\":\"f\" , \"bar\":\"b\" }");
-			obj.Foo.Should().Be("f");
+			obj.Should().NotBeNull();
+			obj!.Foo.Should().Be("f");
 			obj.Bar.Should().Be("b");
 		}
 
@@ -220,7 +223,8 @@ namespace JsonExamples
 		public void match_param_order_not_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"FOO\":\"f\" , \"bAr\":\"b\" }");
-			obj.Foo.Should().Be("f");
+			obj.Should().NotBeNull();
+			obj!.Foo.Should().Be("f");
 			obj.Bar.Should().Be("b");
 		}
 
@@ -228,7 +232,8 @@ namespace JsonExamples
 		public void not_match_param_order_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"bar\":\"b\" , \"foo\":\"f\" }");
-			obj.Foo.Should().Be("f");
+			obj.Should().NotBeNull();
+			obj!.Foo.Should().Be("f");
 			obj.Bar.Should().Be("b");
 		}
 
@@ -236,7 +241,8 @@ namespace JsonExamples
 		public void not_match_param_order_not_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"bAR\":\"b\" , \"Foo\":\"f\" }");
-			obj.Foo.Should().Be("f");
+			obj.Should().NotBeNull();
+			obj!.Foo.Should().Be("f");
 			obj.Bar.Should().Be("b");
 		}
 	}
@@ -380,14 +386,14 @@ namespace JsonExamples
             var j = JObject.Parse(jObj);
 
             // direct cast
-            var _9 = (int)j["Id"];
+            var _9 = j["Id"]?.Value<int>();
             _9.Should().Be(9);
-            var rick = (string)j["Name"];
+            var rick = j["Name"]?.Value<string>();
             rick.Should().Be("Rick");
 
             // or with ToString
-            var westWind = j["Company"].ToString();
-            westWind.Should().Be("West Wind");
+            var westWind = j["Company"]?.Value<string>();
+			westWind.Should().Be("West Wind");
         }
 
         [TestMethod]
@@ -431,14 +437,14 @@ namespace JsonExamples
             var techGuys = JArray.Parse(json);
 
             // direct cast
-            var bill = (string)techGuys[0]["Name"];
+            var bill = techGuys[0]["Name"]?.Value<string>();
             bill.Should().Be("Bill");
-            var ms = (string)techGuys[0]["Company"];
-            ms.Should().Be("Microsoft");
+            var ms = techGuys[0]["Company"]?.Value<string>();
+			ms.Should().Be("Microsoft");
 
             // or ToString
-            techGuys[1]["Name"].ToString().Should().Be("Steve");
-            techGuys[1]["Company"].ToString().Should().Be("Apple");
+            techGuys[1]["Name"]?.Value<string>().Should().Be("Steve");
+            techGuys[1]["Company"]?.Value<string>().Should().Be("Apple");
         }
 
         [TestMethod]
@@ -484,8 +490,8 @@ namespace JsonExamples
 
             var cast = (JObject)token;
 
-            cast["Name"].ToString().Should().Be("Rick");
-            cast["Company"].ToString().Should().Be("West Wind");
+            cast["Name"]?.Value<string>().Should().Be("Rick");
+            cast["Company"]?.Value<string>().Should().Be("West Wind");
         }
 
         [TestMethod]
@@ -508,26 +514,26 @@ namespace JsonExamples
 
             var cast = (JArray)token;
 
-            cast[0]["Name"].ToString().Should().Be("Bill");
-            cast[0]["Company"].ToString().Should().Be("Microsoft");
-            cast[1]["Name"].ToString().Should().Be("Steve");
-            cast[1]["Company"].ToString().Should().Be("Apple");
+            cast[0]["Name"]?.Value<string>().Should().Be("Bill");
+            cast[0]["Company"]?.Value<string>().Should().Be("Microsoft");
+            cast[1]["Name"]?.Value<string>().Should().Be("Steve");
+            cast[1]["Company"]?.Value<string>().Should().Be("Apple");
         }
 
         // below examples adapted from:
         // https://weblog.west-wind.com/posts/2012/aug/30/using-jsonnet-for-dynamic-json-parsing
         public class Album
         {
-            public string AlbumName { get; set; }
-            public string Artist { get; set; }
+            public string? AlbumName { get; set; }
+            public string? Artist { get; set; }
             public int YearReleased { get; set; }
             public List<Song> Songs { get; set; } = new List<Song>();
         }
 
         public class Song
         {
-            public string SongName { get; set; }
-            public string SongLength { get; set; }
+            public string? SongName { get; set; }
+            public string? SongLength { get; set; }
         }
 
         [TestMethod]
@@ -572,10 +578,10 @@ namespace JsonExamples
             var jalbum = albums[0] as JObject;
 
             // Copy to a new Album instance
-            var album = jalbum.ToObject<Album>();
+            var album = jalbum?.ToObject<Album>();
 
             Assert.IsNotNull(album);
-            Assert.AreEqual(album.AlbumName, jalbum.Value<string>("AlbumName"));
+            Assert.AreEqual(album.AlbumName, jalbum?.Value<string>("AlbumName"));
             Assert.IsTrue(album.Songs.Count > 0);
         }
 

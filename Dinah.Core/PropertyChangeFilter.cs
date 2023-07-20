@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
+#nullable enable
 namespace Dinah.Core
 {
 	#region Useage
@@ -81,7 +82,7 @@ namespace Dinah.Core
 		private readonly List<(PropertyChangedEventHandlerEx subscriber, PropertyChangedEventHandlerEx wrapper)> changedFilters = new();
 		private readonly List<(PropertyChangingEventHandlerEx subscriber, PropertyChangingEventHandlerEx wrapper)> changingFilters = new();
 
-		protected void OnPropertyChanged(string propertyName, object newValue)
+		protected void OnPropertyChanged(string propertyName, object? newValue)
 		{
 			if (propertyChangedActions.ContainsKey(propertyName))
 			{
@@ -93,7 +94,7 @@ namespace Dinah.Core
 			_propertyChanged?.Invoke(this, new(propertyName, newValue));
 		}
 
-		protected void OnPropertyChanging(string propertyName, object oldValue, object newValue)
+		protected void OnPropertyChanging(string propertyName, object? oldValue, object? newValue)
 		{
 			if (propertyChangingActions.ContainsKey(propertyName))
 			{
@@ -107,8 +108,8 @@ namespace Dinah.Core
 
 		#region Events
 
-		private PropertyChangedEventHandlerEx _propertyChanged;
-		private PropertyChangingEventHandlerEx _propertyChanging;
+		private PropertyChangedEventHandlerEx? _propertyChanged;
+		private PropertyChangingEventHandlerEx? _propertyChanging;
 
 		public event PropertyChangedEventHandlerEx PropertyChanged
 		{
@@ -182,7 +183,7 @@ namespace Dinah.Core
 		}
 
 		private static T[] getAttributes<T>(MethodInfo methodInfo) where T : Attribute
-			=> Attribute.GetCustomAttributes(methodInfo, typeof(T)) as T[];
+			=> (T[])Attribute.GetCustomAttributes(methodInfo, typeof(T));
 
 		#endregion
 
@@ -292,9 +293,9 @@ namespace Dinah.Core
 
 	public class PropertyChangedEventArgsEx : PropertyChangedEventArgs
 	{
-		public object NewValue { get; }
+		public object? NewValue { get; }
 
-		public PropertyChangedEventArgsEx(string propertyName, object newValue) : base(propertyName)
+		public PropertyChangedEventArgsEx(string propertyName, object? newValue) : base(propertyName)
 		{
 			NewValue = newValue;
 		}
@@ -302,10 +303,10 @@ namespace Dinah.Core
 
 	public class PropertyChangingEventArgsEx : PropertyChangingEventArgs
 	{
-		public object OldValue { get; }
-		public object NewValue { get; }
+		public object? OldValue { get; }
+		public object? NewValue { get; }
 
-		public PropertyChangingEventArgsEx(string propertyName, object oldValue, object newValue) : base(propertyName)
+		public PropertyChangingEventArgsEx(string propertyName, object? oldValue, object? newValue) : base(propertyName)
 		{
 			OldValue = oldValue;
 			NewValue = newValue;

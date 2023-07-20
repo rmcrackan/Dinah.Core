@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 
+#nullable enable
 namespace Dinah.Core.IO
 {
     // from: https://stackoverflow.com/a/18727100
@@ -13,7 +14,7 @@ namespace Dinah.Core.IO
         //public MultiTextWriter(IEnumerable<TextWriter> writers) => this.writers = writers.ToList();
         public MultiTextWriter(params TextWriter[] writers) => this.writers = writers;
 
-        public override void WriteLine(string value)
+        public override void WriteLine(string? value)
         {
             foreach (var writer in writers)
                 writer.WriteLine(value);
@@ -25,7 +26,7 @@ namespace Dinah.Core.IO
                 writer.Write(value);
         }
 
-        public override void Write(string value)
+        public override void Write(string? value)
         {
             foreach (var writer in writers)
                 writer.Write(value);

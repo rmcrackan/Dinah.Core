@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
+#nullable enable
 namespace Dinah.Core.Net.Http
 {
 	public class DownloadProgress
@@ -19,18 +17,22 @@ namespace Dinah.Core.Net.Http
 
 	public class HttpBody
 	{
-		public HttpContent Content { get; private init; }
+		required public HttpContent Content { get; init; }
 
-		public static implicit operator HttpBody(JObject jObj)
+		[return: NotNullIfNotNull(nameof(jObj))]
+		public static implicit operator HttpBody?(JObject? jObj)
 			=> jObj is null ? null : new() { Content = new StringContent(jObj.ToString(), System.Text.Encoding.UTF8, "application/json") };
 
-		public static implicit operator HttpBody(XElement xml)
+		[return: NotNullIfNotNull(nameof(xml))]
+		public static implicit operator HttpBody?(XElement? xml)
 			=> xml is null ? null : new() { Content = new StringContent(xml.ToString(SaveOptions.DisableFormatting), System.Text.Encoding.UTF8, "application/xml") };
 
-		public static implicit operator HttpBody(Dictionary<string,string> dictionary)
+		[return: NotNullIfNotNull(nameof(dictionary))]
+		public static implicit operator HttpBody?(Dictionary<string,string>? dictionary)
 			=> dictionary is null ? null : new() { Content = new FormUrlEncodedContent(dictionary) };
 
-		public static implicit operator HttpBody(HttpContent content)
+		[return: NotNullIfNotNull(nameof(content))]
+		public static implicit operator HttpBody?(HttpContent? content)
 			=> content is null ? null : new HttpBody { Content = content };
 	}
 
@@ -58,7 +60,7 @@ namespace Dinah.Core.Net.Http
 					.Select(c => c.Trim())
 					.ToList();
 				var key = kvp[0];
-				var value = (kvp.Count == 2) ? kvp[1] : null;
+				var value = (kvp.Count == 2) ? kvp[1] : "";
 				switch (key.ToLower())
 				{
 					case "secure":
@@ -101,7 +103,7 @@ namespace Dinah.Core.Net.Http
 			//
 			var str = await content.ReadAsStringAsync();
 			var nameValueCollection = System.Web.HttpUtility.ParseQueryString(str);
-			var dic = nameValueCollection.AllKeys.ToDictionary(k => k, k => nameValueCollection[k]);
+			var dic = nameValueCollection.AllKeys.OfType<string>().ToDictionary(k => k, k => nameValueCollection[k]);
 
 			var jObj = JObject.FromObject(dic);
 			var debugJson = jObj.ToString(Newtonsoft.Json.Formatting.Indented);
@@ -114,7 +116,7 @@ namespace Dinah.Core.Net.Http
 			this IHttpClientActions client,
 			string downloadUrl,
 			string destinationFilePath,
-			IProgress<DownloadProgress> progress = null)
+			IProgress<DownloadProgress>? progress = null)
 		{
 			downloadValidate(client, downloadUrl, destinationFilePath);
 
@@ -125,7 +127,7 @@ namespace Dinah.Core.Net.Http
 			this HttpClient client,
 			string downloadUrl,
 			string destinationFilePath,
-			IProgress<DownloadProgress> progress = null)
+			IProgress<DownloadProgress>? progress = null)
 		{
 			downloadValidate(client, downloadUrl, destinationFilePath);
 
@@ -145,12 +147,15 @@ namespace Dinah.Core.Net.Http
 			if (string.IsNullOrWhiteSpace(fileToWriteTo))
 				throw new ArgumentException(nameof(fileToWriteTo) + " may not be blank");
 		}
-		private static async Task<string> downloadAsync(HttpResponseMessage response, string destinationFilePath, IProgress<DownloadProgress> progress)
+		private static async Task<string> downloadAsync(HttpResponseMessage response, string destinationFilePath, IProgress<DownloadProgress>? progress)
 		{
 			response.EnsureSuccessStatusCode();
 
+			if (response?.Content?.Headers is null)
+				throw new HttpRequestException();
+
 			// if ContentDisposition.FileName specifies file extension, then keep param file path and name but use file extension from ContentDisposition.FileName
-			var headerFilename = response?.Content?.Headers?.ContentDisposition?.FileName;
+			var headerFilename = response.Content.Headers.ContentDisposition?.FileName;
 			if (!string.IsNullOrWhiteSpace(headerFilename))
 				destinationFilePath = Path.ChangeExtension(destinationFilePath, Path.GetExtension(headerFilename));
 

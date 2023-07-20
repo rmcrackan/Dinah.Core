@@ -56,7 +56,7 @@ namespace Dinah.Core
                     return true;
                 }
 
-                return Folder(System.IO.Path.GetDirectoryName(path));
+				return System.IO.Path.GetDirectoryName(path) is string dir && Folder(dir);
             }
 
             /// <summary>Platform agnostic. Open folder</summary>
@@ -83,8 +83,8 @@ namespace Dinah.Core
                     Arguments = path is null ? string.Empty : $"\"{path}\"",
                     UseShellExecute = false,
                 });
-                proc.WaitForExit();
-                return proc.ExitCode == 0;
+                proc?.WaitForExit();
+                return proc?.ExitCode == 0;
             }
         }
     }

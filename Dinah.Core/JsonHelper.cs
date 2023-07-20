@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+#nullable enable
 namespace Dinah.Core
 {
 	public static class JsonHelper
 	{
-		public static T FromJson<T>(string json, string jsonPath = null, JsonSerializerSettings jsonSerializerSettings = null)
+		public static T FromJson<T>(string json, string? jsonPath = null, JsonSerializerSettings? jsonSerializerSettings = null)
 		{
-			T instance;
+			T? instance;
 
 			if (jsonPath is null)
 				instance = JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
 			else
 			{
 				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				instance = JObject.Parse(json)
-					.SelectToken(jsonPath)
-					.ToObject<T>(serializer);
+                var token = JObject.Parse(json).SelectToken(jsonPath);
+				instance = token is null ? default : token.ToObject<T>(serializer);
 			}
 
 			if (instance is null)
@@ -27,10 +27,31 @@ namespace Dinah.Core
 			return instance;
 		}
 
+        public static T? GetValue<T>(this JObject jObject, string propertyName)
+        {
+			if (jObject?.GetValue(propertyName)?.Value<object>() is not object obj)
+				return default;
+
+			if (obj.GetType().IsAssignableTo(typeof(T))) return (T)obj;
+			if (obj is JObject jObject2) return jObject2.ToObject<T>();
+            if (obj is JValue jValue)
+			{
+				if (typeof(T).IsAssignableTo(typeof(Enum)))
+				{
+					return
+						Enum.TryParse(typeof(T), jValue.Value<string>(), out var enumVal)
+						? (T)enumVal
+						: Enum.GetValues(typeof(T)).Cast<T>().First();
+				}
+				return jValue.Value<T>();
+			}
+			throw new InvalidCastException($"{obj.GetType()} is not convertible to {typeof(T)}");
+		}
+
         /// <summary>
         /// Find a key containing all of these strings. Recursive search
         /// </summary>
-        public static JProperty Search(string jsonFilePath, IEnumerable<string> searchPieces)
+        public static JProperty? Search(string jsonFilePath, IEnumerable<string> searchPieces)
         {
             // SingleOrDefault: don't accidentally update more than intended
             var contents = File.ReadAllText(jsonFilePath);
