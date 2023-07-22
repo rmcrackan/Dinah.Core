@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 
+#nullable enable
 namespace Dinah.Core.StepRunner
 {
     public abstract class BaseStep
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         protected abstract bool RunRaw();
 
@@ -16,7 +17,7 @@ namespace Dinah.Core.StepRunner
 			var stopwatch = Stopwatch.StartNew();
 
 			bool success;
-			Exception exc = null;
+			Exception? exc = null;
 			try
 			{
 				success = RunRaw();
@@ -40,7 +41,7 @@ namespace Dinah.Core.StepRunner
 			Serilog.Log.Logger.Information($"Begin step '{Name}'");
 		}
 
-		protected void logEnd(bool success, TimeSpan elapsed, Exception exc)
+		protected void logEnd(bool success, TimeSpan elapsed, Exception? exc)
 		{
 			var logStart = $"End step '{Name}'. ";
 			var logEnd = $". Completed in {elapsed.GetTotalTimeFormatted()}";

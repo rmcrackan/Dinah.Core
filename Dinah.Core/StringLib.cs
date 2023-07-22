@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
+#nullable enable
 namespace Dinah.Core
 {
 	public static class StringLib
 	{
-		public static string ToBase64(string text)
+		[return: NotNullIfNotNull(nameof(text))]
+		public static string? ToBase64(string? text)
 		{
 			if (string.IsNullOrEmpty(text))
 				return text;
@@ -13,7 +16,8 @@ namespace Dinah.Core
 			return Convert.ToBase64String(textBytes);
 		}
 
-		public static string FromBase64(string base64EncodedText)
+		[return: NotNullIfNotNull(nameof(base64EncodedText))]
+		public static string? FromBase64(string? base64EncodedText)
 		{
 			if (string.IsNullOrEmpty(base64EncodedText))
 				return base64EncodedText;
@@ -22,7 +26,7 @@ namespace Dinah.Core
 		}
 
 		private static Regex regex { get; } = new Regex(@"(?<index>-?\d+\.?\d*)", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
-		public static float ExtractFirstNumber(string text)
+		public static float ExtractFirstNumber(string? text)
 			=> string.IsNullOrWhiteSpace(text) || !regex.IsMatch(text) || !float.TryParse(regex.Match(text).Groups["index"].ToString(), out var f)
 			? 0
 			: f;

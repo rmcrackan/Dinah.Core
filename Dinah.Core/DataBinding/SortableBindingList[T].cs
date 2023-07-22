@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 
+#nullable enable
 namespace Dinah.Core.DataBinding
 {
 	// see also notes in Libation/Source/_ARCHITECTURE NOTES.txt :: MVVM
@@ -10,16 +11,16 @@ namespace Dinah.Core.DataBinding
 	{
 		private bool isSorted;
 		private ListSortDirection listSortDirection;
-		private PropertyDescriptor propertyDescriptor;
+		private PropertyDescriptor? propertyDescriptor;
 
-		public SortableBindingList() : base(new List<T>()) { }
+		public SortableBindingList() { }
 		public SortableBindingList(IEnumerable<T> enumeration) : base(new List<T>(enumeration)) { }
 
 		private MemberComparer<T> Comparer { get; } = new();
 		protected override bool SupportsSortingCore => true;
 		protected override bool SupportsSearchingCore => true;
 		protected override bool IsSortedCore => isSorted;
-		protected override PropertyDescriptor SortPropertyCore => propertyDescriptor;
+		protected override PropertyDescriptor? SortPropertyCore => propertyDescriptor;
 		protected override ListSortDirection SortDirectionCore => listSortDirection;
 
 		protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
@@ -76,7 +77,7 @@ namespace Dinah.Core.DataBinding
 		{
 			int count = Count;
 
-			System.Collections.IComparer valueComparer = null;
+			System.Collections.IComparer? valueComparer = null;
 
 			for (int i = 0; i < count; ++i)
 			{

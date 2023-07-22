@@ -33,7 +33,7 @@ namespace Dinah.Core.Collections.Generic
         /// <returns>
         /// A System.Collections.Generic.Dictionary`2 that contains keys and values. The values within each group are in the same order as in source. Key conflicts are safely avoided.
         /// </returns>
-        public static Dictionary<TKey, TSource> ToDictionarySafe<TKey, TSource>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, WinnerEnum winner = WinnerEnum.FirstInWins)
+        public static Dictionary<TKey, TSource> ToDictionarySafe<TKey, TSource>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, WinnerEnum winner = WinnerEnum.FirstInWins) where TKey : notnull
         {
             var dic = new Dictionary<TKey, TSource>();
 

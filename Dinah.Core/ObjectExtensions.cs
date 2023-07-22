@@ -4,11 +4,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
+#nullable enable
 namespace Dinah.Core
 {
 	public static class ObjectExtensions
 	{
-		public static string GetDescription<T>(this T e)
+		public static string? GetDescription<T>(this T e)
 		{
 			// identical
 			//en.GetType().IsDefined(typeof(FlagsAttribute), false)
@@ -26,18 +27,20 @@ namespace Dinah.Core
 			return e.getDescription();
 		}
 
-		private static string getFlagDescriptions(this Enum en)
+		private static string? getFlagDescriptions(this Enum en)
 			=> Enum.GetValues(en.GetType()).Cast<Enum>()
 				.Where(enumValue => en.HasFlag(enumValue) && Convert.ToInt64(enumValue) > 0)
 				.Select(enumValue => enumValue.getDescription())
 				.Aggregate((a, b) => $"{a ?? "[null]"} | {b ?? "[null]"}");
 
-		private static string getDescription<T>(this T e)
+		private static string? getDescription<T>(this T e)
 		{
+			if (e?.ToString() is not string stringVal) return null;
+
 			var attribute =
 				e.GetType()
 				.GetTypeInfo()
-				.GetMember(e.ToString())
+				.GetMember(stringVal)
 				.FirstOrDefault(member => member.MemberType == MemberTypes.Field)
 				?.GetCustomAttributes(typeof(DescriptionAttribute), false)
 				.SingleOrDefault()

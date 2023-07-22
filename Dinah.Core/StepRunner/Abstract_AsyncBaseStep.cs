@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
+#nullable enable
 namespace Dinah.Core.StepRunner
 {
 	public abstract class AsyncBaseStep : BaseStep
@@ -14,7 +15,7 @@ namespace Dinah.Core.StepRunner
 			var stopwatch = Stopwatch.StartNew();
 
 			bool success;
-			Exception exc = null;
+			Exception? exc = null;
 			try
 			{
 				success = await RunRawAsync();

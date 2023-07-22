@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
 namespace Dinah.Core
 {
     //
@@ -29,25 +30,9 @@ namespace Dinah.Core
 
     public static class EnumExtensions
     {
-        /// <summary>
-        /// Gets all items for this enum type. Value param itself does nothing except provide the correct type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value">One of the values of this enum type.</param>
-        /// <returns></returns>
-        public static IEnumerable<T> GetValues<T>(this Enum value) => Enum.GetValues(typeof(T)).Cast<T>();
-
-        /// <summary>
-        /// Gets all items for an enum type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IEnumerable<T> GetValues<T>() where T : struct => Enum.GetValues(typeof(T)).Cast<T>();
-
-
         #region object/instance methods. flags
         // https://stackoverflow.com/a/22132996
-        public static IEnumerable<T> ToValues<T>(this T flags) where T : struct, IConvertible
+        public static IEnumerable<T> ToValues<T>(this T flags) where T : struct, Enum
 		{
 			if (!typeof(T).IsEnum)
 				throw new ArgumentException("T must be an enumerated type.");
@@ -88,8 +73,8 @@ namespace Dinah.Core
             }
         }
 
-        public static T IncludeOrRemove<T>(this Enum value, T flag, bool addRemoveFlag)
-        {
+        public static T IncludeOrRemove<T>(this T value, T flag, bool addRemoveFlag) where T : struct, Enum
+		{
             if (addRemoveFlag)
                 return value.Include(flag);
             else
@@ -97,8 +82,8 @@ namespace Dinah.Core
         }
 
         /// <summary>Includes an enumerated type and returns the new value</summary>
-        public static T Include<T>(this Enum value, T append)
-        {
+        public static T Include<T>(this T value, T append) where T : struct, Enum
+		{
             Type type = value.GetType();
 
             //determine the values
@@ -109,13 +94,15 @@ namespace Dinah.Core
             else if (parsed.Unsigned is ulong)
                 result = Convert.ToUInt64(value) | (ulong)parsed.Unsigned;
 
-            //return the final value
-            return (T)Enum.Parse(type, result.ToString());
-        }
+
+			//return the final value
+			return Enum.Parse<T>(result.ToString() ?? "");
+		}
+
 
         /// <summary>Removes an enumerated type and returns the new value</summary>
-        public static T Remove<T>(this Enum value, T remove)
-        {
+        public static T Remove<T>(this T value, T remove) where T : struct, Enum
+		{
             Type type = value.GetType();
 
             //determine the values
@@ -127,12 +114,12 @@ namespace Dinah.Core
                 result = Convert.ToUInt64(value) & ~(ulong)parsed.Unsigned;
 
             //return the final value
-            return (T)Enum.Parse(type, result.ToString());
+            return Enum.Parse<T>(result.ToString() ?? "");
         }
 
         /// <summary>Checks if an enumerated type is missing a value</summary>
-        public static bool MissingFlag<T>(this T obj, Enum value) where T : struct, IConvertible
-            => !(Enum.Parse(typeof(T), obj.ToString()) as Enum).HasFlag(value);
+        public static bool MissingFlag<T>(this T obj, T value) where T : Enum
+            => !obj.HasFlag(value);
 
         //class to simplfy narrowing values between a ulong and long since either value should cover any lesser value
         private class _Value
@@ -144,7 +131,7 @@ namespace Dinah.Core
             public long? Signed;
             public ulong? Unsigned;
 
-            public _Value(object value, Type type)
+            public _Value(object? value, Type type)
             {
                 //make sure it is even an enum to work with
                 if (!type.IsEnum)

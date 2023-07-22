@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 
+#nullable enable
 namespace Dinah.Core.IO
 {
     public class FileLoggerTextWriter : TextWriter
@@ -10,9 +11,9 @@ namespace Dinah.Core.IO
 
         public FileLoggerTextWriter(FileLogger logger1) => this.logger1 = logger1;
 
-        public override void WriteLine(string value) => logger1.TextWriterLogger(value);
+        public override void WriteLine(string? value) => logger1.TextWriterLogger(value);
         public override void Write(char value) => logger1.TextWriterLogger(value.ToString());
-        public override void Write(string value) => logger1.TextWriterLogger(value);
+        public override void Write(string? value) => logger1.TextWriterLogger(value);
         public override Encoding Encoding => Encoding.ASCII;
     }
 }

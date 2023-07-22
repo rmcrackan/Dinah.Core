@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+#nullable enable
 // FROM
 // https://lostechies.com/jimmybogard/2008/08/12/enumeration-classes/
 // tarantino / src / Tarantino.DatabaseManager.Core / Enumeration.cs
@@ -49,7 +50,7 @@ namespace Dinah.Core
 				cache.Add(t, properties.Concat(fields));
 			}
 
-			return cache[t] as IEnumerable<T>;
+			return (IEnumerable<T>)cache[t];
 		}
 
 		//public static IEnumerable GetAll(Type type)
@@ -59,7 +60,7 @@ namespace Dinah.Core
 		//        yield return info.GetValue(Activator.CreateInstance(type));
 		//}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (!(obj is Enumeration otherValue))
 				return false;
@@ -84,6 +85,6 @@ namespace Dinah.Core
 			=> GetAll<T>().FirstOrDefault(predicate)
 			?? throw new ApplicationException($"'{value}' is not a valid {description} in {typeof(T)}");
 
-		public virtual int CompareTo(object obj) => Value.CompareTo(((Enumeration)obj).Value);
+		public virtual int CompareTo(object? obj) => Value.CompareTo((obj as Enumeration)?.Value);
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
+#nullable enable
 namespace Dinah.Core
 {
 	public static class SystemExtensions
@@ -10,7 +12,8 @@ namespace Dinah.Core
 		public static string ToRfc3339String(this DateTime dateTime)
 			=> System.Xml.XmlConvert.ToString(dateTime, System.Xml.XmlDateTimeSerializationMode.Utc);
 
-		public static string GetOrigin(this Uri uri)
-			=> uri.GetLeftPart(UriPartial.Authority);
+		[return: NotNullIfNotNull(nameof(uri))]
+		public static string? GetOrigin(this Uri? uri)
+			=> uri?.GetLeftPart(UriPartial.Authority);
 	}
 }

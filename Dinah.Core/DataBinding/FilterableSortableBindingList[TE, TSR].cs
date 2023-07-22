@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
+#nullable enable
 namespace Dinah.Core.DataBinding
 {
 	/// <summary>
@@ -23,17 +24,17 @@ namespace Dinah.Core.DataBinding
 	/// <typeparam name="TSearchResults"></typeparam>
 	public class FilterableSortableBindingList<TEntry, TSearchResults> : BindingList<TEntry>, IBindingListView where TEntry : IMemberComparable
 	{
-		public Func<string, TSearchResults> GetSearchResults { get; set; }
-		public Func<TSearchResults, TEntry, bool> SearchResultsContain { get; set; }
+		public Func<string?, TSearchResults>? GetSearchResults { get; set; }
+		public Func<TSearchResults, TEntry, bool>? SearchResultsContain { get; set; }
 
 		/// <summary>
 		/// Items that were removed from the base list due to filtering
 		/// </summary>
 		private readonly List<TEntry> FilterRemoved = new();
-		private string FilterString;
+		private string? FilterString;
 		private bool isSorted;
 		private ListSortDirection listSortDirection;
-		private PropertyDescriptor propertyDescriptor;
+		private PropertyDescriptor? propertyDescriptor;
 		private readonly string DefaultSortProperty;
 		private readonly ListSortDirection DefaultSearchDirection;
 
@@ -50,13 +51,13 @@ namespace Dinah.Core.DataBinding
 		protected override bool SupportsSortingCore => true;
 		protected override bool SupportsSearchingCore => true;
 		protected override bool IsSortedCore => isSorted;
-		protected override PropertyDescriptor SortPropertyCore => propertyDescriptor;
+		protected override PropertyDescriptor? SortPropertyCore => propertyDescriptor;
 		protected override ListSortDirection SortDirectionCore => listSortDirection;
 
 		/// <returns>All items in the list, including those filtered out.</returns>
 		public List<TEntry> AllItems() => Items.Concat(FilterRemoved).ToList();
 		public bool SupportsFiltering => true;
-		public string Filter { get => FilterString; set => ApplyFilter(value); }
+		public string? Filter { get => FilterString; set => ApplyFilter(value); }
 
 		#region Unused - Advanced Filtering
 		public bool SupportsAdvancedSorting => false;
@@ -92,9 +93,9 @@ namespace Dinah.Core.DataBinding
 			itemsList.AddRange(sortedItems);
 		}
 
-		private void ApplyFilter(string filterString)
+		private void ApplyFilter(string? filterString)
 		{
-			if (SearchResultsContain is null || SearchResultsContain is null)
+			if (SearchResultsContain is null || GetSearchResults is null)
 				throw new NotSupportedException($"{nameof(GetSearchResults)} and {nameof(SearchResultsContain)} must be set before filtering.");
 
 			if (filterString != FilterString)
@@ -157,7 +158,7 @@ namespace Dinah.Core.DataBinding
 		{
 			int count = Count;
 
-			System.Collections.IComparer valueComparer = null;
+			System.Collections.IComparer? valueComparer = null;
 
 			for (int i = 0; i < count; ++i)
 			{

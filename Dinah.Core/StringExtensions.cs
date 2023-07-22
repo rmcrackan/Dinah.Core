@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#nullable enable
 namespace Dinah.Core
 {
 	public static class StringExtensions
 	{
-		public static bool EqualsInsensitive(this string str1, string str2) => string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase);
+		public static bool EqualsInsensitive(this string? str1, string? str2) => string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase);
 
 		public static bool StartsWithInsensitive(this string str1, string str2) => str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
 
@@ -21,7 +23,8 @@ namespace Dinah.Core
 		/// <summary>return qty and noun</summary>
 		public static string PluralizeWithCount(this string str, int qty) => new Pluralize.NET.Pluralizer().Format(str, qty, true);
 
-		public static string FirstCharToUpper(this string str)
+		[return: NotNullIfNotNull(nameof(str))]
+		public static string? FirstCharToUpper(this string? str)
 		{
 			if (string.IsNullOrWhiteSpace(str))
 				return str;
@@ -32,7 +35,8 @@ namespace Dinah.Core
 			return char.ToUpper(str[0]) + str.Substring(1);
 		}
 
-		public static string Truncate(this string str, int limit)
+		[return: NotNullIfNotNull(nameof(str))]
+		public static string? Truncate(this string? str, int limit)
 			=> str is null ? null
 			: str.Length.In(0, 1) ? str
 			: limit < 1 ? str.Substring(0, 1)
@@ -41,7 +45,8 @@ namespace Dinah.Core
 
 		public static string SurroundWithQuotes(this string str) => "\"" + str + "\"";
 
-		public static string ExtractString(this string haystack, string before, int needleLength)
+
+		public static string? ExtractString(this string? haystack, string? before, int needleLength)
 		{
 			if (string.IsNullOrWhiteSpace(haystack))
 				return null;
@@ -65,7 +70,7 @@ namespace Dinah.Core
 		}
 
 		/// <summary>A very forgiving interpretation of a string to a boolean.</summary>
-		public static bool ToBoolean(this string str)
+		public static bool ToBoolean(this string? str)
 			=> str is null ? false : str.Trim().ToLower(CultureInfo.InvariantCulture).In("y", "1", "t", "true");
 
 		private const string _validHexChars = "0123456789ABCDEFabcdef";
@@ -78,7 +83,7 @@ namespace Dinah.Core
 		///   If the string contains non-hexadecimal characters (except for leading or trailing white space, which is ignored), or if it 
 		///   does not contain an even number of characters (since 2 characters are needed to represent each byte).
 		/// </exception>
-		public static byte[] HexStringToByteArray(this string hexValue)
+		public static byte[] HexStringToByteArray([NotNull] this string? hexValue)
 		{
 			hexValue = hexValue?.Trim();
 
@@ -210,10 +215,10 @@ namespace Dinah.Core
 			return output;
 		}
 
-		public static string DefaultIfNullOrWhiteSpace(this string value, string defaultValue)
+		public static string DefaultIfNullOrWhiteSpace(this string? value, string defaultValue)
 			=> string.IsNullOrWhiteSpace(value) ? defaultValue : value;
 		
-		public static string DefaultIfNullOrEmpty(this string value, string defaultValue)
+		public static string DefaultIfNullOrEmpty(this string? value, string defaultValue)
 			=> string.IsNullOrEmpty(value) ? defaultValue : value;
 
 		/// <summary>
