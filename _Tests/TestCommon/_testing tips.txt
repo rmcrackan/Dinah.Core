@@ -6,9 +6,17 @@ attribute directive on host project
 [assembly: InternalsVisibleTo("YourSolution.Tests")]
 
 
-unit testing with httpclient
+Migration from Moq to NSubstitute
+https://gist.github.com/AlbertoMonteiro/daeab549df57727ddaa7
+
+
+unit testing with httpclient (with FakeItEasy)
 https://thomaslevesque.com/2016/12/08/fun-with-the-httpclient-pipeline/
 
 
-Migration from Moq to NSubstitute
-https://gist.github.com/AlbertoMonteiro/daeab549df57727ddaa7
+unit testing with httpclient (with Moq)
+https://gingter.org/2018/07/26/how-to-mock-httpclient-in-your-net-c-unit-tests/
+
+
+Mocking the HttpClient in .NET Core (with NSubstitute)
+https://dev.to/n_develop/mocking-the-httpclient-in-net-core-with-nsubstitute-k4j
