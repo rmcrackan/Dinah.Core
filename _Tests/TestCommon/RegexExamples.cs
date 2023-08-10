@@ -1,19 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using TestCommon;
+﻿using System.Text.RegularExpressions;
 
 namespace RegexExamples
 {
@@ -45,8 +30,7 @@ namespace RegexExamples
 		[DataRow("X.5", 5f)] // no leading 0
 		public void get_first_number(string input, float expected)
 		{
-			var pattern = @"^\D*(?<index>\d+\.?\d*)";
-			var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+			var regex = new Regex(@"^\D*(?<index>\d+\.?\d*)", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 			var match = regex.Match(input);
 			var mStr = match.Groups["index"].ToString();

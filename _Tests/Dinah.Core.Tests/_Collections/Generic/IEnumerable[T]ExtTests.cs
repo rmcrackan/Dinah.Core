@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Dinah.Core;
-using Dinah.Core.Collections.Generic;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Protected;
-
-namespace IEnumerable_T_ExtTests
+﻿namespace IEnumerable_T_ExtTests
 {
     [TestClass]
     public class ToDictionarySafe

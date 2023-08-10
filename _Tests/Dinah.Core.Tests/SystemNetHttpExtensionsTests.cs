@@ -1,19 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Dinah.Core;
-using Dinah.Core.Net.Http;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using TestCommon;
-
-namespace SystemNetHttpExtensionsTests
+﻿namespace SystemNetHttpExtensionsTests
 {
     [TestClass]
     public class AddContent
@@ -172,14 +157,14 @@ namespace SystemNetHttpExtensionsTests
         public async Task null_params_throw()
         {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync((IHttpClientActions)null, "url", "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<IHttpClientActions>().Object, null, "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<IHttpClientActions>().Object, "url", null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(Substitute.For<IHttpClientActions>(), null, "file"));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(Substitute.For<IHttpClientActions>(), "url", null));
         }
 
         [TestMethod]
         public async Task blank_params_throw()
         {
-            var mock = new Mock<IHttpClientActions>().Object;
+            var mock = Substitute.For<IHttpClientActions>();
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "   ", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "url", ""));
@@ -194,14 +179,14 @@ namespace SystemNetHttpExtensionsTests
         public async Task null_params_throw()
         {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync((HttpClient)null, "url", "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<HttpClient>().Object, null, "file"));
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(new Mock<HttpClient>().Object, "url", null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(Substitute.For<HttpClient>(), null, "file"));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => SystemNetHttpExtensions.DownloadFileAsync(Substitute.For<HttpClient>(), "url", null));
         }
 
         [TestMethod]
         public async Task blank_params_throw()
         {
-            var mock = new Mock<HttpClient>().Object;
+            var mock = Substitute.For<HttpClient>();
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "   ", "file"));
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => SystemNetHttpExtensions.DownloadFileAsync(mock, "url", ""));

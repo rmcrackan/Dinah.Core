@@ -1,8 +1,4 @@
-﻿using System;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Dinah.Core.Tests
+﻿namespace Dinah.Core.Tests
 {
     class MyGenericBase<T> { }
     class MyGenericBaseTwo<T> : MyGenericBase<T> { }

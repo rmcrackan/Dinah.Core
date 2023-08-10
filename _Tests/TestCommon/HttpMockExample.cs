@@ -1,11 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 
 namespace TestCommon
@@ -27,7 +20,7 @@ namespace TestCommon
         {
             var message = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Get, path));
             var str = await message.Content.ReadAsStringAsync();
-            var objects = Newtonsoft.Json.JsonConvert.DeserializeObject<ReturnType>(str);
+            var objects = JsonConvert.DeserializeObject<ReturnType>(str);
             return objects;
         }
     }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 
 namespace MoqExamples
@@ -69,7 +64,7 @@ namespace MoqExamples
         public async Task complex_sequence()
         {
             // ARRANGE mock
-            var handlerMock = new Mock<System.Net.Http.HttpMessageHandler>(MockBehavior.Strict);
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             handlerMock
                 .Protected()
                 .Setup("Dispose", ItExpr.IsAny<bool>())
@@ -77,27 +72,27 @@ namespace MoqExamples
 
             handlerMock
                 .Protected()
-                .SetupSequence<Task<System.Net.Http.HttpResponseMessage>>(
+                .SetupSequence<Task<HttpResponseMessage>>(
                     "SendAsync",
-                    ItExpr.IsAny<System.Net.Http.HttpRequestMessage>(),
+                    ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>()
                 )
                 // 1st handler call: throws
                 .ThrowsAsync(new TimeoutException())
                 //  2nd handler call: passes
-                .ReturnsAsync(new System.Net.Http.HttpResponseMessage()
+                .ReturnsAsync(new HttpResponseMessage()
                 {
                     StatusCode = System.Net.HttpStatusCode.ServiceUnavailable,
-                    Content = new System.Net.Http.StringContent("foo bar")
+                    Content = new StringContent("foo bar")
                 })
                 //  3rd handler call: throws
                 .ThrowsAsync(new ArgumentException())
                 ;
 
-            var client = new System.Net.Http.HttpClient(handlerMock.Object);
-            async Task<System.Net.Http.HttpResponseMessage> callClient()
+            var client = new HttpClient(handlerMock.Object);
+            async Task<HttpResponseMessage> callClient()
                 => await client.SendAsync(
-                    new System.Net.Http.HttpRequestMessage(
+                    new HttpRequestMessage(
                         System.Net.Http.HttpMethod.Get,
                         new Uri("http://test.com")
                         )

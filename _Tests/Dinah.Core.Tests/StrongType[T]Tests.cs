@@ -1,11 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dinah.Core;
-using FluentAssertions;
-
-namespace StrongTypeTests
+﻿namespace StrongTypeTests
 {
     [TestClass]
     public class equality

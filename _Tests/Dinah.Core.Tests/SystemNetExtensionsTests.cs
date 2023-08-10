@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Dinah.Core;
-using Dinah.Core.Net;
-using Dinah.Core.Net.Http;
-
-namespace SystemNetExtensionsTests
+﻿namespace SystemNetExtensionsTests
 {
     [TestClass]
     public class EnumerateCookies

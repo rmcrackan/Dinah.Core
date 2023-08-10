@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace PluralizerTests
+﻿namespace PluralizerTests
 {
 	[TestClass]
 	public class Pluralize_NET

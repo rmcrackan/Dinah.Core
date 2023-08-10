@@ -1,29 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using TestCommon;
-
-// Uri stuff is way too nuanced to keep in my head
+﻿// Uri stuff is way too nuanced to keep in my head
 namespace UriExamples
 {
 	[TestClass]
 	public class UriTesting
 	{
-		Uri http = new Uri("http://www.a.com");
-		Uri https = new Uri("https://www.a.com");
-		Uri slash = new Uri("http://www.a.com/");
-		Uri fragment = new Uri("http://www.a.com/#z");
-		Uri param = new Uri("http://www.a.com/?z=1");
+		Uri http = new("http://www.a.com");
+		Uri https = new("https://www.a.com");
+		Uri slash = new("http://www.a.com/");
+		Uri fragment = new("http://www.a.com/#z");
+		Uri param = new("http://www.a.com/?z=1");
 
 		[TestMethod]
 		public void compare_equality()

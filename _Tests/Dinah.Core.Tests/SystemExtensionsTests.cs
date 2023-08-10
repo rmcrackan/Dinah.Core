@@ -1,11 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dinah.Core;
-using FluentAssertions;
-
-namespace SystemExtensionsTests
+﻿namespace SystemExtensionsTests
 {
     [TestClass]
     public class ToUnixTimeStamp
