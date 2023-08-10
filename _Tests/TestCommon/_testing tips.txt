@@ -8,3 +8,7 @@ attribute directive on host project
 
 unit testing with httpclient
 https://thomaslevesque.com/2016/12/08/fun-with-the-httpclient-pipeline/
+
+
+Migration from Moq to NSubstitute
+https://gist.github.com/AlbertoMonteiro/daeab549df57727ddaa7
