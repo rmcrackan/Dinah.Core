@@ -7,7 +7,9 @@ attribute directive on host project
 
 
 Migration from Moq to NSubstitute
+https://github.com/AlbertoMonteiro/moq-to-nsubstitute/tree/main
 https://gist.github.com/AlbertoMonteiro/daeab549df57727ddaa7
+https://itnext.io/how-to-migrate-from-moq-to-nsubstitute-cdb6a80404d
 
 
 unit testing with httpclient (with FakeItEasy)
