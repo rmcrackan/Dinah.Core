@@ -10,17 +10,15 @@ Migration from Moq to NSubstitute
 https://github.com/AlbertoMonteiro/moq-to-nsubstitute/tree/main
 This one is on medium.com. Open in incognito mode to read the whole article.
   https://itnext.io/how-to-migrate-from-moq-to-nsubstitute-cdb6a80404d
+
+
 Mocking protected virtual method:
-  https://github.com/rmcrackan/AudibleApi/blob/master/_Tests/AudibleApi.Tests/HttpMock.cs
-  https://www.reddit.com/r/csharp/comments/15qu4p4/can_nsubstitute_mock_protected_methods/jwipdpv/
+https://github.com/rmcrackan/AudibleApi/blob/master/_Tests/AudibleApi.Tests/HttpMock.cs
+https://www.reddit.com/r/csharp/comments/15qu4p4/can_nsubstitute_mock_protected_methods/jwipdpv/
 
 
-unit testing with httpclient (with FakeItEasy)
-https://thomaslevesque.com/2016/12/08/fun-with-the-httpclient-pipeline/
-
-
-unit testing with httpclient (with Moq)
-https://gingter.org/2018/07/26/how-to-mock-httpclient-in-your-net-c-unit-tests/
+NSubstitute extensions: ReturnsAsync , ThrowsAsync
+https://gist.github.com/AlbertoMonteiro/daeab549df57727ddaa7?permalink_comment_id=4657490#gistcomment-4657490
 
 
 Mocking the HttpClient in .NET Core (with NSubstitute)
