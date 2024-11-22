@@ -3,9 +3,9 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>8.0.0.1</Version>
+    <Version>9.0.0.1</Version>
     <ApplicationIcon />
     <StartupObject />
     <AllowedOutputExtensionsInPackageBuildOutputFolder>
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dinah.Core" Version="8.0.0.1" />
+    <PackageReference Include="Dinah.Core" Version="9.0.0.1" />
   </ItemGroup>
 
 </Project>
