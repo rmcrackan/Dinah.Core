@@ -33,7 +33,12 @@ namespace Dinah.Core.IO
 		public string Path { get; }
 		public string? JsonPath { get; }
 
-		private static ConcurrentDictionary<string, object> _locks { get; } = [];
+		class Locker
+        {
+            public object locker = new();
+            public DateTime lastWrite = DateTime.MinValue;
+        }
+        private static ConcurrentDictionary<string, Locker> _lockers { get; } = [];
 
 		/// <summary>uses path. create file if doesn't yet exist</summary>
 		protected JsonFilePersister(T target, string path, string? jsonPath = null)
@@ -44,7 +49,7 @@ namespace Dinah.Core.IO
 			validatePath(path);
 
 			Path = path;
-			_locks.TryAdd(Path, new());
+			_lockers.TryAdd(Path, new());
 
 			if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
@@ -58,7 +63,7 @@ namespace Dinah.Core.IO
 			validatePath(path);
 
 			Path = path;
-            _locks.TryAdd(Path, new());
+            _lockers.TryAdd(Path, new());
 
             if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
@@ -118,8 +123,7 @@ namespace Dinah.Core.IO
 			try
 			{
 				OnSaving();
-				var locker = _locks[Path];
-                lock (locker)
+                lock (_lockers[Path].locker)
                     saveJson();
             }
 			finally
@@ -166,14 +170,13 @@ namespace Dinah.Core.IO
 			File.WriteAllText(Path, json);
 		}
 
-		private static DateTime lastWrite = DateTime.MinValue;
 		// prevent multiple writes in quick succession
 		private void preventRapidWrites()
 		{
-			if (DateTime.UtcNow - lastWrite < TimeSpan.FromMilliseconds(100))
+			if (DateTime.UtcNow - _lockers[Path].lastWrite < TimeSpan.FromMilliseconds(100))
 				Thread.Sleep(100);
 
-			lastWrite = DateTime.UtcNow;
+            _lockers[Path].lastWrite = DateTime.UtcNow;
 		}
 
 		private void _dispose()
