@@ -32,20 +32,20 @@ namespace Dinah.Core.IO
 		public string Path { get; }
 		public string? JsonPath { get; }
 
-		private static Dictionary<string, ReaderWriterLockSlim> _locks = [];
+		private static Dictionary<string, object> _locks = [];
 
-        /// <summary>uses path. create file if doesn't yet exist</summary>
-        protected JsonFilePersister(T target, string path, string? jsonPath = null)
+		/// <summary>uses path. create file if doesn't yet exist</summary>
+		protected JsonFilePersister(T target, string path, string? jsonPath = null)
 		{
 			Target = target ?? throw new ArgumentNullException(nameof(target));
 			Target.Updated += saveFile;
 
 			validatePath(path);
 
-            Path = path;
-			_locks.TryAdd(Path, new ReaderWriterLockSlim());
+			Path = path;
+			_locks.TryAdd(Path, new());
 
-            if (!string.IsNullOrWhiteSpace(jsonPath))
+			if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
 
 			saveFile(this, EventArgs.Empty);
@@ -71,9 +71,9 @@ namespace Dinah.Core.IO
 			var target = JsonHelper.FromJson<T>(json, JsonPath, GetSerializerSettings());
 
 			return target ?? throw new FormatException("File was not in a format able to be imported");
-        }
+		}
 
-        protected virtual JsonSerializerSettings? GetSerializerSettings() => null;
+		protected virtual JsonSerializerSettings? GetSerializerSettings() => null;
 
 		private void validatePath(string path)
 		{
@@ -114,68 +114,67 @@ namespace Dinah.Core.IO
 			}
 
 			try
-            {
-                OnSaving();
-				var readWriteLock = _locks[Path];
-                readWriteLock.EnterWriteLock();
-                try
-                {
-					saveJson();
-                }
-                finally
-                {
-                    readWriteLock.ExitWriteLock();
-                }
+			{
+				OnSaving();
+				var locker = _locks[Path];
+                lock (locker)
+                    saveJson();
             }
-            finally
-            {
-                OnSaved();
-            }
+			finally
+			{
+				OnSaved();
+			}
 		}
 
 		private void saveJson()
-        {
-            if (JsonPath is null)
-            {
+		{
+			if (JsonPath is null)
+			{
 				serializeAndWrite(Target);
-                return;
-            }
+				return;
+			}
 
-            // path must
-            // - exist
-            // - have valid jsonPath match
+			// path must
+			// - exist
+			// - have valid jsonPath match
 
-            var contents = File.ReadAllText(Path);
-            var allToken = JObject.Parse(contents);
-            var pathToken = allToken.SelectToken(JsonPath) ?? throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
+			var contents = File.ReadAllText(Path);
+			var allToken = JObject.Parse(contents);
+			var pathToken = allToken.SelectToken(JsonPath) ?? throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
 
-            // load existing identity into JObject
-            var serializer = JsonSerializer.Create(GetSerializerSettings());
-            var idJObj = JObject.FromObject(Target, serializer);
+			// load existing identity into JObject
+			var serializer = JsonSerializer.Create(GetSerializerSettings());
+			var idJObj = JObject.FromObject(Target, serializer);
 
-            // replace. this propgates to 'allToken'
-            pathToken.Replace(idJObj);
+			// replace. this propgates to 'allToken'
+			pathToken.Replace(idJObj);
 
 			serializeAndWrite(allToken);
-        }
+		}
+
+		private void serializeAndWrite(object payload)
+		{
+			// prevent invalid writes
+			var json = JsonConvert.SerializeObject(payload, Formatting.Indented, GetSerializerSettings());
+			if (string.IsNullOrWhiteSpace(json))
+				throw new JsonSerializationException("Could not write json file. Empty payload");
+
+			preventRapidWrites();
+
+			File.WriteAllText(Path, json);
+		}
 
 		private static DateTime lastWrite = DateTime.MinValue;
-        private void serializeAndWrite(object payload)
-        {
-            // prevent invalid writes
-            var json = JsonConvert.SerializeObject(payload, Formatting.Indented, GetSerializerSettings());
-			if (string.IsNullOrWhiteSpace(json))
-                throw new JsonSerializationException("Could not write json file. Empty payload");
-
-            // prevent multiple writes in quick succession
-            if (DateTime.UtcNow - lastWrite < TimeSpan.FromMilliseconds(100))
-                Thread.Sleep(100);
+		// prevent multiple writes in quick succession
+		private void preventRapidWrites()
+		{
+			if (DateTime.UtcNow - lastWrite < TimeSpan.FromMilliseconds(100))
+				Thread.Sleep(100);
 
 			lastWrite = DateTime.UtcNow;
-            File.WriteAllText(Path, json);
-        }
+		}
 
-        private void _dispose()
+		private void _dispose()
 			=> Target.Updated -= saveFile;
 
 		#region IDisposable pattern
