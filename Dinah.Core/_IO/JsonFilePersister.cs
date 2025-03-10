@@ -35,8 +35,8 @@ namespace Dinah.Core.IO
 
 		class Locker
         {
-            public object locker = new();
-            public DateTime lastWrite = DateTime.MinValue;
+            public object locker { get; } = new();
+            public DateTime lastWrite { get; set; }
         }
         private static ConcurrentDictionary<string, Locker> _lockers { get; } = [];
 
