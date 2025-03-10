@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 
 #nullable enable
 namespace Dinah.Core.IO
@@ -32,7 +33,7 @@ namespace Dinah.Core.IO
 		public string Path { get; }
 		public string? JsonPath { get; }
 
-		private static Dictionary<string, object> _locks = [];
+		private static ConcurrentDictionary<string, object> _locks { get; } = [];
 
 		/// <summary>uses path. create file if doesn't yet exist</summary>
 		protected JsonFilePersister(T target, string path, string? jsonPath = null)
@@ -57,8 +58,9 @@ namespace Dinah.Core.IO
 			validatePath(path);
 
 			Path = path;
+            _locks.TryAdd(Path, new());
 
-			if (!string.IsNullOrWhiteSpace(jsonPath))
+            if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
 
 			Target = loadFromFile();
