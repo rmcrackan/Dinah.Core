@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 #nullable enable
@@ -35,17 +32,20 @@ namespace Dinah.Core.IO
 		public string Path { get; }
 		public string? JsonPath { get; }
 
-		/// <summary>uses path. create file if doesn't yet exist</summary>
-		protected JsonFilePersister(T target, string path, string? jsonPath = null)
+		private static Dictionary<string, ReaderWriterLockSlim> _locks = [];
+
+        /// <summary>uses path. create file if doesn't yet exist</summary>
+        protected JsonFilePersister(T target, string path, string? jsonPath = null)
 		{
 			Target = target ?? throw new ArgumentNullException(nameof(target));
 			Target.Updated += saveFile;
 
 			validatePath(path);
 
-			Path = path;
+            Path = path;
+			_locks.TryAdd(Path, new ReaderWriterLockSlim());
 
-			if (!string.IsNullOrWhiteSpace(jsonPath))
+            if (!string.IsNullOrWhiteSpace(jsonPath))
 				JsonPath = jsonPath.Trim();
 
 			saveFile(this, EventArgs.Empty);
@@ -70,20 +70,15 @@ namespace Dinah.Core.IO
 			var json = File.ReadAllText(Path);
 			var target = JsonHelper.FromJson<T>(json, JsonPath, GetSerializerSettings());
 
-			if (target is null)
-				throw new FormatException("File was not in a format able to be imported");
+			return target ?? throw new FormatException("File was not in a format able to be imported");
+        }
 
-			return target;
-		}
-
-		protected virtual JsonSerializerSettings? GetSerializerSettings() => null;
+        protected virtual JsonSerializerSettings? GetSerializerSettings() => null;
 
 		private void validatePath(string path)
 		{
-			if (path is null)
-				throw new ArgumentNullException(nameof(path));
-			if (string.IsNullOrWhiteSpace(path))
-				throw new ArgumentException("Path cannot be blank", nameof(path));
+			ArgumentValidator.EnsureNotNull(path, nameof(path));
+			ArgumentValidator.EnsureNotNullOrWhiteSpace(path, nameof(path));
 		}
 
 
@@ -110,7 +105,6 @@ namespace Dinah.Core.IO
 		/// <summary>Called when save begins</summary>
 		protected virtual void OnSaved() { }
 
-		private object _locker { get; } = new object();
 		private void saveFile(object? _, EventArgs __)
 		{
 			if (IsInTransaction)
@@ -119,47 +113,69 @@ namespace Dinah.Core.IO
 				return;
 			}
 
-			lock (_locker)
+			try
             {
+                OnSaving();
+				var readWriteLock = _locks[Path];
+                readWriteLock.EnterWriteLock();
                 try
                 {
-					OnSaving();
-
-					if (JsonPath is null)
-					{
-						File.WriteAllText(Path, JsonConvert.SerializeObject(Target, Formatting.Indented, GetSerializerSettings()));
-						return;
-					}
-
-					// path must
-					// - exist
-					// - have valid jsonPath match
-
-					var contents = File.ReadAllText(Path);
-					var allToken = JObject.Parse(contents);
-					var pathToken = allToken.SelectToken(JsonPath);
-
-					if (pathToken is null)
-						throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
-
-					// load existing identity into JObject
-					var serializer = JsonSerializer.Create(GetSerializerSettings());
-					var idJObj = JObject.FromObject(Target, serializer);
-
-					// replace. this propgates to 'allToken'
-					pathToken.Replace(idJObj);
-
-					var allSer = JsonConvert.SerializeObject(allToken, Formatting.Indented, GetSerializerSettings());
-					File.WriteAllText(Path, allSer);
-				}
+					saveJson();
+                }
                 finally
                 {
-					OnSaved();
-				}
-			}
+                    readWriteLock.ExitWriteLock();
+                }
+            }
+            finally
+            {
+                OnSaved();
+            }
 		}
 
-		private void _dispose()
+		private void saveJson()
+        {
+            if (JsonPath is null)
+            {
+				serializeAndWrite(Target);
+                return;
+            }
+
+            // path must
+            // - exist
+            // - have valid jsonPath match
+
+            var contents = File.ReadAllText(Path);
+            var allToken = JObject.Parse(contents);
+            var pathToken = allToken.SelectToken(JsonPath) ?? throw new JsonSerializationException($"No match found at JSONPath: {JsonPath}");
+
+            // load existing identity into JObject
+            var serializer = JsonSerializer.Create(GetSerializerSettings());
+            var idJObj = JObject.FromObject(Target, serializer);
+
+            // replace. this propgates to 'allToken'
+            pathToken.Replace(idJObj);
+
+			serializeAndWrite(allToken);
+        }
+
+		private static DateTime lastWrite = DateTime.MinValue;
+        private void serializeAndWrite(object payload)
+        {
+            // prevent invalid writes
+            var json = JsonConvert.SerializeObject(payload, Formatting.Indented, GetSerializerSettings());
+			if (string.IsNullOrWhiteSpace(json))
+                throw new JsonSerializationException("Could not write json file. Empty payload");
+
+            // prevent multiple writes in quick succession
+            if (DateTime.UtcNow - lastWrite < TimeSpan.FromMilliseconds(100))
+                Thread.Sleep(100);
+
+			lastWrite = DateTime.UtcNow;
+            File.WriteAllText(Path, json);
+        }
+
+        private void _dispose()
 			=> Target.Updated -= saveFile;
 
 		#region IDisposable pattern
