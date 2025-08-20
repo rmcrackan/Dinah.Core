@@ -8,14 +8,14 @@
     public class TypeExtensionsTests
     {
         [TestMethod]
-        public void firstNull() => TypeExtensions.IsGenericOf(null, typeof(string)).Should().BeFalse();
+        public void firstNull() => TypeExtensions.IsGenericOf(null, typeof(string)).ShouldBeFalse();
 
         [TestMethod]
-        public void secondNull() => typeof(string).IsGenericOf(null).Should().BeFalse();
+        public void secondNull() => typeof(string).IsGenericOf(null).ShouldBeFalse();
 
         [TestMethod]
         [DataRow(typeof(int), typeof(string))]
-        public void NoMatch(Type a, Type b) => a.IsGenericOf(b).Should().BeFalse();
+        public void NoMatch(Type a, Type b) => a.IsGenericOf(b).ShouldBeFalse();
 
         [TestMethod]
         public void Matches()
@@ -38,6 +38,6 @@
         [DataRow(typeof(MyGenericBaseTwo<>), typeof(MyGenericBase<>))]
         [DataRow(typeof(MyConcrete), typeof(MyGenericBase<>))]
         [DataRow(typeof(MyConcrete), typeof(MyGenericBaseTwo<>))]
-        public void Match(Type a, Type b) => a.IsGenericOf(b).Should().BeTrue();
+        public void Match(Type a, Type b) => a.IsGenericOf(b).ShouldBeTrue();
     }
 }

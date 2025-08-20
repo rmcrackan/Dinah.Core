@@ -15,8 +15,8 @@
             };
 
             var dic = list.ToDictionarySafe(x => x.Bar);
-            dic.Count.Should().Be(1);
-            dic["bbb"].Baz.Should().Be("111");
+            dic.Count.ShouldBe(1);
+            dic["bbb"].Baz.ShouldBe("111");
         }
 
         [TestMethod]
@@ -29,8 +29,8 @@
             };
 
             var dic = list.ToDictionarySafe(x => x.Bar, WinnerEnum.FirstInWins);
-            dic.Count.Should().Be(1);
-            dic["bbb"].Baz.Should().Be("111");
+            dic.Count.ShouldBe(1);
+            dic["bbb"].Baz.ShouldBe("111");
         }
 
         [TestMethod]
@@ -43,8 +43,8 @@
             };
 
             var dic = list.ToDictionarySafe(x => x.Bar, WinnerEnum.LastInWins);
-            dic.Count.Should().Be(1);
-            dic["bbb"].Baz.Should().Be("222");
+            dic.Count.ShouldBe(1);
+            dic["bbb"].Baz.ShouldBe("222");
         }
 
     }

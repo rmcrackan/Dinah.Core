@@ -42,8 +42,8 @@
             var json = JObject.Parse(jsonStr);
             request.AddContent(json);
 
-            request.Content.Headers.ContentType.CharSet.Should().Be("utf-8");
-            request.Content.Headers.ContentType.MediaType.Should().Be("application/json");
+            request.Content.Headers.ContentType.CharSet.ShouldBe("utf-8");
+            request.Content.Headers.ContentType.MediaType.ShouldBe("application/json");
 
             test_content(request, JObject.Parse(jsonStr).ToString(Newtonsoft.Json.Formatting.Indented));
         }
@@ -74,12 +74,12 @@
         public void test_cookie()
         {
             var cookie = SystemNetHttpExtensions.ParseCookie("session-id=139-1488065-0277455; Domain=.amazon.com; Expires=Thu, 30-Jun-2039 19:07:14 GMT; Path=/");
-            cookie.Name.Should().Be("session-id");
-            cookie.Value.Should().Be("139-1488065-0277455");
-            cookie.Domain.Should().Be(".amazon.com");
-            cookie.Path.Should().Be("/");
-            cookie.Secure.Should().BeFalse();
-            cookie.Expires.Should().Be(DateTime.Parse("Thu, 30-Jun-2039 19:07:14 GMT"));
+            cookie.Name.ShouldBe("session-id");
+            cookie.Value.ShouldBe("139-1488065-0277455");
+            cookie.Domain.ShouldBe(".amazon.com");
+            cookie.Path.ShouldBe("/");
+            cookie.Secure.ShouldBeFalse();
+            cookie.Expires.ShouldBe(DateTime.Parse("Thu, 30-Jun-2039 19:07:14 GMT"));
         }
     }
 
@@ -100,7 +100,7 @@
 			};
 
 			var str = await message.Content.ReadAsStringAsync();
-			str.Should().Be("k1=v1&k2=%21%40%23%24%25%5E%26%2A%28%29%3C%3E-%3D_%3A%27%22%5C%0A");
+			str.ShouldBe("k1=v1&k2=%21%40%23%24%25%5E%26%2A%28%29%3C%3E-%3D_%3A%27%22%5C%0A");
 
 			var jObj = await message.Content.ReadAsJObjectAsync();
 			var json = jObj.ToString(Newtonsoft.Json.Formatting.Indented);
@@ -111,7 +111,7 @@
 }
 		".Trim();
 
-			json.Should().Be(expected);
+			json.ShouldBe(expected);
 		}
 
 		[TestMethod]
@@ -146,7 +146,7 @@
 				StatusCode = System.Net.HttpStatusCode.OK
 			};
 			var jObj = await message.Content.ReadAsJObjectAsync();
-			jObj.ToString(Newtonsoft.Json.Formatting.None).Should().Be("{\"a\":1}");
+			jObj.ToString(Newtonsoft.Json.Formatting.None).ShouldBe("{\"a\":1}");
 		}
 	}
 

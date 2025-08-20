@@ -65,8 +65,8 @@ namespace JsonExamples
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
 
-			deser.Should().NotBeNull();
-			deser!.GetOnly.Should().Be(9);
+			deser.ShouldNotBeNull();
+			deser!.GetOnly.ShouldBe(9);
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace JsonExamples
             var j = JsonTest.Factory(9);
             var ser = JsonConvert.SerializeObject(j);
 
-            ser.Should().Contain("\"nullPriv\":null");
+            ser.ShouldContain("\"nullPriv\":null");
         }
 
         [TestMethod]
@@ -85,8 +85,8 @@ namespace JsonExamples
             j.setPriv(2);
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-			deser.Should().NotBeNull();
-			deser!.GetPriv().Should().Be(2);
+			deser.ShouldNotBeNull();
+			deser!.GetPriv().ShouldBe(2);
         }
 
         [TestMethod]
@@ -94,17 +94,17 @@ namespace JsonExamples
         {
             var j = JsonTest.Factory(9);
             j.setGPS(5);
-            j.GetPrivSet.Should().Be(5);
-            j.GetPrivSet.Should().Be(5d);
+            j.GetPrivSet.ShouldBe(5);
+            j.GetPrivSet.ShouldBe(5d);
 
             // is serialized
             var ser = JsonConvert.SerializeObject(j);
-            ser.Should().Contain("\"" + nameof(j.GetPrivSet) + "\":5.0");
+            ser.ShouldContain("\"" + nameof(j.GetPrivSet) + "\":5.0");
 
             // cannot be deserialized
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-			deser.Should().NotBeNull();
-			deser!.GetPrivSet.Should().Be(default);
+			deser.ShouldNotBeNull();
+			deser!.GetPrivSet.ShouldBe(default);
         }
 
         [TestMethod]
@@ -112,12 +112,12 @@ namespace JsonExamples
         {
             var j = JsonTest.Factory(9);
             j.SetPrivReq("y");
-            j.GetPrivReq().Should().Be("y");
+            j.GetPrivReq().ShouldBe("y");
 
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-			deser.Should().NotBeNull();
-			deser!.GetPrivReq().Should().Be("y");
+			deser.ShouldNotBeNull();
+			deser!.GetPrivReq().ShouldBe("y");
         }
 
         [TestMethod]
@@ -132,20 +132,20 @@ namespace JsonExamples
         public void complex_type_is_ser_and_deser()
         {
             var j = JsonTest.Factory(9);
-            j.GetComplexType().Should().BeNull();
+            j.GetComplexType().ShouldBeNull();
 
             var ser = JsonConvert.SerializeObject(j);
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-			deser.Should().NotBeNull();
-			deser!.GetComplexType().Should().BeNull();
+			deser.ShouldNotBeNull();
+			deser!.GetComplexType().ShouldBeNull();
 
             var token = new ComplexType { Value = "v", Expires = DateTime.MaxValue };
             deser.SetComplexType(token);
             var ser2 = JsonConvert.SerializeObject(deser);
             var deser2 = JsonConvert.DeserializeObject<JsonTest>(ser2);
-			deser2.Should().NotBeNull();
-			deser2!.GetComplexType()?.Value.Should().Be("v");
-            deser2.GetComplexType()?.Expires.Should().Be(DateTime.MaxValue);
+			deser2.ShouldNotBeNull();
+			deser2!.GetComplexType()?.Value.ShouldBe("v");
+            deser2.GetComplexType()?.Expires.ShouldBe(DateTime.MaxValue);
         }
 
         [TestMethod]
@@ -153,13 +153,13 @@ namespace JsonExamples
         {
             var j = JsonTest.Factory(9);
             j.IgnoreMe = "hi!";
-            j.IgnoreMe.Should().Be("hi!");
+            j.IgnoreMe.ShouldBe("hi!");
 
             var ser = JsonConvert.SerializeObject(j);
-            ser.Should().NotContain(nameof(j.IgnoreMe));
+            ser.ShouldNotContain(nameof(j.IgnoreMe));
             var deser = JsonConvert.DeserializeObject<JsonTest>(ser);
-			deser.Should().NotBeNull();
-			deser!.IgnoreMe.Should().BeNull();
+			deser.ShouldNotBeNull();
+			deser!.IgnoreMe.ShouldBeNull();
         }
 
         [TestMethod]
@@ -167,11 +167,11 @@ namespace JsonExamples
         {
             var o = new OptIn { Id = Guid.NewGuid(), Name = "n", Size = 7 };
             var ser = JsonConvert.SerializeObject(o);
-            ser.Should().NotContain(nameof(o.Id));
+            ser.ShouldNotContain(nameof(o.Id));
             var deser = JsonConvert.DeserializeObject<OptIn>(ser);
-			deser.Should().NotBeNull();
-			deser!.Name.Should().Be("n");
-            deser.Size.Should().Be(7);
+			deser.ShouldNotBeNull();
+			deser!.Name.ShouldBe("n");
+            deser.Size.ShouldBe(7);
             Assert.AreEqual(deser.Id, default);
         }
     }
@@ -189,7 +189,7 @@ namespace JsonExamples
 		public void ctor_1_param()
 			=> JsonConvert
 				.DeserializeObject<_1Param>("{ \"bar\": \"hello\" }")
-				?.Bar.Should().Be("hello");
+				?.Bar.ShouldBe("hello");
 
 		public class _2Params
 		{
@@ -206,36 +206,36 @@ namespace JsonExamples
 		public void match_param_order_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"foo\":\"f\" , \"bar\":\"b\" }");
-			obj.Should().NotBeNull();
-			obj!.Foo.Should().Be("f");
-			obj.Bar.Should().Be("b");
+			obj.ShouldNotBeNull();
+			obj!.Foo.ShouldBe("f");
+			obj.Bar.ShouldBe("b");
 		}
 
 		[TestMethod]
 		public void match_param_order_not_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"FOO\":\"f\" , \"bAr\":\"b\" }");
-			obj.Should().NotBeNull();
-			obj!.Foo.Should().Be("f");
-			obj.Bar.Should().Be("b");
+			obj.ShouldNotBeNull();
+			obj!.Foo.ShouldBe("f");
+			obj.Bar.ShouldBe("b");
 		}
 
 		[TestMethod]
 		public void not_match_param_order_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"bar\":\"b\" , \"foo\":\"f\" }");
-			obj.Should().NotBeNull();
-			obj!.Foo.Should().Be("f");
-			obj.Bar.Should().Be("b");
+			obj.ShouldNotBeNull();
+			obj!.Foo.ShouldBe("f");
+			obj.Bar.ShouldBe("b");
 		}
 
 		[TestMethod]
 		public void not_match_param_order_not_match_case()
 		{
 			var obj = JsonConvert.DeserializeObject<_2Params>("{ \"bAR\":\"b\" , \"Foo\":\"f\" }");
-			obj.Should().NotBeNull();
-			obj!.Foo.Should().Be("f");
-			obj.Bar.Should().Be("b");
+			obj.ShouldNotBeNull();
+			obj!.Foo.ShouldBe("f");
+			obj.Bar.ShouldBe("b");
 		}
 	}
 
@@ -259,7 +259,7 @@ namespace JsonExamples
             var expected = @"
 {""a"":1,""MyArray"":[""Manual text"",""2000-05-23T00:00:00""]}".Trim();
 
-            str.Should().Be(expected);
+            str.ShouldBe(expected);
         }
 
         [TestMethod]
@@ -284,7 +284,7 @@ namespace JsonExamples
             var expected = @"
 {""Cpu"":""Intel"",""Memory"":32,""Drives"":[""DVD"",""SSD""]}".Trim();
 
-            str.Should().Be(expected);
+            str.ShouldBe(expected);
         }
 
         [TestMethod]
@@ -304,7 +304,7 @@ namespace JsonExamples
             var expected = @"
 {""ProductName"":""Elbow Grease"",""Enabled"":true,""Price"":4.90,""StockCount"":9000,""StockValue"":44100,""Tags"":[""Real"",""OnSale""]}".Trim();
 
-            str.Should().Be(expected);
+            str.ShouldBe(expected);
         }
 
         [TestMethod]
@@ -355,7 +355,7 @@ namespace JsonExamples
   ]
 }
 ".Trim();
-            output.Should().Be(expected);
+            output.ShouldBe(expected);
         }
     }
 
@@ -379,13 +379,13 @@ namespace JsonExamples
 
             // direct cast
             var _9 = j["Id"]?.Value<int>();
-            _9.Should().Be(9);
+            _9.ShouldBe(9);
             var rick = j["Name"]?.Value<string>();
-            rick.Should().Be("Rick");
+            rick.ShouldBe("Rick");
 
             // or with ToString
             var westWind = j["Company"]?.Value<string>();
-			westWind.Should().Be("West Wind");
+			westWind.ShouldBe("West Wind");
         }
 
         [TestMethod]
@@ -403,11 +403,11 @@ namespace JsonExamples
 
             // cast
             string name = j.Name;
-            name.Should().Be("Rick");
+            name.ShouldBe("Rick");
             DateTime entered = j.Entered;
-            entered.Should().Be(DateTime.Parse("2012-03-16T00:03:33.245-10:00"));
+            entered.ShouldBe(DateTime.Parse("2012-03-16T00:03:33.245-10:00"));
             string w = j.Company;
-            w.Should().Be("West Wind");
+            w.ShouldBe("West Wind");
         }
 
         [TestMethod]
@@ -430,13 +430,13 @@ namespace JsonExamples
 
             // direct cast
             var bill = techGuys[0]["Name"]?.Value<string>();
-            bill.Should().Be("Bill");
+            bill.ShouldBe("Bill");
             var ms = techGuys[0]["Company"]?.Value<string>();
-			ms.Should().Be("Microsoft");
+			ms.ShouldBe("Microsoft");
 
             // or ToString
-            techGuys[1]["Name"]?.Value<string>().Should().Be("Steve");
-            techGuys[1]["Company"]?.Value<string>().Should().Be("Apple");
+            techGuys[1]["Name"]?.Value<string>().ShouldBe("Steve");
+            techGuys[1]["Company"]?.Value<string>().ShouldBe("Apple");
         }
 
         [TestMethod]
@@ -458,14 +458,14 @@ namespace JsonExamples
             dynamic array = JArray.Parse(json);
 
             string grandpa = array[0].who;
-            grandpa.Should().Be("grandpa");
+            grandpa.ShouldBe("grandpa");
             int gAge = array[0].age;
-            gAge.Should().Be(99);
+            gAge.ShouldBe(99);
 
             string futureHuman = array[1].who;
-            futureHuman.Should().Be("future human");
+            futureHuman.ShouldBe("future human");
             int fhAge = array[1].age;
-            fhAge.Should().Be(-1);
+            fhAge.ShouldBe(-1);
         }
 
         [TestMethod]
@@ -478,12 +478,12 @@ namespace JsonExamples
                 }";
 
             var token = JToken.Parse(obj);
-            token.Type.Should().Be(JTokenType.Object);
+            token.Type.ShouldBe(JTokenType.Object);
 
             var cast = (JObject)token;
 
-            cast["Name"]?.Value<string>().Should().Be("Rick");
-            cast["Company"]?.Value<string>().Should().Be("West Wind");
+            cast["Name"]?.Value<string>().ShouldBe("Rick");
+            cast["Company"]?.Value<string>().ShouldBe("West Wind");
         }
 
         [TestMethod]
@@ -502,14 +502,14 @@ namespace JsonExamples
 ]";
 
             var token = JToken.Parse(array);
-            token.Type.Should().Be(JTokenType.Array);
+            token.Type.ShouldBe(JTokenType.Array);
 
             var cast = (JArray)token;
 
-            cast[0]["Name"]?.Value<string>().Should().Be("Bill");
-            cast[0]["Company"]?.Value<string>().Should().Be("Microsoft");
-            cast[1]["Name"]?.Value<string>().Should().Be("Steve");
-            cast[1]["Company"]?.Value<string>().Should().Be("Apple");
+            cast[0]["Name"]?.Value<string>().ShouldBe("Bill");
+            cast[0]["Company"]?.Value<string>().ShouldBe("Microsoft");
+            cast[1]["Name"]?.Value<string>().ShouldBe("Steve");
+            cast[1]["Company"]?.Value<string>().ShouldBe("Apple");
         }
 
         // below examples adapted from:
@@ -624,7 +624,7 @@ namespace JsonExamples
 			var csharpSyntax = getRawMetadata("userAgent", "oauthUrl", 123456789);
 			var stringLiteral = getMetadata("userAgent", "oauthUrl", 123456789);
 
-			csharpSyntax.Should().Be(stringLiteral);
+			csharpSyntax.ShouldBe(stringLiteral);
 		}
 
 		private static string getRawMetadata(string useragent, string oauth, long nowUnixTimeStamp)

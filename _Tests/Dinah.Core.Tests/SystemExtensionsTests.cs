@@ -20,13 +20,13 @@
         {
             new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                 .ToRfc3339String()
-                .Should().Be("1970-01-01T00:00:00Z");
+                .ShouldBe("1970-01-01T00:00:00Z");
             new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                 .ToRfc3339String()
-                .Should().Be("2000-01-01T00:00:00Z");
+                .ShouldBe("2000-01-01T00:00:00Z");
             new DateTime(2019, 2, 3, 4, 5, 6, 7, DateTimeKind.Utc)
                 .ToRfc3339String()
-                .Should().Be("2019-02-03T04:05:06.007Z");
+                .ShouldBe("2019-02-03T04:05:06.007Z");
         }
     }
 
@@ -45,6 +45,6 @@
 		[DataRow("http://www.a.com:1234/#z", "http://www.a.com:1234")]
 		[DataRow("http://www.a.com:1234/?z=1", "http://www.a.com:1234")]
 		public void extract_origin(string url, string expected)
-			=> new Uri(url).GetOrigin().Should().Be(expected);
+			=> new Uri(url).GetOrigin().ShouldBe(expected);
 	}
 }

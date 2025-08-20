@@ -74,10 +74,10 @@ namespace UriExamples
 		[TestMethod]
 		public void combine_Uri_and_string()
 		{
-			new Uri(slash, "/a/z.html?f=b").AbsoluteUri.Should()
-				.Be("http://www.a.com/a/z.html?f=b");
-			new Uri(slash, "/a/z.html?f=b").AbsoluteUri.Should()
-				.NotBe("http://www.a.com//a/z.html?f=b");
+			new Uri(slash, "/a/z.html?f=b").AbsoluteUri
+				.ShouldBe("http://www.a.com/a/z.html?f=b");
+			new Uri(slash, "/a/z.html?f=b").AbsoluteUri
+				.ShouldNotBe("http://www.a.com//a/z.html?f=b");
 		}
 
 		[TestMethod]
@@ -86,11 +86,11 @@ namespace UriExamples
 			var u = "https://a.b.com";
 			var uri = new Uri(u);
 
-			uri.Host.Should().Be("a.b.com");
+			uri.Host.ShouldBe("a.b.com");
 		}
 
 		[TestMethod]
 		public void AbsoluteUri_ends_in_slash()
-			=> new Uri("https://a.b.com").AbsoluteUri.Should().Be("https://a.b.com/");
+			=> new Uri("https://a.b.com").AbsoluteUri.ShouldBe("https://a.b.com/");
 	}
 }

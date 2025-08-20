@@ -1,8 +1,8 @@
 using System;
 using Dinah.EntityFrameworkCore;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shouldly;
 
 namespace Dinah.EntityFrameworkCore.Tests
 {
@@ -23,7 +23,7 @@ namespace Dinah.EntityFrameworkCore.Tests
 			context.SaveChanges();
 
             // student was saved in the database
-            student.Id.Should().Be(1);
+            student.Id.ShouldBe(1);
         }
     }
 

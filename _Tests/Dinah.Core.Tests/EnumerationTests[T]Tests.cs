@@ -28,7 +28,7 @@
     {
         [TestMethod]
         public void Value_is_stored()
-            => SubClassing.Manager.Value.Should().Be(0);
+            => SubClassing.Manager.Value.ShouldBe(0);
     }
 
     [TestClass]
@@ -38,9 +38,9 @@
         public void verify_all_values()
         {
             var all = Enumeration<SubClassing>.GetAll();
-            all.Count().Should().Be(2);
-            all.Any(a => a.Value == 0).Should().BeTrue();
-            all.Any(a => a.Value == 1).Should().BeTrue();
+            all.Count().ShouldBe(2);
+            all.Any(a => a.Value == 0).ShouldBeTrue();
+            all.Any(a => a.Value == 1).ShouldBeTrue();
         }
     }
 
@@ -50,7 +50,7 @@
         [TestMethod]
         public void get_manager()
             => Enumeration<SubClassing>.FromValue(0)
-            .Should().Be(SubClassing.Manager);
+            .ShouldBe(SubClassing.Manager);
     }
 
     [TestClass]
@@ -59,6 +59,6 @@
         [TestMethod]
         public void get_manager()
             => Enumeration<SubClassing>.FromDisplayName("Manager")
-            .Should().Be(SubClassing.Manager);
+            .ShouldBe(SubClassing.Manager);
     }
 }

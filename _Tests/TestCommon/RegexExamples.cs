@@ -14,7 +14,7 @@ namespace RegexExamples
 			var replacement = @"C:\User\whatever";
 
 			Regex.Replace(input, pattern, replacement, RegexOptions.IgnoreCase)
-				.Should().Be(@"C:\User\whatever\path\file.txt");
+				.ShouldBe(@"C:\User\whatever\path\file.txt");
 		}
 	}
 
@@ -36,7 +36,7 @@ namespace RegexExamples
 			var mStr = match.Groups["index"].ToString();
 			
 			var mFloat = float.Parse(mStr);
-			mFloat.Should().Be(expected);
+			mFloat.ShouldBe(expected);
 		}
 	}
 }

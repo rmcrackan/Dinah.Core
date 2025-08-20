@@ -62,11 +62,11 @@
 			var array = flags.ToValues().ToArray();
 
 			var expectedArray = new[] { FlagsEnum.One, FlagsEnum.Four };
-			array.Should().BeEquivalentTo(expectedArray);
+			array.ShouldBeEquivalentTo(expectedArray);
 		}
 
 		public static void ShouldBeEquivalentTo(IEnumerable<IntEnum> values, params IntEnum[] becauseArgs)
-			=> values.ToArray().Should().BeEquivalentTo(becauseArgs);
+			=> values.ToArray().ShouldBeEquivalentTo(becauseArgs);
 	}
 
 	[TestClass]
@@ -117,7 +117,7 @@
 		public void example()
 		{
 			var options = FlagsEnum.Two | FlagsEnum.Four;
-			options.HasFlag(FlagsEnum.Two).Should().BeTrue();
+			options.HasFlag(FlagsEnum.Two).ShouldBeTrue();
 		}
 	}
 
@@ -128,13 +128,13 @@
 		public void example()
 		{
 			var options = FlagsEnum.Two | FlagsEnum.Four;
-			options.MissingFlag(FlagsEnum.One).Should().BeTrue();
+			options.MissingFlag(FlagsEnum.One).ShouldBeTrue();
 		}
 	}
 
 	public static class AssertExt
 	{
 		public static void ShouldBeEquivalentTo(this FlagsEnum flagEnum, params FlagsEnum[] becauseArgs)
-			=> flagEnum.ToValues().ToArray().Should().BeEquivalentTo(becauseArgs);
+			=> flagEnum.ToValues().ToArray().ShouldBeEquivalentTo(becauseArgs);
 	}
 }

@@ -157,8 +157,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.Pluralize(0).Should().Be(pl);
-				pl.Pluralize(0).Should().Be(pl);
+				sing.Pluralize(0).ShouldBe(pl);
+				pl.Pluralize(0).ShouldBe(pl);
 			}
 		}
 
@@ -170,8 +170,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.Pluralize(1).Should().Be(sing);
-				pl.Pluralize(1).Should().Be(sing);
+				sing.Pluralize(1).ShouldBe(sing);
+				pl.Pluralize(1).ShouldBe(sing);
 			}
 		}
 
@@ -183,8 +183,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.Pluralize(5).Should().Be(pl);
-				pl.Pluralize(5).Should().Be(pl);
+				sing.Pluralize(5).ShouldBe(pl);
+				pl.Pluralize(5).ShouldBe(pl);
 			}
 		}
 	}
@@ -200,8 +200,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.PluralizeWithCount(0).Should().Be("0 " + pl);
-				pl.PluralizeWithCount(0).Should().Be("0 " + pl);
+				sing.PluralizeWithCount(0).ShouldBe("0 " + pl);
+				pl.PluralizeWithCount(0).ShouldBe("0 " + pl);
 			}
 		}
 
@@ -213,8 +213,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.PluralizeWithCount(1).Should().Be("1 " + sing);
-				pl.PluralizeWithCount(1).Should().Be("1 " + sing);
+				sing.PluralizeWithCount(1).ShouldBe("1 " + sing);
+				pl.PluralizeWithCount(1).ShouldBe("1 " + sing);
 			}
 		}
 
@@ -226,8 +226,8 @@ namespace StringExtensionsTests
 				var sing = kvp.Key;
 				var pl = kvp.Value;
 
-				sing.PluralizeWithCount(5).Should().Be("5 " + pl);
-				pl.PluralizeWithCount(5).Should().Be("5 " + pl);
+				sing.PluralizeWithCount(5).ShouldBe("5 " + pl);
+				pl.PluralizeWithCount(5).ShouldBe("5 " + pl);
 			}
 		}
 	}
@@ -244,7 +244,7 @@ namespace StringExtensionsTests
 		[DataRow("FOO", "FOO")]
 		[DataRow("foo bar", "Foo bar")]
 		public void test_outputs(string param, string expected)
-			=> param.FirstCharToUpper().Should().Be(expected);
+			=> param.FirstCharToUpper().ShouldBe(expected);
 	}
 
 	[TestClass]
@@ -252,35 +252,35 @@ namespace StringExtensionsTests
 	{
 		[TestMethod]
 		public void null_returns_null()
-			=> ((string)null).Truncate(10).Should().Be(null);
+			=> ((string)null).Truncate(10).ShouldBe(null);
 
 		[TestMethod]
 		public void empty_returns_empty()
-			=> "".Truncate(10).Should().Be("");
+			=> "".Truncate(10).ShouldBe("");
 
 		[TestMethod]
 		public void single_char_string_returns_char()
-			=> "F".Truncate(10).Should().Be("F");
+			=> "F".Truncate(10).ShouldBe("F");
 
 		[TestMethod]
 		public void _0_limit_returns_char()
-			=> "foo".Truncate(0).Should().Be("f");
+			=> "foo".Truncate(0).ShouldBe("f");
 
 		[TestMethod]
 		public void negative_limit_returns_char()
-			=> "foo".Truncate(-1).Should().Be("f");
+			=> "foo".Truncate(-1).ShouldBe("f");
 
 		[TestMethod]
 		public void string_shorter_than_limit_is_truncated()
-			=> "foo".Truncate(2).Should().Be("fo");
+			=> "foo".Truncate(2).ShouldBe("fo");
 
 		[TestMethod]
 		public void string_same_length_as_limit_is_returned()
-			=> "foo".Truncate(3).Should().Be("foo");
+			=> "foo".Truncate(3).ShouldBe("foo");
 
 		[TestMethod]
 		public void string_longer_than_limit_is_returned()
-			=> "foo".Truncate(4).Should().Be("foo");
+			=> "foo".Truncate(4).ShouldBe("foo");
 	}
 
 	[TestClass]
@@ -293,7 +293,7 @@ namespace StringExtensionsTests
 		[DataRow("foo", "\"foo\"")]
 		[DataRow("foo bar", "\"foo bar\"")]
 		public void test_outputs(string param, string expected)
-			=> param.SurroundWithQuotes().Should().Be(expected);
+			=> param.SurroundWithQuotes().ShouldBe(expected);
 	}
 
 	[TestClass]
@@ -301,19 +301,19 @@ namespace StringExtensionsTests
 	{
 		[TestMethod]
 		public void null_haystack_returns_null()
-			=> ((string)null).ExtractString("", 1).Should().BeNull();
+			=> ((string)null).ExtractString("", 1).ShouldBeNull();
 
 		[TestMethod]
 		public void null_before_returns_null()
-			=> "foo".ExtractString(null, 1).Should().BeNull();
+			=> "foo".ExtractString(null, 1).ShouldBeNull();
 
 		[TestMethod]
 		public void empty_before_returns_null()
-			=> "foo".ExtractString("", 1).Should().BeNull();
+			=> "foo".ExtractString("", 1).ShouldBeNull();
 
 		[TestMethod]
 		public void whitespace_before_returns_null()
-			=> "foo".ExtractString("   ", 1).Should().BeNull();
+			=> "foo".ExtractString("   ", 1).ShouldBeNull();
 
 		[TestMethod]
 		public void _0_needleLength_throws()
@@ -325,17 +325,17 @@ namespace StringExtensionsTests
 
 		[TestMethod]
 		public void needle_not_found_returns_null()
-			=> "foo".ExtractString("bar", 1).Should().BeNull();
+			=> "foo".ExtractString("bar", 1).ShouldBeNull();
 
 		[TestMethod]
 		[DataRow("foobar", "foo", 1, "b")]
 		[DataRow("foobar", "foo", 3, "bar")]
 		public void needle_found(string haystack, string before, int needleLength, string expected)
-			=> haystack.ExtractString(before, needleLength).Should().Be(expected);
+			=> haystack.ExtractString(before, needleLength).ShouldBe(expected);
 
 		[TestMethod]
 		public void needleLength_too_big_returns_existing()
-			=> "foobar".ExtractString("foo", 4).Should().Be("bar");
+			=> "foobar".ExtractString("foo", 4).ShouldBe("bar");
 	}
 
 	[TestClass]
@@ -355,7 +355,7 @@ namespace StringExtensionsTests
 		[DataRow("True")]
 		[DataRow("TRUE")]
 		public void is_true(string str)
-			=> str.ToBoolean().Should().BeTrue();
+			=> str.ToBoolean().ShouldBeTrue();
 
 		[TestMethod]
 		[DataRow(null)]
@@ -367,7 +367,7 @@ namespace StringExtensionsTests
 		[DataRow("false")]
 		[DataRow("Foo")]
 		public void is_false(string str)
-			=> str.ToBoolean().Should().BeFalse();
+			=> str.ToBoolean().ShouldBeFalse();
 	}
 
 	[TestClass]
@@ -403,7 +403,7 @@ namespace StringExtensionsTests
 		[DataRow("0102", new byte[] { 1, 2 })]
 		[DataRow("0a0b0c0d", new byte[] { 10, 11, 12, 13 })]
 		public void test_outputs(string str, byte[] bytes)
-			=> str.HexStringToByteArray().Should().BeEquivalentTo(bytes);
+			=> str.HexStringToByteArray().ShouldBeEquivalentTo(bytes);
 	}
 
 	[TestClass]
@@ -418,7 +418,7 @@ namespace StringExtensionsTests
 		[DataRow("foo", "ACBD18DB4CC2F85CEDEF654FCCC4A4D8")]
 		[DataRow("test me", "7B0C2C2CBC980155D71BA3BE4D174F56")]
 		public void test_outputs(string input, string expected)
-			=> input.ToMd5Hash().Should().Be(expected);
+			=> input.ToMd5Hash().ShouldBe(expected);
 	}
 
 	[TestClass]
@@ -457,6 +457,6 @@ namespace StringExtensionsTests
 		// file path
 		[DataRow(@"C:\my\file\here.txt", @"[...]:\m[...]y\f[...]e\h[...]e.t[...]t")]
 		public void test_outputs(string input, string expected)
-			=> StringExtensions.ToMask(input, "[...]").Should().Be(expected);
+			=> StringExtensions.ToMask(input, "[...]").ShouldBe(expected);
 	}
 }

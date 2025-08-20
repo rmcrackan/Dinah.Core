@@ -1,4 +1,6 @@
-﻿namespace SystemNetExtensionsTests
+﻿using Shouldly;
+
+namespace SystemNetExtensionsTests
 {
     [TestClass]
     public class EnumerateCookies
@@ -47,37 +49,37 @@
             var hashTable = cookies.ReflectOverAllCookies();
 
             // ASSERT
-            hashTable.Keys.Count.Should().Be(2);
+            hashTable.Keys.Count.ShouldBe(2);
             var keys = hashTable.Keys.Cast<string>().ToList();
-            keys.Should().BeEquivalentTo(".domain1.com", ".domain2.com");
-            keys.Should().BeEquivalentTo(".domain2.com", ".domain1.com");
+            keys.ShouldBe([".domain1.com", ".domain2.com"], ignoreOrder: true);
+            keys.ShouldBe([".domain2.com", ".domain1.com"], ignoreOrder: true);
 
             var collection1 = cookies.GetCookies(new Uri("http://domain1.com/"));
-            collection1.Count.Should().Be(2);
+            collection1.Count.ShouldBe(2);
 
             var collection1CookieNames = collection1.Cast<Cookie>().Select(c => c.Name).ToList();
-            collection1CookieNames.Should().BeEquivalentTo("name1", "name2");
+            collection1CookieNames.ShouldBe(["name1", "name2"], ignoreOrder: true);
 
             var cookie1_1 = collection1["name1"];
-            cookie1_1.Name.Should().Be("name1");
-            cookie1_1.Value.Should().Be("value1");
-            cookie1_1.Domain.Should().Be("domain1.com");
+            cookie1_1.Name.ShouldBe("name1");
+            cookie1_1.Value.ShouldBe("value1");
+            cookie1_1.Domain.ShouldBe("domain1.com");
 
             var cookie1_2 = collection1["name2"];
-            cookie1_2.Name.Should().Be("name2");
-            cookie1_2.Value.Should().Be("value2");
-            cookie1_2.Domain.Should().Be("domain1.com");
+            cookie1_2.Name.ShouldBe("name2");
+            cookie1_2.Value.ShouldBe("value2");
+            cookie1_2.Domain.ShouldBe("domain1.com");
 
             var collection2 = cookies.GetCookies(new Uri("http://domain2.com/"));
-            collection2.Count.Should().Be(1);
+            collection2.Count.ShouldBe(1);
 
             var collection2CookieNames = collection2.Cast<Cookie>().Select(c => c.Name).ToList();
-            collection2CookieNames.Should().BeEquivalentTo("name3");
+            collection2CookieNames.ShouldBe(["name3"], ignoreOrder: true);
 
             var cookie2_1 = collection2[0];
-            cookie2_1.Name.Should().Be("name3");
-            cookie2_1.Value.Should().Be("value3");
-            cookie2_1.Domain.Should().Be("domain2.com");
+            cookie2_1.Name.ShouldBe("name3");
+            cookie2_1.Value.ShouldBe("value3");
+            cookie2_1.Domain.ShouldBe("domain2.com");
         }
     }
 }

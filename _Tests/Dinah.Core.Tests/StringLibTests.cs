@@ -39,6 +39,6 @@
         [DataRow("X-.5", 5f)]
         [DataRow("-X.5", 5f)]
         [DataRow("X.-5", -5f)]
-        public void match(string input, float result) => StringLib.ExtractFirstNumber(input).Should().Be(result);
+        public void match(string input, float result) => StringLib.ExtractFirstNumber(input).ShouldBe(result);
 	}
 }

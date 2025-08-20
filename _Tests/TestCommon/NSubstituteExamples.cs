@@ -15,7 +15,7 @@
         {
             var mockRng = Substitute.For<IRandomNumberGenerator>();
             mockRng.Next().Returns(3);
-            mockRng.Next().Should().Be(3);
+            mockRng.Next().ShouldBe(3);
         }
 
         [TestMethod]
@@ -24,7 +24,7 @@
             var seed = -12345;
             var mockRng = Substitute.For<IRandomNumberGenerator>();
             mockRng.Seed.Returns(seed);
-            mockRng.Seed.Should().Be(seed);
+            mockRng.Seed.ShouldBe(seed);
         }
 
         [TestMethod]
@@ -34,10 +34,10 @@
             rng.Next(995, 1005).Returns(1001);
 
             var undefined = rng.Next(1, 2);
-            undefined.Should().Be(0);
+            undefined.ShouldBe(0);
 
             var _1001 = rng.Next(995, 1005);
-            _1001.Should().Be(1001);
+            _1001.ShouldBe(1001);
         }
 
         [TestMethod]
@@ -48,8 +48,8 @@
 			var seed2 = -12345;
             rng.Seed.Returns(seed1, seed2);
 
-            rng.Seed.Should().Be(seed1);
-            rng.Seed.Should().Be(seed2);
+            rng.Seed.ShouldBe(seed1);
+            rng.Seed.ShouldBe(seed2);
         }
     }
 }

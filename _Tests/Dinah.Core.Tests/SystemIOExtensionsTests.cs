@@ -16,7 +16,7 @@
 
                 var info = new FileInfo(temp);
                 var md5 = info.MD5();
-                md5.Should().Be("d41d8cd98f00b204e9800998ecf8427e");
+                md5.ShouldBe("d41d8cd98f00b204e9800998ecf8427e");
             }
             finally
             {

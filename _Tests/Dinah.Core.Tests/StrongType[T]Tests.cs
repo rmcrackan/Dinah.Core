@@ -208,7 +208,7 @@
 		public void no_validation_passes()
 		{
 			var nv = new noValidationStrongString(null);
-			nv.Value.Should().BeNull();
+			nv.Value.ShouldBeNull();
 		}
 
 		class withValidationStrongString : StrongType<string>
@@ -230,7 +230,7 @@
 		public void validation_success()
 		{
 			var wv = new withValidationStrongString("");
-			wv.Value.Should().Be("");
+			wv.Value.ShouldBe("");
 		}
 	}
 }

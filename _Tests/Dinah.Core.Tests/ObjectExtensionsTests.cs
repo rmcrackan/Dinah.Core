@@ -61,42 +61,42 @@
 	{
 		[TestMethod]
 		public void non_enum_is_null()
-			=> new NonEnum().GetDescription().Should().BeNull();
+			=> new NonEnum().GetDescription().ShouldBeNull();
 
 		[TestMethod]
 		public void non_described_byte_enum_is_null()
-			=> ByteEnum.Four.GetDescription().Should().BeNull();
+			=> ByteEnum.Four.GetDescription().ShouldBeNull();
 
 		[TestMethod]
 		public void described_byte_enum_is_foo()
-			=> ByteEnum.Three.GetDescription().Should().Be("three val");
+			=> ByteEnum.Three.GetDescription().ShouldBe("three val");
 
 		[TestMethod]
 		public void non_described_int_enum_is_null()
-			=> IntEnum.Four.GetDescription().Should().BeNull();
+			=> IntEnum.Four.GetDescription().ShouldBeNull();
 
 		[TestMethod]
 		public void described_int_enum_is_foo()
-			=> IntEnum.Three.GetDescription().Should().Be("three val");
+			=> IntEnum.Three.GetDescription().ShouldBe("three val");
 
 		[TestMethod]
 		public void non_described_flag_enum_is_null()
-			=> FlagsEnum.Eight.GetDescription().Should().BeNull();
+			=> FlagsEnum.Eight.GetDescription().ShouldBeNull();
 
 		[TestMethod]
 		public void described_flag_enum_is_foo()
-			=> FlagsEnum.Four.GetDescription().Should().Be("four val");
+			=> FlagsEnum.Four.GetDescription().ShouldBe("four val");
 
 		[TestMethod]
 		public void mult_flag_enums_with_null()
-			=> (FlagsEnum.Eight | FlagsEnum.Four).GetDescription().Should().Be("four val | [null]");
+			=> (FlagsEnum.Eight | FlagsEnum.Four).GetDescription().ShouldBe("four val | [null]");
 
 		[TestMethod]
 		public void mult_flag_enums_descriptions()
-			=> (FlagsEnum.Two | FlagsEnum.Four).GetDescription().Should().Be("two val | four val");
+			=> (FlagsEnum.Two | FlagsEnum.Four).GetDescription().ShouldBe("two val | four val");
 
 		[TestMethod]
 		public void none_flag_enums_description()
-			=> FlagsEnum.None.GetDescription().Should().Be("no val");
+			=> FlagsEnum.None.GetDescription().ShouldBe("no val");
 	}
 }

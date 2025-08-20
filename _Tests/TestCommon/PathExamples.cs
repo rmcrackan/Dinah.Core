@@ -9,13 +9,13 @@
 			// get actual system dir:
 			// eg: C:\Users\username\AppData\Roaming
 			var appDataDir = Environment.ExpandEnvironmentVariables("%appdata%");
-			Directory.Exists(appDataDir).Should().BeTrue();
-			appDataDir.Should().NotEndWith("\\");
+			Directory.Exists(appDataDir).ShouldBeTrue();
+			appDataDir.ShouldNotEndWith("\\");
 
 
 			Environment
 				.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-				.Should().Be(appDataDir);
+				.ShouldBe(appDataDir);
 		}
 
 		// windows environment variables. can use in %variable% format
@@ -30,27 +30,27 @@
 			// get actual system dirs:
 			// eg: C:\Users\username\AppData\Roaming
 			var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			Directory.Exists(appDataDir).Should().BeTrue();
-			appDataDir.Should().NotEndWith("\\");
+			Directory.Exists(appDataDir).ShouldBeTrue();
+			appDataDir.ShouldNotEndWith("\\");
 
 			// eg: C:\Program Files
 			var programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			Directory.Exists(programFilesDir).Should().BeTrue();
-			programFilesDir.Should().NotEndWith("\\");
+			Directory.Exists(programFilesDir).ShouldBeTrue();
+			programFilesDir.ShouldNotEndWith("\\");
 
 
 			Environment
 				.ExpandEnvironmentVariables(@"%AppData%\stuff")
-				.Should().Be(appDataDir + @"\stuff");
+				.ShouldBe(appDataDir + @"\stuff");
 
 			Environment
 				.ExpandEnvironmentVariables(@"%aPpdAtA%\HelloWorld")
-				.Should().Be(appDataDir + @"\HelloWorld");
+				.ShouldBe(appDataDir + @"\HelloWorld");
 
 			// collection of paths
 			Environment
 				.ExpandEnvironmentVariables(@"%progRAMfiLES%\Adobe;%appdata%\FileZilla")
-				.Should().Be($@"{programFilesDir}\Adobe;{appDataDir}\FileZilla");
+				.ShouldBe($@"{programFilesDir}\Adobe;{appDataDir}\FileZilla");
 		}
 	}
 
@@ -65,7 +65,7 @@
 		{
 			var path = Path.Combine(full, @"..\..\..");
 			var final = Path.GetFullPath(path);
-			final.Should().Be(up3);
+			final.ShouldBe(up3);
 		}
 
 		[TestMethod]
@@ -73,7 +73,7 @@
 		{
 			var path = Path.Combine(full, @"..\..\..");
 			var final = new DirectoryInfo(path).FullName;
-			final.Should().Be(up3);
+			final.ShouldBe(up3);
 		}
 	}
 }

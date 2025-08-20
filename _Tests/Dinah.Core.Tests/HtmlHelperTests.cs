@@ -12,28 +12,28 @@
 
         [TestMethod]
         public void empty()
-            => HtmlHelper.GetInputs("").Count.Should().Be(0);
+            => HtmlHelper.GetInputs("").Count.ShouldBe(0);
 
         [TestMethod]
         public void no_match()
-            => HtmlHelper.GetInputs("<p></p>").Count.Should().Be(0);
+            => HtmlHelper.GetInputs("<p></p>").Count.ShouldBe(0);
 
         [TestMethod]
         public void match_hidden()
         {
             var inputs = HtmlHelper.GetInputs(basicHidden);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
         public void match_checkbox()
         {
             var inputs = HtmlHelper.GetInputs(basicCb);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("cbFoo").Should().BeTrue();
-            inputs["cbFoo"].Should().Be("cbBar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("cbFoo").ShouldBeTrue();
+            inputs["cbFoo"].ShouldBe("cbBar");
         }
 
         [TestMethod]
@@ -43,22 +43,22 @@
 
             var inputs = HtmlHelper.GetInputs(both);
 
-            inputs.Count.Should().Be(2);
+            inputs.Count.ShouldBe(2);
 
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
 
-            inputs.ContainsKey("cbFoo").Should().BeTrue();
-            inputs["cbFoo"].Should().Be("cbBar");
+            inputs.ContainsKey("cbFoo").ShouldBeTrue();
+            inputs["cbFoo"].ShouldBe("cbBar");
         }
 
         [TestMethod]
         public void find_1_top_level()
         {
             var inputs = HtmlHelper.GetInputs(basicHidden);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -66,9 +66,9 @@
         {
             var html = $"<p>{basicHidden}</p>";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -76,9 +76,9 @@
         {
             var html = $"<p><p>{basicHidden}</p></p>";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -86,9 +86,9 @@
         {
             var html = $"<p><p><p>{basicHidden}</p></p></p>";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -96,9 +96,9 @@
         {
             var html = $"<p><p><p>{basicHidden}</p></p>";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -106,9 +106,9 @@
         {
             var html = $"<p><p>{basicHidden}</p></p></p>";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(1);
-            inputs.ContainsKey("foo").Should().BeTrue();
-            inputs["foo"].Should().Be("bar");
+            inputs.Count.ShouldBe(1);
+            inputs.ContainsKey("foo").ShouldBeTrue();
+            inputs["foo"].ShouldBe("bar");
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@
         {
             var html = @"<input type='hidden' value='foo' />";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(0);
+            inputs.Count.ShouldBe(0);
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@
         {
             var html = @"<input type='hidden' name='' value='foo' />";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(0);
+            inputs.Count.ShouldBe(0);
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@
         {
             var html = @"<input type='hidden' name='   ' value='foo' />";
             var inputs = HtmlHelper.GetInputs(html);
-            inputs.Count.Should().Be(0);
+            inputs.Count.ShouldBe(0);
         }
 
         [TestMethod]
@@ -157,22 +157,22 @@
 
             var inputs = HtmlHelper.GetInputs(html);
 
-            inputs.Count.Should().Be(5);
+            inputs.Count.ShouldBe(5);
 
-            inputs.ContainsKey("h1").Should().BeTrue();
-            inputs["h1"].Should().Be("hv1");
+            inputs.ContainsKey("h1").ShouldBeTrue();
+            inputs["h1"].ShouldBe("hv1");
 
-            inputs.ContainsKey("h2").Should().BeTrue();
-            inputs["h2"].Should().Be("hv2");
+            inputs.ContainsKey("h2").ShouldBeTrue();
+            inputs["h2"].ShouldBe("hv2");
 
-            inputs.ContainsKey("cb1").Should().BeTrue();
-            inputs["cb1"].Should().Be("cbv1");
+            inputs.ContainsKey("cb1").ShouldBeTrue();
+            inputs["cb1"].ShouldBe("cbv1");
 
-            inputs.ContainsKey("cb2").Should().BeTrue();
-            inputs["cb2"].Should().Be("cbv2");
+            inputs.ContainsKey("cb2").ShouldBeTrue();
+            inputs["cb2"].ShouldBe("cbv2");
 
-            inputs.ContainsKey("e1").Should().BeTrue();
-            inputs["e1"].Should().Be("a@b.xyz");
+            inputs.ContainsKey("e1").ShouldBeTrue();
+            inputs["e1"].ShouldBe("a@b.xyz");
         }
     }
 
@@ -185,8 +185,8 @@
             var url = "http://example.com/a?b=c";
             var html = $@"<body><p><a href='{url}'></p></body>";
             var links = HtmlHelper.GetLinks(html);
-            links.Count.Should().Be(1);
-            links[0].Should().Be(url);
+            links.Count.ShouldBe(1);
+            links[0].ShouldBe(url);
         }
 
         [TestMethod]
@@ -196,9 +196,9 @@
             var url2 = "#";
             var html = $@"<body><p><a href='{url1}'></p><p><a href='{url2}' class='foo'></p></body>";
             var links = HtmlHelper.GetLinks(html);
-            links.Count.Should().Be(2);
-            links[0].Should().Be(url1);
-            links[1].Should().Be(url2);
+            links.Count.ShouldBe(2);
+            links[0].ShouldBe(url1);
+            links[1].ShouldBe(url2);
         }
 
         [TestMethod]
@@ -208,8 +208,8 @@
             var barUrl = "#";
             var html = $@"<body><p><a href='{fooUrl}' class='foo'></p><p><a href='{barUrl}' class='bar'></p></body>";
             var links = HtmlHelper.GetLinks(html, "foo");
-            links.Count.Should().Be(1);
-            links[0].Should().Be(fooUrl);
+            links.Count.ShouldBe(1);
+            links[0].ShouldBe(fooUrl);
         }
     }
 
@@ -220,25 +220,25 @@
         public void _0_divs()
         {
             var html = "<body><p></p></body>";
-            HtmlHelper.GetDivCount(html).Should().Be(0);
+            HtmlHelper.GetDivCount(html).ShouldBe(0);
         }
         [TestMethod]
         public void _1_div()
         {
             var html = "<body><p><div /></p></body>";
-            HtmlHelper.GetDivCount(html).Should().Be(1);
+            HtmlHelper.GetDivCount(html).ShouldBe(1);
         }
         [TestMethod]
         public void _1_div_0_matches()
         {
             var html = "<body><p><div id='foo' /></p></body>";
-            HtmlHelper.GetDivCount(html, "bar").Should().Be(0);
+            HtmlHelper.GetDivCount(html, "bar").ShouldBe(0);
         }
         [TestMethod]
         public void _3_divs_2_matches()
         {
             var html = "<body><p><div id='foo' /><div id='bar' /><div id='bar' /></p></body>";
-            HtmlHelper.GetDivCount(html, "bar").Should().Be(2);
+            HtmlHelper.GetDivCount(html, "bar").ShouldBe(2);
         }
     }
 
@@ -268,20 +268,20 @@
 		public void parse_sample()
 		{
             var otpDivs = HtmlHelper.GetElements(SAMPLE, "div", "data-a-input-name", "otpDeviceContext");
-            otpDivs.Count.Should().Be(3);
+            otpDivs.Count.ShouldBe(3);
 
             {
                 var otp = otpDivs[0];
 
                 var inputNode = otp.SelectSingleNode(".//input");
                 var name = inputNode.Attributes["name"]?.Value;
-                name.Should().Be("otpDeviceContext");
+                name.ShouldBe("otpDeviceContext");
                 var value = inputNode.Attributes["value"]?.Value;
-                value.Should().Be("aAbBcC=, TOTP");
+                value.ShouldBe("aAbBcC=, TOTP");
 
                 var span = otp.SelectSingleNode(".//span");
                 var text = span?.InnerText.Trim();
-                text.Should().Be("Enter the OTP from the authenticator app");
+                text.ShouldBe("Enter the OTP from the authenticator app");
             }
 
             {
@@ -289,13 +289,13 @@
 
                 var inputNode = otp.SelectSingleNode(".//input");
                 var name = inputNode.Attributes["name"]?.Value;
-                name.Should().Be("otpDeviceContext");
+                name.ShouldBe("otpDeviceContext");
                 var value = inputNode.Attributes["value"]?.Value;
-                value.Should().Be("dDeEfE=, SMS");
+                value.ShouldBe("dDeEfE=, SMS");
 
                 var span = otp.SelectSingleNode(".//span");
                 var text = span?.InnerText.Trim();
-                text.Should().Be("Send an SMS to my number ending with 123");
+                text.ShouldBe("Send an SMS to my number ending with 123");
             }
 
             {
@@ -303,13 +303,13 @@
 
                 var inputNode = otp.SelectSingleNode(".//input");
                 var name = inputNode.Attributes["name"]?.Value;
-                name.Should().Be("otpDeviceContext");
+                name.ShouldBe("otpDeviceContext");
                 var value = inputNode.Attributes["value"]?.Value;
-                value.Should().Be("dDeEfE=, VOICE");
+                value.ShouldBe("dDeEfE=, VOICE");
 
                 var span = otp.SelectSingleNode(".//span");
                 var text = span?.InnerText.Trim();
-                text.Should().Be("Call me on my number ending with 123");
+                text.ShouldBe("Call me on my number ending with 123");
             }
         }
 
@@ -319,8 +319,8 @@
             var title = "My Title";
             var html = $"<head><title foo='bar'>{title}</title></head>";
             var nodes = HtmlHelper.GetElements(html, "title");
-            nodes.Count.Should().Be(1);
-            nodes[0].InnerText.Should().Be(title);
+            nodes.Count.ShouldBe(1);
+            nodes[0].InnerText.ShouldBe(title);
 		}
     }
 }
