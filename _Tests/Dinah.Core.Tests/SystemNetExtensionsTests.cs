@@ -1,6 +1,4 @@
-﻿using Shouldly;
-
-namespace SystemNetExtensionsTests
+﻿namespace SystemNetExtensionsTests
 {
     [TestClass]
     public class EnumerateCookies
