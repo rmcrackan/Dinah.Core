@@ -39,7 +39,7 @@
 
 		[TestMethod]
 		public void byte_enum_throws()
-			=> Assert.ThrowsException<InvalidCastException>(() => ByteEnum.Four.ToValues().ToArray());
+			=> Assert.Throws<InvalidCastException>(() => ByteEnum.Four.ToValues().ToArray());
 
 		[TestMethod]
 		public void non_flag_gives_inaccurate_results()

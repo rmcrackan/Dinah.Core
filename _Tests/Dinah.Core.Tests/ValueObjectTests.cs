@@ -125,14 +125,14 @@ namespace ValueObjectTests
         public void should_throw_NullReferenceException()
         {
             foreach (var testAddr in AddressesFail.Where(a => a == null))
-                Assert.ThrowsException<NullReferenceException>(() => Address0.GetHashCode() == testAddr.GetHashCode());
+                Assert.Throws<NullReferenceException>(() => Address0.GetHashCode() == testAddr.GetHashCode());
         }
 
         [TestMethod]
         public void should_fail()
         {
             foreach (var testAddr in AddressesFail.Where(a => a != null))
-                Assert.IsFalse(Address0.GetHashCode() == testAddr.GetHashCode());
+                Assert.AreNotEqual(Address0.GetHashCode(), testAddr.GetHashCode());
         }
 
         [TestMethod]

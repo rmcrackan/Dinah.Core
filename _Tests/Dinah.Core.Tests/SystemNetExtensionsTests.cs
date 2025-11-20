@@ -22,7 +22,7 @@
             Assert.AreEqual(3, cookieJar.Count);
             
             var uri1cookies = cookieJar.EnumerateCookies(uri1).ToList();
-            Assert.AreEqual(2, uri1cookies.Count);
+            Assert.HasCount(2, uri1cookies);
             Assert.AreEqual(uri1cookies[0].Name, cookie1name);
             Assert.AreEqual(uri1cookies[0].Value, cookie1value);
             Assert.AreEqual(uri1cookies[1].Name, cookie2name);
@@ -49,8 +49,8 @@
             // ASSERT
             hashTable.Keys.Count.ShouldBe(2);
             var keys = hashTable.Keys.Cast<string>().ToList();
-            keys.ShouldBe([".domain1.com", ".domain2.com"], ignoreOrder: true);
-            keys.ShouldBe([".domain2.com", ".domain1.com"], ignoreOrder: true);
+            keys.ShouldBe(["domain1.com", "domain2.com"], ignoreOrder: true);
+            keys.ShouldBe(["domain2.com", "domain1.com"], ignoreOrder: true);
 
             var collection1 = cookies.GetCookies(new Uri("http://domain1.com/"));
             collection1.Count.ShouldBe(2);

@@ -4,7 +4,7 @@
 	public class EnsureNotNull
 	{
 		[TestMethod]
-		public void null_fails() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureNotNull((string)null, "name"));
+		public void null_fails() => Assert.Throws<ArgumentNullException>(() => ArgumentValidator.EnsureNotNull((string)null, "name"));
 
 		[TestMethod]
 		public void blank_passes()
@@ -31,10 +31,10 @@
 	public class EnsureEnumerableNotNullOrEmpty
 	{
 		[TestMethod]
-		public void null_throws() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureEnumerableNotNullOrEmpty((List<string>)null, "foo"));
+		public void null_throws() => Assert.Throws<ArgumentNullException>(() => ArgumentValidator.EnsureEnumerableNotNullOrEmpty((List<string>)null, "foo"));
 
 		[TestMethod]
-		public void empty_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureEnumerableNotNullOrEmpty(new List<string>(), "foo"));
+		public void empty_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureEnumerableNotNullOrEmpty(new List<string>(), "foo"));
 
 		[TestMethod]
 		public void has_items_passes() => ArgumentValidator.EnsureEnumerableNotNullOrEmpty(new List<string> { null }, "foo");
@@ -44,10 +44,10 @@
 	public class EnsureNotNullOrEmpty
 	{
 		[TestMethod]
-		public void null_throws() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureNotNullOrEmpty(null, "foo"));
+		public void null_throws() => Assert.Throws<ArgumentNullException>(() => ArgumentValidator.EnsureNotNullOrEmpty(null, "foo"));
 
 		[TestMethod]
-		public void empty_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrEmpty("", "foo"));
+		public void empty_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrEmpty("", "foo"));
 
 		[TestMethod]
 		public void whitespace_passes() => ArgumentValidator.EnsureNotNullOrEmpty("   ", "foo");
@@ -60,13 +60,13 @@
 	public class EnsureNotNullOrWhiteSpace
 	{
 		[TestMethod]
-		public void null_throws() => Assert.ThrowsException<ArgumentNullException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace(null, "foo"));
+		public void null_throws() => Assert.Throws<ArgumentNullException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace(null, "foo"));
 
 		[TestMethod]
-		public void empty_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace("", "foo"));
+		public void empty_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace("", "foo"));
 
 		[TestMethod]
-		public void whitespace_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace("   ", "foo"));
+		public void whitespace_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureNotNullOrWhiteSpace("   ", "foo"));
 
 		[TestMethod]
 		public void has_value_passes() => ArgumentValidator.EnsureNotNullOrWhiteSpace("bar", "foo");
@@ -77,10 +77,10 @@
 	{
 
 		[TestMethod]
-		public void too_small_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureGreaterThan(9, "n", 10));
+		public void too_small_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureGreaterThan(9, "n", 10));
 
 		[TestMethod]
-		public void equals_fails() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureGreaterThan(9, "n", 9));
+		public void equals_fails() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureGreaterThan(9, "n", 9));
 
 		[TestMethod]
 		public void bigger_passes() => ArgumentValidator.EnsureGreaterThan(9, "n", 8);
@@ -90,10 +90,10 @@
 	public class EnsureBetweenInclusive
 	{
 		[TestMethod]
-		public void too_small_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(9, "n", 10, 20));
+		public void too_small_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(9, "n", 10, 20));
 
 		[TestMethod]
-		public void too_big_throws() => Assert.ThrowsException<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(21, "n", 10, 20));
+		public void too_big_throws() => Assert.Throws<ArgumentException>(() => ArgumentValidator.EnsureBetweenInclusive(21, "n", 10, 20));
 
 		[TestMethod]
 		public void minimum_passes() => ArgumentValidator.EnsureBetweenInclusive(10, "n", 10, 20);

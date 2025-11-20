@@ -224,7 +224,7 @@
 
 		[TestMethod]
 		public void validation_failure()
-			=> Assert.ThrowsException<ArgumentNullException>(() => new withValidationStrongString(null));
+			=> Assert.Throws<ArgumentNullException>(() => new withValidationStrongString(null));
 
 		[TestMethod]
 		public void validation_success()

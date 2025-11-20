@@ -12,6 +12,16 @@ namespace Dinah.Core.Collections.Generic
 
     public static class IEnumerable_T_Ext
     {
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            ArgumentNullException.ThrowIfNull(enumerable, nameof(enumerable));
+            ArgumentNullException.ThrowIfNull(action, nameof(action));
+			foreach (T item in enumerable)
+            {
+                action(item);
+			}
+		}
+
         /// <summary>Determines whether a string collection contains a specified string. Case-INsensative.</summary>
         public static bool ContainsInsensative(this IEnumerable<string> collection, string str) => collection.Any(item => item.EqualsInsensitive(str));
 

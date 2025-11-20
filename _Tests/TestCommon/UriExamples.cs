@@ -37,16 +37,16 @@ namespace UriExamples
 			Assert.IsFalse(https.Equals(param));
 			Assert.IsFalse(fragment.Equals(param));
 
-			Assert.IsFalse(http.AbsoluteUri == https.AbsoluteUri);
-			Assert.IsTrue(http.AbsoluteUri == slash.AbsoluteUri); // true
-			Assert.IsFalse(http.AbsoluteUri == fragment.AbsoluteUri);
-			Assert.IsFalse(http.AbsoluteUri == param.AbsoluteUri);
-			Assert.IsFalse(https.AbsoluteUri == slash.AbsoluteUri);
-			Assert.IsFalse(https.AbsoluteUri == fragment.AbsoluteUri);
-			Assert.IsFalse(https.AbsoluteUri == param.AbsoluteUri);
-			Assert.IsFalse(slash.AbsoluteUri == fragment.AbsoluteUri);
-			Assert.IsFalse(https.AbsoluteUri == param.AbsoluteUri);
-			Assert.IsFalse(fragment.AbsoluteUri == param.AbsoluteUri);
+			Assert.AreNotEqual(http.AbsoluteUri, https.AbsoluteUri);
+			Assert.AreEqual(http.AbsoluteUri, slash.AbsoluteUri); // true
+			Assert.AreNotEqual(http.AbsoluteUri, fragment.AbsoluteUri);
+			Assert.AreNotEqual(http.AbsoluteUri, param.AbsoluteUri);
+			Assert.AreNotEqual(https.AbsoluteUri, slash.AbsoluteUri);
+			Assert.AreNotEqual(https.AbsoluteUri, fragment.AbsoluteUri);
+			Assert.AreNotEqual(https.AbsoluteUri, param.AbsoluteUri);
+			Assert.AreNotEqual(slash.AbsoluteUri, fragment.AbsoluteUri);
+			Assert.AreNotEqual(https.AbsoluteUri, param.AbsoluteUri);
+			Assert.AreNotEqual(fragment.AbsoluteUri, param.AbsoluteUri);
 		}
 
 		[TestMethod]

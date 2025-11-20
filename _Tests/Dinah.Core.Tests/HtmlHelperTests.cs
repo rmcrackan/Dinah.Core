@@ -5,7 +5,7 @@
     {
         [TestMethod]
         public void null_param_throws()
-            => Assert.ThrowsException<ArgumentNullException>(() => HtmlHelper.GetInputs(null));
+            => Assert.Throws<ArgumentNullException>(() => HtmlHelper.GetInputs(null));
 
         string basicHidden => "<input type='hidden' name='foo' value='bar' />";
         string basicCb => "<input type='checkbox' name='cbFoo' value='cbBar' />";
