@@ -125,7 +125,7 @@ namespace JsonExamples
         {
             var j = JsonTest.Factory(9);
             j.SetPrivReq(null);
-            Assert.ThrowsException<JsonSerializationException>(() => JsonConvert.SerializeObject(j));
+            Assert.Throws<JsonSerializationException>(() => JsonConvert.SerializeObject(j));
         }
 
         [TestMethod]
@@ -574,7 +574,7 @@ namespace JsonExamples
 
             Assert.IsNotNull(album);
             Assert.AreEqual(album.AlbumName, jalbum?.Value<string>("AlbumName"));
-            Assert.IsTrue(album.Songs.Count > 0);
+            Assert.IsNotEmpty(album.Songs);
         }
 
         [TestMethod]
@@ -610,8 +610,8 @@ namespace JsonExamples
             var album2 = JsonConvert.DeserializeObject<Album>(json2);
 
             Assert.IsNotNull(album2);
-            Assert.IsTrue(album2.AlbumName == "Dirty Deeds Done Dirt Cheap");
-            Assert.IsTrue(album2.Songs.Count == 2);
+            Assert.AreEqual("Dirty Deeds Done Dirt Cheap", album2.AlbumName);
+            Assert.HasCount(2, album2.Songs);
         }
     }
 

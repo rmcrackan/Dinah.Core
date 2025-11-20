@@ -31,13 +31,13 @@ namespace StringExtensionsTests
         [DataRow(null, "")]
         [DataRow(null, "   ")]
         public void should_throw_NullReferenceException(string fullString, string prefix)
-            => Assert.ThrowsException<NullReferenceException>(() => fullString.StartsWithInsensitive(prefix));
+            => Assert.Throws<NullReferenceException>(() => fullString.StartsWithInsensitive(prefix));
 
         [TestMethod]
         [DataRow("", null)]
         [DataRow("   ", null)]
         public void should_throw_ArgumentNullException(string fullString, string prefix)
-            => Assert.ThrowsException<ArgumentNullException>(() => fullString.StartsWithInsensitive(prefix));
+            => Assert.Throws<ArgumentNullException>(() => fullString.StartsWithInsensitive(prefix));
 
         [TestMethod]
         [DataRow("", "   ")]
@@ -66,13 +66,13 @@ namespace StringExtensionsTests
         [DataRow(null, "")]
         [DataRow(null, "   ")]
         public void should_throw_NullReferenceException(string fullString, string prefix)
-            => Assert.ThrowsException<NullReferenceException>(() => fullString.EndsWithInsensitive(prefix));
+            => Assert.Throws<NullReferenceException>(() => fullString.EndsWithInsensitive(prefix));
 
         [TestMethod]
         [DataRow("", null)]
         [DataRow("   ", null)]
         public void should_throw_ArgumentNullException(string fullString, string prefix)
-            => Assert.ThrowsException<ArgumentNullException>(() => fullString.EndsWithInsensitive(prefix));
+            => Assert.Throws<ArgumentNullException>(() => fullString.EndsWithInsensitive(prefix));
 
         [TestMethod]
         [DataRow("", "   ")]
@@ -100,7 +100,7 @@ namespace StringExtensionsTests
         [DataRow("", null)]
         [DataRow("   ", null)]
         public void should_throw_ArgumentNullException(string fullString, string needle)
-            => Assert.ThrowsException<ArgumentNullException>(() => fullString.ContainsInsensitive(needle));
+            => Assert.Throws<ArgumentNullException>(() => fullString.ContainsInsensitive(needle));
 
         [TestMethod]
         [DataRow(null, null)]
@@ -317,11 +317,11 @@ namespace StringExtensionsTests
 
 		[TestMethod]
 		public void _0_needleLength_throws()
-			=> Assert.ThrowsException<ArgumentException>(() => "foo".ExtractString("f", 0));
+			=> Assert.Throws<ArgumentException>(() => "foo".ExtractString("f", 0));
 
 		[TestMethod]
 		public void negative_needleLength_throws()
-			=> Assert.ThrowsException<ArgumentException>(() => "foo".ExtractString("f", -1));
+			=> Assert.Throws<ArgumentException>(() => "foo".ExtractString("f", -1));
 
 		[TestMethod]
 		public void needle_not_found_returns_null()
@@ -375,27 +375,27 @@ namespace StringExtensionsTests
 	{
 		[TestMethod]
 		public void null_throws()
-			=> Assert.ThrowsException<ArgumentNullException>(() => ((string)null).HexStringToByteArray());
+			=> Assert.Throws<ArgumentNullException>(() => ((string)null).HexStringToByteArray());
 
 		[TestMethod]
 		public void empty_or_whitespace_throws()
 		{
-			Assert.ThrowsException<ArgumentException>(() => "".HexStringToByteArray());
-			Assert.ThrowsException<ArgumentException>(() => "   ".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "   ".HexStringToByteArray());
 		}
 
 		[TestMethod]
 		public void invalid_char_throws()
 		{
-			Assert.ThrowsException<ArgumentException>(() => "1z".HexStringToByteArray());
-			Assert.ThrowsException<ArgumentException>(() => "z".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "1z".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "z".HexStringToByteArray());
 		}
 
 		[TestMethod]
 		public void uneven_char_count_throws()
 		{
-			Assert.ThrowsException<ArgumentException>(() => "1".HexStringToByteArray());
-			Assert.ThrowsException<ArgumentException>(() => "abc".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "1".HexStringToByteArray());
+			Assert.Throws<ArgumentException>(() => "abc".HexStringToByteArray());
 		}
 
 		[TestMethod]
@@ -411,7 +411,7 @@ namespace StringExtensionsTests
 	{
 		[TestMethod]
 		public void null_throws()
-			=> Assert.ThrowsException<ArgumentNullException>(() => ((string)null).ToMd5Hash());
+			=> Assert.Throws<ArgumentNullException>(() => ((string)null).ToMd5Hash());
 
 		[TestMethod]
 		[DataRow("", "D41D8CD98F00B204E9800998ECF8427E")]
