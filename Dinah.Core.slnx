@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/_Demos/">
+    <Project Path="_Demos/Dinah.Core.Demos/Dinah.Core.Demos.csproj" />
+  </Folder>
+  <Folder Name="/_Tests/">
+    <Project Path="_Tests/Dinah.Core.Tests/Dinah.Core.Tests.csproj" />
+    <Project Path="_Tests/Dinah.EntityFrameworkCore.Tests/Dinah.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="_Tests/TestCommon/TestCommon.csproj" />
+  </Folder>
+  <Project Path="Dinah.Core.WindowsDesktop/Dinah.Core.WindowsDesktop.csproj" />
+  <Project Path="Dinah.Core/Dinah.Core.csproj" />
+  <Project Path="Dinah.EntityFrameworkCore/Dinah.EntityFrameworkCore.csproj" />
+</Solution>
