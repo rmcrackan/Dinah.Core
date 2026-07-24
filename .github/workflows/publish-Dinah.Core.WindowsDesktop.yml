@@ -28,4 +28,8 @@ jobs:
         with:
           user: rmcrackan
       - name: PushNuget
-        run: dotnet nuget push nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
+        shell: pwsh
+        run: |
+          Get-ChildItem nupkg/*.nupkg | ForEach-Object {
+            dotnet nuget push $_.FullName --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
+          }
