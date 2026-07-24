@@ -13,12 +13,21 @@ jobs:
   publish:
     name: Dinah.EntityFrameworkCore build, pack & publish
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.x
+
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: rmcrackan
 
       # Publish
       - name: Dinah.EntityFrameworkCore publish on version change
@@ -47,7 +56,7 @@ jobs:
           # TAG_FORMAT: v*
 
           # API key to authenticate with NuGet server
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          NUGET_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
 
           # NuGet server uri hosting the packages, defaults to https://api.nuget.org
           # NUGET_SOURCE: https://api.nuget.org
