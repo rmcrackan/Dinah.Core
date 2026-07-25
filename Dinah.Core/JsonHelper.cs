@@ -84,7 +84,7 @@ namespace Dinah.Core
             var contents = File.ReadAllText(jsonFilePath);
             var jObj = JObject.Parse(contents);
             updateAction(jObj);
-            File.WriteAllText(jsonFilePath, jObj.ToString(Formatting.Indented));
+            IO.AtomicFileWriter.WriteAllText(jsonFilePath, jObj.ToString(Formatting.Indented));
         }
     }
 }

@@ -167,7 +167,17 @@ namespace Dinah.Core.IO
 
 			preventRapidWrites();
 
-			File.WriteAllText(Path, json);
+			AtomicFileWriter.WriteAllText(Path, json, validateTempFile: validateJsonTempFile);
+		}
+
+		private static void validateJsonTempFile(string tempPath)
+		{
+			var text = File.ReadAllText(tempPath);
+			if (string.IsNullOrWhiteSpace(text))
+				throw new JsonSerializationException("Could not write json file. Empty temp payload");
+
+			// Ensure the temp file is readable JSON before replacing the destination.
+			JToken.Parse(text);
 		}
 
 		// prevent multiple writes in quick succession
