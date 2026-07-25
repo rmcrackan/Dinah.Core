@@ -21,8 +21,23 @@ public static class AtomicFileWriter
 	/// </summary>
 	public static void WriteAllText(string path, string contents, Action<string>? validateTempFile)
 	{
-		ArgumentValidator.EnsureNotNullOrWhiteSpace(path, nameof(path));
 		ArgumentNullException.ThrowIfNull(contents);
+		WriteAllBytes(path, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false).GetBytes(contents), validateTempFile);
+	}
+
+	/// <summary>
+	/// Write bytes by creating a temp file in the same directory, flushing it, then replacing the destination.
+	/// </summary>
+	public static void WriteAllBytes(string path, byte[] bytes)
+		=> WriteAllBytes(path, bytes, validateTempFile: null);
+
+	/// <summary>
+	/// Same as <see cref="WriteAllBytes(string, byte[])"/>, with optional validation of the temp file before replace.
+	/// </summary>
+	public static void WriteAllBytes(string path, byte[] bytes, Action<string>? validateTempFile)
+	{
+		ArgumentValidator.EnsureNotNullOrWhiteSpace(path, nameof(path));
+		ArgumentNullException.ThrowIfNull(bytes);
 
 		var fullPath = Path.GetFullPath(path);
 		var directory = Path.GetDirectoryName(fullPath);
@@ -34,10 +49,8 @@ public static class AtomicFileWriter
 		try
 		{
 			using (var stream = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-			using (var writer = new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)))
 			{
-				writer.Write(contents);
-				writer.Flush();
+				stream.Write(bytes, 0, bytes.Length);
 				stream.Flush(flushToDisk: true);
 			}
 
