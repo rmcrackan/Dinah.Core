@@ -17,7 +17,7 @@ public sealed class AesGcmSecretProtector
 
 	private readonly IOsSecretStore _secretStore;
 	private readonly string _masterKeyName;
-	private readonly object _keyLock = new();
+	private Lock KeyLock { get; } = new();
 	private byte[]? _cachedKey;
 
 	public AesGcmSecretProtector(IOsSecretStore secretStore, string masterKeyName = "aes-gcm-master-key-v1")
@@ -121,7 +121,7 @@ public sealed class AesGcmSecretProtector
 
 	private byte[] GetOrCreateMasterKey()
 	{
-		lock (_keyLock)
+		lock (KeyLock)
 		{
 			if (_cachedKey is not null)
 				return _cachedKey;
