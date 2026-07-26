@@ -117,12 +117,8 @@ public static class AtomicFileWriter
 
 	private static void ReplaceDestination(string tempPath, string destinationPath)
 	{
-		if (File.Exists(destinationPath))
-		{
-			File.Replace(tempPath, destinationPath, destinationBackupFileName: null);
-			return;
-		}
-
-		File.Move(tempPath, destinationPath);
+		// Prefer Move(overwrite) over File.Replace: Replace can fail on Windows with
+		// "Unable to remove the file to be replaced" when the destination is briefly locked.
+		File.Move(tempPath, destinationPath, overwrite: true);
 	}
 }
