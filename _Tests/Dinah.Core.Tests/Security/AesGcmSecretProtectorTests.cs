@@ -28,7 +28,7 @@ public class ProtectUnprotect
 		_ = protector.Protect("a");
 		_ = protector.Protect("b");
 
-		store.TryGet("aes-gcm-master-key-v1", out var key).ShouldBeTrue();
+		store.TryGet(AesGcmSecretProtector.DefaultMasterKeyName, out var key).ShouldBeTrue();
 		key.Length.ShouldBe(AesGcmSecretProtector.KeySizeBytes);
 	}
 
@@ -75,6 +75,20 @@ public class ProtectUnprotect
 		ex.StoreName.ShouldBe("UnavailableTest");
 		ex.Message.ShouldContain("no desktop session");
 		ex.Message.ShouldNotContain("x");
+	}
+
+	[TestMethod]
+	public void unprotect_fails_closed_when_master_key_missing()
+	{
+		var encryptStore = new MemoryOsSecretStore();
+		var payload = new AesGcmSecretProtector(encryptStore).Protect("secret-token-value");
+
+		var emptyStore = new MemoryOsSecretStore();
+		var decryptor = new AesGcmSecretProtector(emptyStore);
+
+		var ex = Should.Throw<SecretProtectionException>(() => decryptor.Unprotect(payload));
+		ex.Message.ShouldContain("was not found");
+		emptyStore.TryGet(AesGcmSecretProtector.DefaultMasterKeyName, out _).ShouldBeFalse();
 	}
 
 	static string Pad(string base64Url)
