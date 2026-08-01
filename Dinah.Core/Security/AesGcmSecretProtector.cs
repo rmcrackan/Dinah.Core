@@ -11,6 +11,7 @@ namespace Dinah.Core.Security;
 public sealed class AesGcmSecretProtector
 {
 	public const string PayloadVersion = "v1";
+	public const string DefaultMasterKeyName = "aes-gcm-master-key-v1";
 	public const int KeySizeBytes = 32;
 	public const int NonceSizeBytes = 12;
 	public const int TagSizeBytes = 16;
@@ -20,7 +21,7 @@ public sealed class AesGcmSecretProtector
 	private Lock KeyLock { get; } = new();
 	private byte[]? _cachedKey;
 
-	public AesGcmSecretProtector(IOsSecretStore secretStore, string masterKeyName = "aes-gcm-master-key-v1")
+	public AesGcmSecretProtector(IOsSecretStore secretStore, string masterKeyName = DefaultMasterKeyName)
 	{
 		_secretStore = secretStore ?? throw new ArgumentNullException(nameof(secretStore));
 		ArgumentValidator.EnsureNotNullOrWhiteSpace(masterKeyName, nameof(masterKeyName));
@@ -91,7 +92,7 @@ public sealed class AesGcmSecretProtector
 			throw new SecretProtectionException("Ciphertext payload is malformed.");
 
 		var plaintextBytes = new byte[ciphertext.Length];
-		var key = GetOrCreateMasterKey();
+		var key = GetExistingMasterKey();
 		try
 		{
 			var aad = ToAad(associatedData);
@@ -117,6 +118,24 @@ public sealed class AesGcmSecretProtector
 		throw new OsSecretStoreUnavailableException(
 			_secretStore.Name,
 			_secretStore.UnavailableReason ?? $"{_secretStore.Name} is unavailable.");
+	}
+
+	private byte[] GetExistingMasterKey()
+	{
+		lock (KeyLock)
+		{
+			if (_cachedKey is not null)
+				return _cachedKey;
+
+			if (!_secretStore.TryGet(_masterKeyName, out var existing))
+				throw new SecretProtectionException("Master key was not found in the secret store.");
+
+			if (existing.Length != KeySizeBytes)
+				throw new SecretProtectionException("Stored master key has an unexpected length.");
+
+			_cachedKey = existing;
+			return _cachedKey;
+		}
 	}
 
 	private byte[] GetOrCreateMasterKey()

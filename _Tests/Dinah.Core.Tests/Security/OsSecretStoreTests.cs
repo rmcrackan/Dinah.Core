@@ -23,6 +23,87 @@ public class MemoryStore
 }
 
 [TestClass]
+public class FileStore
+{
+	[TestMethod]
+	public void set_get_delete()
+	{
+		var dir = Path.Combine(Path.GetTempPath(), "Dinah.Core.Tests.FileOsSecretStore." + Guid.NewGuid().ToString("N"));
+		try
+		{
+			var store = new FileOsSecretStore(dir);
+			store.IsAvailable.ShouldBeTrue();
+
+			store.Set("aes-gcm-master-key-v1", "value"u8);
+			store.TryGet("aes-gcm-master-key-v1", out var value).ShouldBeTrue();
+			value.ShouldBe("value"u8.ToArray());
+
+			Directory.EnumerateFiles(dir, "*.secret").Count().ShouldBe(1);
+
+			store.Delete("aes-gcm-master-key-v1");
+			store.TryGet("aes-gcm-master-key-v1", out _).ShouldBeFalse();
+		}
+		finally
+		{
+			if (Directory.Exists(dir))
+				Directory.Delete(dir, recursive: true);
+		}
+	}
+
+	[TestMethod]
+	public void rejects_empty_value()
+	{
+		var dir = Path.Combine(Path.GetTempPath(), "Dinah.Core.Tests.FileOsSecretStore." + Guid.NewGuid().ToString("N"));
+		try
+		{
+			var store = new FileOsSecretStore(dir);
+			Should.Throw<ArgumentException>(() => store.Set("k", ReadOnlySpan<byte>.Empty));
+		}
+		finally
+		{
+			if (Directory.Exists(dir))
+				Directory.Delete(dir, recursive: true);
+		}
+	}
+}
+
+[TestClass]
+public class EnvironmentStore
+{
+	[TestMethod]
+	public void set_get_delete()
+	{
+		var prefix = "DINAH_CORE_TEST_SECRET_" + Guid.NewGuid().ToString("N") + "_";
+		var store = new EnvironmentOsSecretStore(prefix);
+		var envName = store.GetEnvironmentVariableName("aes-gcm-master-key-v1");
+		envName.ShouldBe(prefix + "AES_GCM_MASTER_KEY_V1");
+
+		try
+		{
+			store.Set("aes-gcm-master-key-v1", "value"u8);
+			store.TryGet("aes-gcm-master-key-v1", out var value).ShouldBeTrue();
+			value.ShouldBe("value"u8.ToArray());
+
+			Environment.GetEnvironmentVariable(envName).ShouldBe(Convert.ToBase64String("value"u8.ToArray()));
+
+			store.Delete("aes-gcm-master-key-v1");
+			store.TryGet("aes-gcm-master-key-v1", out _).ShouldBeFalse();
+		}
+		finally
+		{
+			Environment.SetEnvironmentVariable(envName, null);
+		}
+	}
+
+	[TestMethod]
+	public void rejects_empty_value()
+	{
+		var store = new EnvironmentOsSecretStore("DINAH_CORE_TEST_EMPTY_");
+		Should.Throw<ArgumentException>(() => store.Set("k", ReadOnlySpan<byte>.Empty));
+	}
+}
+
+[TestClass]
 public class Factory
 {
 	[TestMethod]
