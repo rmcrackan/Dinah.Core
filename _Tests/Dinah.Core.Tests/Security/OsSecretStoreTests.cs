@@ -4,6 +4,54 @@ using Dinah.Core.Security;
 #nullable enable
 namespace OsSecretStoreTests;
 
+/// <summary>
+/// Gate for the tests that talk to the real OS secret store (macOS Keychain, Linux Secret Service).
+/// <para>
+/// They are opt-in because on Unix they can <em>hang forever</em> rather than fail. Reaching the store means a
+/// D-Bus call to the Secret Service, and when the login keyring is locked with no desktop session able to
+/// prompt for the password - a headless box, an SSH session, a CI container - that call simply never returns.
+/// There is nothing to catch: <c>CredentialManagerOsSecretStore.Create</c> guards its probe with a try/catch,
+/// which converts a failure into an unavailable store, but a call that never returns is not a failure. So an
+/// unguarded <c>dotnet test</c> on such a machine stops dead instead of reporting anything.
+/// </para>
+/// <para>
+/// <b>How to run them anyway:</b> set <c>DINAH_TEST_OS_SECRET_STORE</c> to <c>1</c> (or <c>true</c>) for the
+/// test run. Do this on a desktop machine where you can answer a keyring prompt:
+/// </para>
+/// <code>
+/// bash/zsh:   DINAH_TEST_OS_SECRET_STORE=1 dotnet test
+/// PowerShell: $env:DINAH_TEST_OS_SECRET_STORE = '1'; dotnet test
+/// cmd.exe:    set DINAH_TEST_OS_SECRET_STORE=1 &amp;&amp; dotnet test
+/// </code>
+/// <para>
+/// If a run does hang after opting in, that is the keyring waiting on a prompt nobody can answer: cancel it
+/// and drop the variable. Nothing below needs the flag on Windows, where DPAPI is used and no prompt exists.
+/// </para>
+/// </summary>
+internal static class RealOsSecretStore
+{
+	public const string OptInVariable = "DINAH_TEST_OS_SECRET_STORE";
+
+	public static bool IsOptedIn
+		=> Environment.GetEnvironmentVariable(OptInVariable) is string value
+		&& (value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase));
+
+	/// <summary>Marks the running test skipped, telling the reader how to opt in, unless they already have.</summary>
+	public static void SkipUnlessOptedIn()
+	{
+		if (IsOptedIn)
+			return;
+
+		Assert.Inconclusive(
+			$"""
+			Skipped: this test reaches the real OS secret store, which can block forever on a locked keyring
+			instead of failing. To run it, set {OptInVariable}=1 for the test run:
+			    bash/zsh:   {OptInVariable}=1 dotnet test
+			    PowerShell: $env:{OptInVariable} = '1'; dotnet test
+			""");
+	}
+}
+
 [TestClass]
 public class MemoryStore
 {
@@ -109,6 +157,11 @@ public class Factory
 	[TestMethod]
 	public void create_returns_platform_store()
 	{
+		// Off Windows this resolves to the Secret Service / Keychain store, and building it probes the real
+		// store. See RealOsSecretStore for why that is opt-in and how to opt in.
+		if (!OperatingSystem.IsWindows())
+			RealOsSecretStore.SkipUnlessOptedIn();
+
 		var store = OsSecretStore.Create("Dinah.Core.Tests");
 		store.ShouldNotBeNull();
 		store.Name.ShouldNotBeNullOrWhiteSpace();
@@ -180,11 +233,17 @@ public class CredentialManagerStore
 		store.UnavailableReason.ShouldNotBeNullOrWhiteSpace();
 	}
 
+	/// <summary>
+	/// This is the one that hangs on a headless Linux box: it is the only test here that asks the real Secret
+	/// Service about a service name it has never seen. See <see cref="RealOsSecretStore"/> to run it.
+	/// </summary>
 	[TestMethod]
 	public void create_on_unix_does_not_use_insecure_backends()
 	{
 		if (OperatingSystem.IsWindows())
 			Assert.Inconclusive("Unix-only test");
+
+		RealOsSecretStore.SkipUnlessOptedIn();
 
 		var store = CredentialManagerOsSecretStore.Create("Dinah.Core.Tests." + Guid.NewGuid().ToString("N"));
 		// May be available (desktop + keychain/secretservice) or unavailable (headless) - never plaintext.
