@@ -25,7 +25,7 @@ public class ToStringRedaction
 	public void null_is_distinguishable_from_empty()
 	{
 		new SecretString(null).ToString().ShouldBe("[REDACTED <null>]");
-		new SecretString("").ToString().ShouldBe("[REDACTED <empty>]");
+		new SecretString("").ToString().ShouldBe("[REDACTED length=0]");
 	}
 
 	[TestMethod]

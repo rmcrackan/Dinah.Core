@@ -11,8 +11,7 @@ namespace Dinah.Core.Security;
 /// <para>
 /// Everything else - interpolation, <see cref="string.Format(string, object?)"/>, <see cref="ToString"/> -
 /// gets <see cref="Redact(string?)"/> instead, which shares only what costs nothing: whether the value is
-/// null, whether it is empty, and how long it is. Enough to answer "is this even set?" from a log attached
-/// to a public issue.
+/// null, and how long it is. Enough to answer "is this even set?" from a log attached to a public issue.
 /// </para>
 /// </summary>
 [JsonConverter(typeof(SecretStringJsonConverter))]
@@ -32,13 +31,13 @@ public readonly struct SecretString : IEquatable<SecretString>
 	public override string ToString() => Redact(value);
 
 	/// <summary>
-	/// The canonical redaction: <c>[REDACTED &lt;null&gt;]</c>, <c>[REDACTED &lt;empty&gt;]</c>, or
-	/// <c>[REDACTED length=N]</c>.
+	/// The canonical redaction: <c>[REDACTED &lt;null&gt;]</c> or <c>[REDACTED length=N]</c>, where an empty
+	/// value is length 0.
 	/// </summary>
 	public static string Redact(string? value)
-		=> value is null ? "[REDACTED <null>]"
-		: value.Length == 0 ? "[REDACTED <empty>]"
-		: $"[REDACTED length={value.Length}]";
+		=> value is null
+			? "[REDACTED <null>]"
+			: $"[REDACTED length={value.Length}]";
 
 	/// <summary>
 	/// <see cref="Redact(string?)"/> behind a name, for a <see cref="object.ToString"/> override on a type
