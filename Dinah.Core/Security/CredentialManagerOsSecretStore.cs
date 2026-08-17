@@ -67,31 +67,24 @@ public sealed class CredentialManagerOsSecretStore : IOsSecretStore
 			// Force a secure backend so git/user plaintext or cache settings cannot win.
 			Environment.SetEnvironmentVariable("GCM_CREDENTIAL_STORE", requiredBackend);
 
-			var context = CredentialManager.CreateContext(applicationName);
-			var configured = context.Settings.CredentialBackingStore?.Trim().ToLowerInvariant();
-			if (!string.IsNullOrEmpty(configured) && configured != requiredBackend)
+			// All of it - creating the context, reading settings, opening the store, probing it - on a worker
+			// with a bounded wait. A locked keyring with nothing able to prompt for its password does not fail
+			// these calls, it never returns from them, so a try/catch alone cannot keep this method's promise to
+			// report unavailability rather than hang.
+			var attempt = Task.Run(() => OpenBackend(requiredBackend, applicationName));
+
+			if (!attempt.Wait(BackendTimeout))
 			{
-				return new CredentialManagerOsSecretStore(
+				return Unavailable(
 					name,
 					applicationName,
-					store: null,
-					isAvailable: false,
-					unavailableReason: $"{name} refused insecure or unexpected backing store '{configured}'.");
+					$"{name} did not respond within {BackendTimeout.TotalSeconds:0} seconds. A locked keyring "
+					+ "with no way to prompt for its password behaves this way.");
 			}
 
-			if (IsInsecureBackend(configured))
-			{
-				return new CredentialManagerOsSecretStore(
-					name,
-					applicationName,
-					store: null,
-					isAvailable: false,
-					unavailableReason: $"{name} refused insecure backing store '{configured}'.");
-			}
-
-			var store = context.CredentialStore;
-			// Force backend initialization; throws when Secret Service / Keychain is unavailable.
-			_ = store.GetAccounts(ServicePrefix + ":probe:" + applicationName);
+			var (store, refusal) = attempt.Result;
+			if (refusal is not null)
+				return Unavailable(name, applicationName, $"{name} {refusal}");
 
 			return new CredentialManagerOsSecretStore(
 				name,
@@ -102,18 +95,47 @@ public sealed class CredentialManagerOsSecretStore : IOsSecretStore
 		}
 		catch (Exception ex)
 		{
-			return new CredentialManagerOsSecretStore(
-				name,
-				applicationName,
-				store: null,
-				isAvailable: false,
-				unavailableReason: $"{name} is unavailable: {SafeMessage(ex)}");
+			var cause = ex is AggregateException aggregate ? aggregate.InnerException ?? ex : ex;
+			return Unavailable(name, applicationName, $"{name} is unavailable: {SafeMessage(cause)}");
 		}
 		finally
 		{
 			Environment.SetEnvironmentVariable("GCM_CREDENTIAL_STORE", previous);
 		}
 	}
+
+	/// <summary>
+	/// How long to wait for the backend before calling it unavailable. Generous enough for a desktop keychain
+	/// that has to be unlocked, short enough that a headless machine is not stuck.
+	/// </summary>
+	private static readonly TimeSpan BackendTimeout = TimeSpan.FromSeconds(5);
+
+	/// <summary>
+	/// Open the backend and ask it for something harmless, so an unusable one is found here rather than at the
+	/// first attempt to store a secret. Runs on a worker: a timed-out call leaves that worker parked in the
+	/// backend for the life of the process, which is the price of not parking the caller there instead.
+	/// </summary>
+	/// <returns>The store, or the reason it was refused.</returns>
+	private static (ICredentialStore? store, string? refusal) OpenBackend(string requiredBackend, string applicationName)
+	{
+		var context = CredentialManager.CreateContext(applicationName);
+
+		var configured = context.Settings.CredentialBackingStore?.Trim().ToLowerInvariant();
+		if (!string.IsNullOrEmpty(configured) && configured != requiredBackend)
+			return (null, $"refused insecure or unexpected backing store '{configured}'.");
+
+		if (IsInsecureBackend(configured))
+			return (null, $"refused insecure backing store '{configured}'.");
+
+		var store = context.CredentialStore;
+		// Force backend initialization; throws when Secret Service / Keychain is unavailable.
+		_ = store.GetAccounts(ServicePrefix + ":probe:" + applicationName);
+
+		return (store, null);
+	}
+
+	private static CredentialManagerOsSecretStore Unavailable(string name, string applicationName, string reason)
+		=> new(name, applicationName, store: null, isAvailable: false, unavailableReason: reason);
 
 	public void Set(string key, ReadOnlySpan<byte> value)
 	{
