@@ -4,54 +4,6 @@ using Dinah.Core.Security;
 #nullable enable
 namespace OsSecretStoreTests;
 
-/// <summary>
-/// Gate for the tests that talk to the real OS secret store (macOS Keychain, Linux Secret Service).
-/// <para>
-/// They are opt-in because on Unix they can <em>hang forever</em> rather than fail. Reaching the store means a
-/// D-Bus call to the Secret Service, and when the login keyring is locked with no desktop session able to
-/// prompt for the password - a headless box, an SSH session, a CI container - that call simply never returns.
-/// There is nothing to catch: <c>CredentialManagerOsSecretStore.Create</c> guards its probe with a try/catch,
-/// which converts a failure into an unavailable store, but a call that never returns is not a failure. So an
-/// unguarded <c>dotnet test</c> on such a machine stops dead instead of reporting anything.
-/// </para>
-/// <para>
-/// <b>How to run them anyway:</b> set <c>DINAH_TEST_OS_SECRET_STORE</c> to <c>1</c> (or <c>true</c>) for the
-/// test run. Do this on a desktop machine where you can answer a keyring prompt:
-/// </para>
-/// <code>
-/// bash/zsh:   DINAH_TEST_OS_SECRET_STORE=1 dotnet test
-/// PowerShell: $env:DINAH_TEST_OS_SECRET_STORE = '1'; dotnet test
-/// cmd.exe:    set DINAH_TEST_OS_SECRET_STORE=1 &amp;&amp; dotnet test
-/// </code>
-/// <para>
-/// If a run does hang after opting in, that is the keyring waiting on a prompt nobody can answer: cancel it
-/// and drop the variable. Nothing below needs the flag on Windows, where DPAPI is used and no prompt exists.
-/// </para>
-/// </summary>
-internal static class RealOsSecretStore
-{
-	public const string OptInVariable = "DINAH_TEST_OS_SECRET_STORE";
-
-	public static bool IsOptedIn
-		=> Environment.GetEnvironmentVariable(OptInVariable) is string value
-		&& (value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase));
-
-	/// <summary>Marks the running test skipped, telling the reader how to opt in, unless they already have.</summary>
-	public static void SkipUnlessOptedIn()
-	{
-		if (IsOptedIn)
-			return;
-
-		Assert.Inconclusive(
-			$"""
-			Skipped: this test reaches the real OS secret store, which can block forever on a locked keyring
-			instead of failing. To run it, set {OptInVariable}=1 for the test run:
-			    bash/zsh:   {OptInVariable}=1 dotnet test
-			    PowerShell: $env:{OptInVariable} = '1'; dotnet test
-			""");
-	}
-}
-
 [TestClass]
 public class MemoryStore
 {
@@ -157,11 +109,6 @@ public class Factory
 	[TestMethod]
 	public void create_returns_platform_store()
 	{
-		// Off Windows this resolves to the Secret Service / Keychain store, and building it probes the real
-		// store. See RealOsSecretStore for why that is opt-in and how to opt in.
-		if (!OperatingSystem.IsWindows())
-			RealOsSecretStore.SkipUnlessOptedIn();
-
 		var store = OsSecretStore.Create("Dinah.Core.Tests");
 		store.ShouldNotBeNull();
 		store.Name.ShouldNotBeNullOrWhiteSpace();
@@ -234,39 +181,78 @@ public class CredentialManagerStore
 	}
 
 	/// <summary>
-	/// This is the one that hangs on a headless Linux box: it is the only test here that asks the real Secret
-	/// Service about a service name it has never seen. See <see cref="RealOsSecretStore"/> to run it.
+	/// Runs everywhere, because <see cref="CredentialManagerOsSecretStore.Create"/> bounds how long it waits for
+	/// the backend. It used to hang here instead of reporting anything.
 	/// </summary>
 	[TestMethod]
-	public void create_on_unix_does_not_use_insecure_backends()
+	public void create_on_unix_reports_availability_and_never_plaintext()
 	{
 		if (OperatingSystem.IsWindows())
 			Assert.Inconclusive("Unix-only test");
 
-		RealOsSecretStore.SkipUnlessOptedIn();
-
 		var store = CredentialManagerOsSecretStore.Create("Dinah.Core.Tests." + Guid.NewGuid().ToString("N"));
-		// May be available (desktop + keychain/secretservice) or unavailable (headless) - never plaintext.
+
+		// available on a desktop with an answering keychain, unavailable on a headless box - never plaintext
 		if (store.IsAvailable)
-		{
-			var key = "probe-" + Guid.NewGuid().ToString("N");
-			var secret = "unit-test-secret"u8.ToArray();
-			try
-			{
-				store.Set(key, secret);
-				store.TryGet(key, out var loaded).ShouldBeTrue();
-				loaded.ShouldBe(secret);
-			}
-			finally
-			{
-				try { store.Delete(key); } catch { /* cleanup */ }
-			}
-		}
+			store.Name.ShouldNotBeNullOrWhiteSpace();
 		else
 		{
 			store.UnavailableReason.ShouldNotBeNullOrWhiteSpace();
 			store.UnavailableReason!.ToLowerInvariant().ShouldNotContain("plaintext");
 			Should.Throw<OsSecretStoreUnavailableException>(() => store.Set("k", "v"u8));
 		}
+	}
+
+	/// <summary>
+	/// Storing a secret is opt-in, and unlike the availability check it cannot be bounded. Writing a new item to
+	/// a locked keyring asks its owner to unlock it, and waiting on a person is legitimate - a timeout here would
+	/// break the desktop case it exists for. So this hangs on a machine whose keyring nobody can unlock, which is
+	/// why it only runs when asked for.
+	/// <para>
+	/// To run it: <c>DINAH_TEST_OS_SECRET_STORE=1 dotnet test</c> (PowerShell:
+	/// <c>$env:DINAH_TEST_OS_SECRET_STORE = '1'; dotnet test</c>), on a machine where you can answer the prompt.
+	/// </para>
+	/// </summary>
+	[TestMethod]
+	public void a_secret_round_trips_through_the_real_store_on_unix()
+	{
+		if (OperatingSystem.IsWindows())
+			Assert.Inconclusive("Unix-only test");
+
+		SkipUnlessWritingToTheRealStoreWasRequested();
+
+		var store = CredentialManagerOsSecretStore.Create("Dinah.Core.Tests." + Guid.NewGuid().ToString("N"));
+		if (!store.IsAvailable)
+			Assert.Inconclusive($"No usable OS secret store here: {store.UnavailableReason}");
+
+		var key = "probe-" + Guid.NewGuid().ToString("N");
+		var secret = "unit-test-secret"u8.ToArray();
+		try
+		{
+			store.Set(key, secret);
+			store.TryGet(key, out var loaded).ShouldBeTrue();
+			loaded.ShouldBe(secret);
+		}
+		finally
+		{
+			try { store.Delete(key); } catch { /* cleanup */ }
+		}
+	}
+
+	private const string WriteOptInVariable = "DINAH_TEST_OS_SECRET_STORE";
+
+	private static void SkipUnlessWritingToTheRealStoreWasRequested()
+	{
+		var value = Environment.GetEnvironmentVariable(WriteOptInVariable);
+		if (value == "1" || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase))
+			return;
+
+		Assert.Inconclusive(
+			$"""
+			Skipped: this test writes to the real OS secret store, which asks a locked keyring's owner to unlock
+			it and waits indefinitely for an answer. To run it, on a machine where you can answer that prompt:
+			    bash/zsh:   {WriteOptInVariable}=1 dotnet test
+			    PowerShell: $env:{WriteOptInVariable} = '1'; dotnet test
+			""");
 	}
 }
