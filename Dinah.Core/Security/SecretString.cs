@@ -24,8 +24,19 @@ public readonly struct SecretString : IEquatable<SecretString>
 	/// <summary>The secret itself. Each call site is a place to check that the value cannot reach a log.</summary>
 	public string? Reveal() => value;
 
-	/// <summary>Whether a non-empty secret is held. Safe to log.</summary>
+	/// <summary>
+	/// Whether a non-empty secret is held. Lets calling code ask whether anything is set without going through
+	/// <see cref="Reveal"/>, which keeps the number of places that touch the value small enough to audit.
+	/// </summary>
 	public bool HasValue => !string.IsNullOrEmpty(value);
+
+	/// <summary>
+	/// Same as <see cref="ToString"/>, as a property so that a logger reflecting over this type finds the shape
+	/// rather than nothing. Structured logging asked to expand a secret - Serilog's <c>{@Secret}</c> - reads
+	/// public properties and ignores <see cref="ToString"/>, so without this it would report only
+	/// <see cref="HasValue"/> and the length would be lost. Costs no configuration in the consumer.
+	/// </summary>
+	public string Redacted => Redact(value);
 
 	/// <summary>Safe to log: shape only, never content.</summary>
 	public override string ToString() => Redact(value);

@@ -148,12 +148,20 @@ public class Json
 [TestClass]
 public class ReflectionSurface
 {
+	private const string Secret = "Atnr|super-secret";
+
+	/// <summary>
+	/// Asserts the behaviour rather than counting members, so adding a member does not mean editing this test -
+	/// it means proving the new member is safe.
+	/// </summary>
 	[TestMethod]
-	public void no_public_property_exposes_the_value()
-		=> typeof(SecretString)
-			.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-			.Select(p => p.Name)
-			.ShouldBe([nameof(SecretString.HasValue)]);
+	public void no_public_property_returns_the_value()
+	{
+		var secret = new SecretString(Secret);
+
+		foreach (var property in typeof(SecretString).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+			property.GetValue(secret)?.ToString().ShouldNotContain(Secret, Case.Sensitive, $"{property.Name} exposed the secret");
+	}
 
 	[TestMethod]
 	public void no_public_field_exposes_the_value()
@@ -171,6 +179,11 @@ public class SerilogLogging
 		public void Emit(LogEvent logEvent) => Events.Add(logEvent);
 	}
 
+	/// <summary>
+	/// Both forms, with a logger that has no destructuring configured at all - the position a consumer is in
+	/// before they know this type exists. The plain form redacts through ToString; the destructured form reports
+	/// <see cref="SecretString.Redacted"/>, which is why that property is public.
+	/// </summary>
 	[TestMethod]
 	public void neither_plain_nor_destructured_logging_writes_the_value()
 	{
@@ -182,10 +195,14 @@ public class SerilogLogging
 		logger.Information("plain={Plain} destructured={@Destructured}", secret, secret);
 
 		var logEvent = sink.Events.ShouldHaveSingleItem();
-		var written = logEvent.RenderMessage()
-			+ string.Join("|", logEvent.Properties.Select(p => $"{p.Key}={p.Value}"));
+		var plain = logEvent.Properties["Plain"].ToString();
+		var destructured = logEvent.Properties["Destructured"].ToString();
 
-		written.ShouldNotContain(value);
-		written.ShouldContain($"[REDACTED length={value.Length}]");
+		plain.ShouldNotContain(value);
+		destructured.ShouldNotContain(value);
+
+		// the length survives both ways, with nothing registered
+		plain.ShouldContain($"[REDACTED length={value.Length}]");
+		destructured.ShouldContain($"[REDACTED length={value.Length}]");
 	}
 }
