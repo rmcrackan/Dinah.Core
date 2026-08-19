@@ -6,6 +6,9 @@
 		[TestMethod]
 		public void strongly_typed()
 		{
+			if (!OperatingSystem.IsWindows())
+				Assert.Inconclusive("Windows-only test");
+
 			// get actual system dir:
 			// eg: C:\Users\username\AppData\Roaming
 			var appDataDir = Environment.ExpandEnvironmentVariables("%appdata%");
@@ -27,6 +30,9 @@
 		[TestMethod]
 		public void from_string()
 		{
+			if (!OperatingSystem.IsWindows())
+				Assert.Inconclusive("Windows-only test");
+
 			// get actual system dirs:
 			// eg: C:\Users\username\AppData\Roaming
 			var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -63,6 +69,9 @@
 		[TestMethod]
 		public void method1()
 		{
+			if (!OperatingSystem.IsWindows())
+				Assert.Inconclusive("Windows-only test");
+
 			var path = Path.Combine(full, @"..\..\..");
 			var final = Path.GetFullPath(path);
 			final.ShouldBe(up3);
@@ -71,6 +80,9 @@
 		[TestMethod]
 		public void method2()
 		{
+			if (!OperatingSystem.IsWindows())
+				Assert.Inconclusive("Windows-only test");
+
 			var path = Path.Combine(full, @"..\..\..");
 			var final = new DirectoryInfo(path).FullName;
 			final.ShouldBe(up3);
