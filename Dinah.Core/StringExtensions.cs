@@ -18,10 +18,10 @@ namespace Dinah.Core
 
 		public static bool ContainsInsensitive(this string str1, string str2) => str1?.IndexOf(str2, StringComparison.OrdinalIgnoreCase) >= 0;
 
-		public static string Pluralize(this string str, int qty) => new Pluralize.NET.Pluralizer().Format(str, qty);
+		public static string Pluralize(this string str, int qty) => EnglishPluralizer.Format(str, qty);
 
 		/// <summary>return qty and noun</summary>
-		public static string PluralizeWithCount(this string str, int qty) => new Pluralize.NET.Pluralizer().Format(str, qty, true);
+		public static string PluralizeWithCount(this string str, int qty) => $"{qty} {EnglishPluralizer.Format(str, qty)}";
 
 		[return: NotNullIfNotNull(nameof(str))]
 		public static string? FirstCharToUpper(this string? str)
