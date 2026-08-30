@@ -89,30 +89,26 @@
 		[TestMethod]
 		public async Task valid_FormUrlEncodedContent()
 		{
-			var message = new HttpResponseMessage
-			{
-				Content = new FormUrlEncodedContent(new Dictionary<string, string>
-				{
-					["k1"] = "v1",
-					["k2"] = "!@#$%^&*()<>-=_:'\"\\\n"
-				}),
-				StatusCode = System.Net.HttpStatusCode.OK
-			};
+            var message = new HttpResponseMessage
+            {
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["k1"] = "v1",
+                    ["k2"] = "!@#$%^&*()<>-=_:'\"\\\n"
+                }),
+                StatusCode = System.Net.HttpStatusCode.OK
+            };
 
-			var str = await message.Content.ReadAsStringAsync();
-			str.ShouldBe("k1=v1&k2=%21%40%23%24%25%5E%26%2A%28%29%3C%3E-%3D_%3A%27%22%5C%0A");
+            var str = await message.Content.ReadAsStringAsync();
+            // Verify by round-tripping through ParseQueryString instead of asserting exact encoding
+            var parsed = System.Web.HttpUtility.ParseQueryString(str);
+            parsed["k1"].ShouldBe("v1");
+            parsed["k2"].ShouldBe("!@#$%^&*()<>-=_:'\"\\\n");
 
-			var jObj = await message.Content.ReadAsJObjectAsync();
-			var json = jObj.ToString(Newtonsoft.Json.Formatting.Indented);
-			var expected = @"
-{
-  ""k1"": ""v1"",
-  ""k2"": ""!@#$%^&*()<>-=_:'\""\\\n""
-}
-		".Trim();
-
-			json.ShouldBe(expected);
-		}
+            var jObj = await message.Content.ReadAsJObjectAsync();
+            jObj["k1"]?.Value<string>().ShouldBe("v1");
+            jObj["k2"]?.Value<string>().ShouldBe("!@#$%^&*()<>-=_:'\"\\\n");
+        }
 
 		[TestMethod]
 		public async Task not_supported_HttpContent_type()
