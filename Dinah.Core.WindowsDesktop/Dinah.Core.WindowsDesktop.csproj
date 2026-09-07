@@ -6,7 +6,7 @@
 	<TargetFramework>net10.0-windows7</TargetFramework>
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>11.0.0.1</Version>
+    <Version>11.0.1.1</Version>
     <ApplicationIcon />
     <StartupObject />
     <AllowedOutputExtensionsInPackageBuildOutputFolder>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dinah.Core" Version="11.0.0.1" />
+    <PackageReference Include="Dinah.Core" Version="11.0.1.1" />
   </ItemGroup>
 
 </Project>
